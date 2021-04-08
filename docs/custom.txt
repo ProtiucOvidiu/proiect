@@ -1,0 +1,5 @@
+Insert into sql11402476.users(username,password,full_name,email,phone_number,group_id,extra_permissions) values ("ovi", "cvscvs", "Ovi Pro",
+"ovi.pro@yahoo.com", "0773978453", 1,1);
+
+Insert into sql11402476.groups(name,string_permissions,description) values ("Admins","221221", "O mica descr");
+

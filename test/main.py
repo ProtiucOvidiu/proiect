@@ -4,8 +4,8 @@ from flask import Flask, flash, redirect, render_template, request, session, abo
 import mysql.connector as mariadb
 import os
 import operator
-app = Flask(__name__)
-mariadb_connect = mariadb.connect(host='127.0.0.1', user='root', password='cvscvs', database='test')
+app = Flask(__name__, static_url_path="/static")
+mariadb_connect = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
 @app.route('/')
 def home():
   if not session.get('logged_in'):
@@ -13,15 +13,20 @@ def home():
   else:
     return render_template('index.html')
 
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['POST']) 
 def do_admin_login():
   login = request.form
-
+ 
+  full_name = login['full_name'] 
   userName = login['username']
   password = login['password']
+  email = login['email']
+  print('{}'.format(email))
+  print('{}'.format(full_name))
+
 
   cur = mariadb_connect.cursor(buffered=True)
-  data = cur.execute('SELECT * FROM Login WHERE username=\'ovi\'')
+  data = cur.execute('SELECT * FROM users WHERE username=\'ovi\'')
   data = cur.fetchone()[1]
 
   # if sha256_crypt.verify(password, data):
@@ -33,6 +38,32 @@ def do_admin_login():
     flash('wrong password!')
   return home()
 
+# @app.route('/sign_up', methods=['POST']) 
+# def do_admin_login():
+#   login = request.form
+ 
+#   full_name = login['full_name'] 
+#   userName = login['username']
+#   password = login['password']
+#   email = login['email']
+#   print('{}'.format(email))
+#   print('{}'.format(full_name))
+
+
+#   cur = mariadb_connect.cursor(buffered=True)
+#   data = cur.execute('SELECT * FROM users WHERE username=\'ovi\'')
+#   data = cur.fetchone()[1]
+
+#   # if sha256_crypt.verify(password, data):
+#   account = True
+
+#   if account:
+#     session['logged_in'] = True
+#   else:
+#     flash('wrong password!')
+#   return home()
+
+
 @app.route('/logout')
 def logout():
   session['logged_in'] = False
@@ -40,4 +71,4 @@ def logout():
 
 if __name__ == "__main__":
   app.secret_key = os.urandom(12)
-  app.run(debug=False,host='0.0.0.0', port=5000)
+  app.run(debug=True, host='0.0.0.0', port=5000)
