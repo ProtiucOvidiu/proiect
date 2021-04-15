@@ -4,12 +4,13 @@ from flask import Flask, flash, redirect, render_template, request, session, abo
 import mysql.connector as mariadb
 import os
 import operator
+from sign_up import Person
 app = Flask(__name__, static_url_path="/static")
 mariadb_connect = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
 @app.route('/')
 def home():
   if not session.get('logged_in'):
-    return render_template('login.html')
+    return render_template('sign_up.html')
   else:
     return render_template('index.html')
 
@@ -33,6 +34,8 @@ def do_admin_login():
     if i == Email or i == userName or i == passWord:
       check += 1
 
+
+
   if check != 2:
     error = 'Wrong password or email'
     flash(error)
@@ -44,31 +47,24 @@ def do_admin_login():
     flash('error')
   return home()
 
-# @app.route('/sign_up', methods=['POST']) 
-# def do_admin_login():
-#   login = request.form
+
+@app.route('/sign_up', methods=['POST']) 
+def do_admin_sign_up():
+  sign_up = request.form
  
-#   full_name = login['full_name'] 
-#   userName = login['username']
-#   password = login['password']
-#   email = login['email']
-#   print('{}'.format(email))
-#   print('{}'.format(full_name))
+  full_name = sign_up['full_name'] 
+  user_name = sign_up['user_name']
+  email = sign_up['email']
+  phone = sign_up['phone']
+  password = sign_up['password']
+  pass_conf = sign_up['confirm_password']
 
-
-#   cur = mariadb_connect.cursor(buffered=True)
-#   data = cur.execute('SELECT * FROM users WHERE username=\'ovi\'')
-#   data = cur.fetchone()[1]
-
-#   # if sha256_crypt.verify(password, data):
-#   account = True
-
-#   if account:
-#     session['logged_in'] = True
-#   else:
-#     flash('wrong password!')
-#   return home()
-
+  person = Person(full_name, user_name, email, phone, password, pass_conf)
+  print(person)
+  mariadb_connect.close()
+  # cur = mariadb_connect.cursor(buffered=True)
+  # data = cur.execute('SELECT * FROM users WHERE username=\'ovi\'')
+  # data = cur.fetc()
 
 @app.route('/logout')
 def logout():
