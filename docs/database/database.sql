@@ -1,3 +1,9 @@
+Drop table groups_perm_relation;
+Drop table user_groups_relation;
+Drop table permissions;
+Drop table groups;
+Drop table users;
+
 CREATE TABLE `users` (
   `id` int PRIMARY KEY AUTO_INCREMENT,
   `username` varchar(255),

@@ -4,9 +4,9 @@ from flask import Flask, flash, redirect, render_template, request, session, abo
 import mysql.connector as mariadb
 import os
 import operator
-from sign_up import Person
+from sign_up import sign_up_pers
 app = Flask(__name__, static_url_path="/static")
-mariadb_connect = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
+conn = mariadb.connect(host='127.0.0.1', user='root', password='cvscvs', database='test')
 @app.route('/')
 def home():
   if not session.get('logged_in'):
@@ -50,21 +50,23 @@ def do_admin_login():
 
 @app.route('/sign_up', methods=['POST']) 
 def do_admin_sign_up():
-  sign_up = request.form
+  request_sign = request.form
  
-  full_name = sign_up['full_name'] 
-  user_name = sign_up['user_name']
-  email = sign_up['email']
-  phone = sign_up['phone']
-  password = sign_up['password']
-  pass_conf = sign_up['confirm_password']
+  full_name = request_sign['full_name'] 
+  user_name = request_sign['user_name']
+  email = request_sign['email']
+  phone = request_sign['phone']
+  password = request_sign['password']
+  pass_conf = request_sign['confirm_password']
 
-  person = Person(full_name, user_name, email, phone, password, pass_conf)
-  print(person)
-  mariadb_connect.close()
-  # cur = mariadb_connect.cursor(buffered=True)
-  # data = cur.execute('SELECT * FROM users WHERE username=\'ovi\'')
-  # data = cur.fetc()
+
+  sign_up_pers1 = sign_up_pers(full_name, user_name, email, phone, password, pass_conf)
+  sign_up_pers1.check_email(email)
+
+  cur = conn.cursor(buffered=True)
+  data = cur.execute(sign_up_pers1.insert())
+  conn.commit()
+  conn.close()
 
 @app.route('/logout')
 def logout():
