@@ -113,6 +113,18 @@
           <div class="button" style="padding: 10px 10px 20px;" >
             <input type="submit" value="Log in" class="btn">
           </div>
+          {% block content %}
+          <div class="container">
+              {% for message in get_flashed_messages() %}
+              <div class="alert alert-warning">
+                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                  {{ message }}
+              </div>
+              {% endfor %}
+          
+              {% block page_content %}{% endblock %}
+          </div>
+          {% endblock %}
        </div>
       </div>
      </div>

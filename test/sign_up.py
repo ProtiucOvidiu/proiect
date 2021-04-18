@@ -8,22 +8,18 @@ class sign_up_pers:
     self.password = password
     self.pass_confirm = pass_confirm
 
-
-
-  def check_pass(password, pass_confirm):
-    if pass_confirm != password:
-        return false
+  def check_pass(self, pass_confirm):
+    if pass_confirm != self.password:
+      return False
+    return True
 
   def insert(self):
     query = "Insert into test.users(username,password,full_name,email,phone_number)"\
     "values (\"" + self.user_name + "\", \"" + self.password + "\", \"" + self.full_name + "\", \""\
     + self.email + "\", \"" + self.phone + '\");'
     return query
-
-  def __repr__(self): 
-    return "Test user_name:% s password:% s" % (self.user_name, self.password) 
     
-  def check_email(self, email):
+  def check_email(self):
     email_regex = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
     if email_regex.match(self.email):
       return True
