@@ -25,5 +25,10 @@ class sign_up_pers:
       return True
     else:
       return False
+  
+  def select(self):
+    query = "Select username from test.users;"
+    return query
+    
     
   

@@ -49,6 +49,7 @@ def do_admin_login():
 
 @app.route('/sign_up', methods=['POST', 'GET']) 
 def do_admin_sign_up():
+  cur = conn.cursor(buffered=True)
   request_sign = request.form
   full_name = request_sign['full_name'] 
   user_name = request_sign['user_name']
@@ -57,14 +58,23 @@ def do_admin_sign_up():
   password = request_sign['password']
   pass_conf = request_sign['confirm_password']
 
+
   sign_up_pers1 = sign_up_pers(full_name, user_name, email, phone, password, pass_conf)
+  cur.execute(sign_up_pers1.select())
+  users_rows = cur.fetchall()
+  for row in users_rows:
+      if user_name == row[0]:
+        flash('Invalid User Name.')
+        return render_template('sign_up.html')
+
   if not (sign_up_pers1.check_pass(pass_conf) and sign_up_pers1.check_email()):
     flash('Please check your sign up details and try again.')
     return render_template('sign_up.html')
   
-  cur = conn.cursor(buffered=True)
+  
   data = cur.execute(sign_up_pers1.insert())
   conn.commit()
+  cur.close()
   conn.close()
   return render_template('login.html')
 
