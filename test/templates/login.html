@@ -5,43 +5,29 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel= "stylesheet" type= "text/css" href= "/static/styles/style.css">
-  <title>Sign up</title>
+  <title>Log in</title>
 </head>
 <body>
   <form action="/login" method="POST">
     <div class="login">
       <div class="login-screen">
         <div class="app-title">
-          <h1>Sign up</h1>
+          <h1>Log in</h1>
         </div>
       <div class="login-form">
         <div class="control-group">
-          <input type="text" class="login-field" value="" placeholder="full name" name="full_name">
-          <label class="login-field-icon fui-user" for="login-full_name"></label>
-      </div>
-        <div class="control-group">
-            <input type="text" class="login-field" value="" placeholder="username" name="username">
+            <input type="text" class="login-field" value="" placeholder="email or username" name="email-username">
             <label class="login-field-icon fui-user" for="login-name"></label>
-        </div>
-        <div class="control-group">
-          <input type="email" class="login-field" value="" placeholder="email" name="email">
-          <label  for="login-email"></label>
-      </div>
         <div class="control-group">
             <input type="password" class="login-field" value="" placeholder="password" name="password">
             <label class="login-field-icon fui-lock" for="login-pass"></label>
         </div>
-        <div class="control-group">
-          <input type="password" class="login-field" value="" placeholder="confirm password" name="confirm_password" >
-          <label class="login-field-icon fui-lock" for="login-confirm_password"></label>
-      </div>
           <div class="button" style="padding: 10px 10px 10px;" >
             <input type="submit" value="Sign up" class="btn">
           </div>
           <div class="button" style="padding: 10px 10px 20px;" >
             <input type="submit" value="Log in" class="btn">
           </div>
-
        </div>
       </div>
      </div>
