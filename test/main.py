@@ -16,26 +16,32 @@ def home():
 @app.route('/login', methods=['POST']) 
 def do_admin_login():
   login = request.form
- 
-  full_name = login['full_name'] 
-  userName = login['username']
-  password = login['password']
-  email = login['email']
-  print('{}'.format(email))
-  print('{}'.format(full_name))
+  passWord = login['password']
+  Email = login['email-username']
+  userName = login['email-username']
+  cont = True
+  check = 0
+  cur = mariadb_connect.cursor(buffered=  True)
+  data = cur.execute("SELECT username, email, password FROM users WHERE password= %s ", (passWord,))
+  data = cur.fetchall()
 
+  if not data:
+    error = 'Credentials doesn`t exist! '
+    return render_template('login.html')
 
-  cur = mariadb_connect.cursor(buffered=True)
-  data = cur.execute('SELECT * FROM users WHERE username=\'ovi\'')
-  data = cur.fetchone()[1]
+  for i in data[:][0]:
+    if i == Email or i == userName or i == passWord:
+      check += 1
 
-  # if sha256_crypt.verify(password, data):
-  account = True
+  if check != 2:
+    error = 'Wrong password or email'
+    flash(error)
+    return render_template('login.html', error = error, username = userName, password = passWord)
 
-  if account:
+  if cont:
     session['logged_in'] = True
   else:
-    flash('wrong password!')
+    flash('error')
   return home()
 
 # @app.route('/sign_up', methods=['POST']) 
