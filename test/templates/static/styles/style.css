@@ -13,10 +13,19 @@
     margin: 20px auto;
     width: 300px;
     }
+    .login {
+        margin: 20px auto;
+        width: 300px;
+    }
     .sign_up-screen {
     background-color: #FFF;
     padding: 20px;
     border-radius: 5px
+    }
+    .login-screen {
+        background-color: #FFF;
+        padding: 20px;
+        border-radius: 5px
     }
     .app-title {
     text-align: center;
@@ -24,6 +33,9 @@
     }
     .sign_up-form {
     text-align: center;
+    }
+    .login-form {
+        text-align: center;
     }
     .control-group {
     margin-bottom: 10px;

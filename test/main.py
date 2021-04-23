@@ -10,7 +10,7 @@ conn = mariadb.connect(host='127.0.0.1', user='root', password='cvscvs', databas
 @app.route('/')
 def home():
   if not session.get('logged_in'):
-    return render_template('sign_up.html')
+    return render_template('login.html')
   else:
     return render_template('index.html')
 
@@ -22,7 +22,7 @@ def do_admin_login():
   userName = login['email-username']
   cont = True
   check = 0
-  cur = mariadb_connect.cursor(buffered=  True)
+  cur = conn.cursor(buffered=  True)
   data = cur.execute("SELECT username, email, password FROM users WHERE password= %s ", (passWord,))
   data = cur.fetchall()
 
@@ -34,13 +34,13 @@ def do_admin_login():
     if i == Email or i == userName or i == passWord:
       check += 1
 
-
-
   if check != 2:
     error = 'Wrong password or email'
     flash(error)
     return render_template('login.html', error = error, username = userName, password = passWord)
 
+  cur.close()
+  conn.close()
   if cont:
     session['logged_in'] = True
   else:
@@ -58,7 +58,6 @@ def do_admin_sign_up():
   password = request_sign['password']
   pass_conf = request_sign['confirm_password']
 
-
   sign_up_pers1 = sign_up_pers(full_name, user_name, email, phone, password, pass_conf)
   cur.execute(sign_up_pers1.select())
   users_rows = cur.fetchall()
@@ -70,7 +69,6 @@ def do_admin_sign_up():
   if not (sign_up_pers1.check_pass(pass_conf) and sign_up_pers1.check_email()):
     flash('Please check your sign up details and try again.')
     return render_template('sign_up.html')
-  
   
   data = cur.execute(sign_up_pers1.insert())
   conn.commit()
