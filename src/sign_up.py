@@ -13,9 +13,9 @@ class sign_up_pers:
       return False
     return True
 
-  def insert(self):
+  def insert(self, passwd):
     query = "Insert into test.users(username,password,full_name,email,phone_number)"\
-    "values (\"" + self.user_name + "\", \"" + self.password + "\", \"" + self.full_name + "\", \""\
+    "values (\"" + self.user_name + "\", \"" + passwd + "\", \"" + self.full_name + "\", \""\
     + self.email + "\", \"" + self.phone + '\");'
     return query
     
