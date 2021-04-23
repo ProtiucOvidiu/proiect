@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/static/styles/style.css">
+  <title>Sign up</title>
+</head>
+<body>
+  <form action="/sign_up" method="POST">
+    <div class="sign_up">
+      <div class="sign_up-screen">
+        <div class="app-title">
+          <h1>Sign up</h1>
+        </div>
+      <div class="sign_up-form">
+        <div class="control-group">
+          <input type="text" class="login-field" value="" placeholder="full name" name="full_name" required>
+      </div>
+        <div class="control-group">
+            <input type="text" class="login-field" value="" placeholder="user name" name="user_name" required>
+        </div>
+        <div class="control-group">
+          <input type="email" class="login-field" value="" autocomplete="email" placeholder="email" name="email" required>
+      </div>
+      <div class="control-group">
+        <input type="phone" class="login-field" value="" placeholder="phone" name="phone" required>
+    </div>
+        <div class="control-group">
+            <input type="password" class="login-field" value="" placeholder="password" name="password" required>
+        </div>
+        <div class="control-group">
+          <input type="password" class="login-field" value="" placeholder="confirm password" name="confirm_password" required >
+      </div>
+          <div class="button" style="padding: 10px 10px 10px;" >
+            <input type="submit" value="Sign up" class="btn">
+          </div>
+          {% block content %}
+          <div class="container">
+              {% for message in get_flashed_messages() %}
+              <div class="alert alert-warning">
+                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                  {{ message }}
+              </div>
+              {% endfor %}
+          
+              {% block page_content %}{% endblock %}
+          </div>
+          {% endblock %}
+       </div>
+      </div>
+     </div>
+    </form>
+</body>
+</html>
+
+

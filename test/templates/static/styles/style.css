@@ -9,21 +9,33 @@
     background-color: #447c8a;
     padding: 50px;
     }
-    .login {
+    .sign_up {
     margin: 20px auto;
     width: 300px;
     }
-    .login-screen {
+    .login {
+        margin: 20px auto;
+        width: 300px;
+    }
+    .sign_up-screen {
     background-color: #FFF;
     padding: 20px;
     border-radius: 5px
+    }
+    .login-screen {
+        background-color: #FFF;
+        padding: 20px;
+        border-radius: 5px
     }
     .app-title {
     text-align: center;
     color: #777;
     }
-    .login-form {
+    .sign_up-form {
     text-align: center;
+    }
+    .login-form {
+        text-align: center;
     }
     .control-group {
     margin-bottom: 10px;

@@ -1,11 +1,12 @@
 from flask import Flask
-from flask import Flask, flash, redirect, render_template, request, session, abort
+from flask import Flask, flash, redirect, render_template, request, session, abort, flash, url_for
 # from passlib.hash import sha256_crypt
 import mysql.connector as mariadb
 import os
 import operator
+from sign_up import sign_up_pers
 app = Flask(__name__, static_url_path="/static")
-mariadb_connect = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
+conn = mariadb.connect(host='127.0.0.1', user='root', password='cvscvs', database='test')
 @app.route('/')
 def home():
   if not session.get('logged_in'):
@@ -21,7 +22,7 @@ def do_admin_login():
   userName = login['email-username']
   cont = True
   check = 0
-  cur = mariadb_connect.cursor(buffered=  True)
+  cur = conn.cursor(buffered=  True)
   data = cur.execute("SELECT username, email, password FROM users WHERE password= %s ", (passWord,))
   data = cur.fetchall()
 
@@ -38,37 +39,42 @@ def do_admin_login():
     flash(error)
     return render_template('login.html', error = error, username = userName, password = passWord)
 
+  cur.close()
+  conn.close()
   if cont:
     session['logged_in'] = True
   else:
     flash('error')
   return home()
 
-# @app.route('/sign_up', methods=['POST']) 
-# def do_admin_login():
-#   login = request.form
- 
-#   full_name = login['full_name'] 
-#   userName = login['username']
-#   password = login['password']
-#   email = login['email']
-#   print('{}'.format(email))
-#   print('{}'.format(full_name))
+@app.route('/sign_up', methods=['POST', 'GET']) 
+def do_admin_sign_up():
+  cur = conn.cursor(buffered=True)
+  request_sign = request.form
+  full_name = request_sign['full_name'] 
+  user_name = request_sign['user_name']
+  email = request_sign['email']
+  phone = request_sign['phone']
+  password = request_sign['password']
+  pass_conf = request_sign['confirm_password']
 
+  sign_up_pers1 = sign_up_pers(full_name, user_name, email, phone, password, pass_conf)
+  cur.execute(sign_up_pers1.select())
+  users_rows = cur.fetchall()
+  for row in users_rows:
+      if user_name == row[0]:
+        flash('Invalid User Name.')
+        return render_template('sign_up.html')
 
-#   cur = mariadb_connect.cursor(buffered=True)
-#   data = cur.execute('SELECT * FROM users WHERE username=\'ovi\'')
-#   data = cur.fetchone()[1]
-
-#   # if sha256_crypt.verify(password, data):
-#   account = True
-
-#   if account:
-#     session['logged_in'] = True
-#   else:
-#     flash('wrong password!')
-#   return home()
-
+  if not (sign_up_pers1.check_pass(pass_conf) and sign_up_pers1.check_email()):
+    flash('Please check your sign up details and try again.')
+    return render_template('sign_up.html')
+  
+  data = cur.execute(sign_up_pers1.insert())
+  conn.commit()
+  cur.close()
+  conn.close()
+  return render_template('login.html')
 
 @app.route('/logout')
 def logout():
