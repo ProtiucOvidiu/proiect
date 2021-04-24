@@ -13,7 +13,7 @@ conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', pa
 @app.route('/')
 def home():
   if not session.get('logged_in'):
-    return render_template('sign_up.html')
+    return render_template('login.html')
   else:
     return render_template('user_files/user_home.html')
     
@@ -53,7 +53,11 @@ def do_admin_login():
 
   for i in data[:][0]:
     if i == passWord:
-      if sha256_crypt.verify("password", i)
+      if not sha256_crypt.verify("password", i):
+        return render_template('login.html')
+   
+  print('Here')
+
   for i in data[:][0]:
     if i == Email or i == userName or i == passWord:
       check += 1
