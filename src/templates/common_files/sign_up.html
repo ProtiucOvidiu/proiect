@@ -11,30 +11,33 @@
   <form action="/sign_up" method="POST">
     <div class="sign_up">
       <div class="sign_up-screen">
-        <div class="app-title">
+        <div class="app-title"> 
           <h1>Sign up</h1>
         </div>
       <div class="sign_up-form">
         <div class="control-group">
-          <input type="text" class="login-field" value="" placeholder="full name" name="full_name" required>
+          <input type="text" class="login-field" value="" placeholder="full name" name="full_name" >
       </div>
         <div class="control-group">
-            <input type="text" class="login-field" value="" placeholder="user name" name="user_name" required>
+            <input type="text" class="login-field" value="" placeholder="user name" name="user_name" >
         </div>
         <div class="control-group">
-          <input type="email" class="login-field" value="" autocomplete="email" placeholder="email" name="email" required>
+          <input type="email" class="login-field" value="" autocomplete="email" placeholder="email" name="email" >
       </div>
       <div class="control-group">
-        <input type="phone" class="login-field" value="" placeholder="phone" name="phone" required>
+        <input type="phone" class="login-field" value="" placeholder="phone" name="phone" >
     </div>
         <div class="control-group">
-            <input type="password" class="login-field" value="" placeholder="password" name="password" required>
+            <input type="password" class="login-field" value="" placeholder="password" name="password" >
         </div>
         <div class="control-group">
-          <input type="password" class="login-field" value="" placeholder="confirm password" name="confirm_password" required >
+          <input type="password" class="login-field" value="" placeholder="confirm password" name="confirm_password"  >
       </div>
           <div class="button" style="padding: 10px 10px 10px;" >
             <input type="submit" value="Sign up" class="btn">
+          </div>
+          <div class="button" style="padding: 10px 10px 20px;" >
+            <input type="submit" name="login" value="Log in" class="btn">
           </div>
           {% block content %}
           <div class="container">
@@ -44,7 +47,6 @@
                   {{ message }}
               </div>
               {% endfor %}
-
               {% block page_content %}{% endblock %}
           </div>
           {% endblock %}

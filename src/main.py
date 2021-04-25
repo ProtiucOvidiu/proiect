@@ -52,13 +52,6 @@ def do_admin_login():
     return render_template('common_files/login.html')
 
   for i in data[:][0]:
-    if i == passWord:
-      if not sha256_crypt.verify("password", i):
-        return render_template('login.html')
-   
-  print('Here')
-
-  for i in data[:][0]:
     if i == Email or i == userName or i == passWord:
       check += 1
 
@@ -88,6 +81,9 @@ def do_admin_sign_up():
   password = request_sign['password']
   pass_conf = request_sign['confirm_password']
 
+  if request_sign['login']:
+    return render_template('login.html')
+  
   sign_up_pers1 = sign_up_pers(full_name, user_name, email, phone, password, pass_conf)
   cur.execute(sign_up_pers1.select())
   users_rows = cur.fetchall()
