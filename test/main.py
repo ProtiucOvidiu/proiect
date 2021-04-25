@@ -25,9 +25,9 @@ def do_admin_login():
   cur = conn.cursor(buffered=  True)
   data = cur.execute("SELECT username, email, password FROM users WHERE password= %s ", (passWord,))
   data = cur.fetchall()
-
   if not data:
-    error = 'Credentials doesn`t exist! '
+    error = 'Wrong password or email '
+    flash(error)
     return render_template('login.html')
 
   for i in data[:][0]:

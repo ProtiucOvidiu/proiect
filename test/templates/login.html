@@ -92,7 +92,7 @@
   <title>Log in</title>
 </head>
 <body>
-  <form action="/login" method="POST">
+  <form action="{{ url_for('do_admin_login')}}" method="POST">
     <div class="login">
       <div class="login-screen">
         <div class="app-title">
@@ -111,11 +111,17 @@
           </div>
           <div class="button" style="padding: 10px 10px 20px;" >
             <input type="submit" value="Log in" class="btn">
-          </div>
+          </div class="button" style="padding: 10px 10px 20px;">
+          {% with messages = get_flashed_messages() %}
+          {% if messages %}
+                {% for msg in messages %}
+                    <p>{{msg}}</p>
+                  {% endfor %}
+                {% endif %}
+          {% endwith %}
        </div>
       </div>
      </div>
     </form>
 </body>
 </html>
-
