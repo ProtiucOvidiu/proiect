@@ -94,6 +94,7 @@ body {
     font-size: 16px;
     border: none;
     float: right;
+    z-index: 0;
   }
   
   .topnav .homebtn {
@@ -109,6 +110,7 @@ body {
   .topnav .dropdown {
     position: relative;
     float: right;
+    z-index: 0;
   
   }
   
@@ -117,7 +119,7 @@ body {
     position: relative;
     top: 25;
     background-color: #E5F0E7;
-    min-width: 160px;
+    min-width: 100px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
   }
