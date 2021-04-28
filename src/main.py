@@ -6,14 +6,16 @@ import os
 import operator
 import re
 from sign_up import sign_up_pers
-app = Flask(__name__, static_url_path="/static")
+from global_variables import app
+import user, admin, settings, contact
+
 conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
 @app.route('/')
 def home():
   if not session.get('logged_in'):
-    return render_template('login.html')
+    return render_template('common_files/login.html')
   else:
-    return render_template('index.html')
+    return render_template('user_files/user_home.html')
     
 def check_email(Email):
     email_regex = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
@@ -44,7 +46,7 @@ def do_admin_login():
   if not data:
     error = 'Invalid credentials'
     flash(error)
-    return render_template('login.html')
+    return render_template('common_files/login.html')
 
   for i in data[:][0]:
     if i == Email or i == userName or i == passWord:
@@ -53,7 +55,7 @@ def do_admin_login():
   if check != 2:
     error = 'Wrong password or email'
     flash(error)
-    return render_template('login.html', error = error, username = userName, password = passWord)
+    return render_template('common_files/login.html', error = error, username = userName, password = passWord)
 
   #if login['sing_up']:
   #  return render_template('sing_up.html') #spre sign-up
@@ -82,17 +84,17 @@ def do_admin_sign_up():
   for row in users_rows:
       if user_name == row[0]:
         flash('Invalid User Name.')
-        return render_template('sign_up.html')
+        return render_template('common_files/sign_up.html')
 
   if not (sign_up_pers1.check_pass(pass_conf) and sign_up_pers1.check_email()):
     flash('Please check your sign up details and try again.')
-    return render_template('sign_up.html')
+    return render_template('common_files/sign_up.html')
   
   data = cur.execute(sign_up_pers1.insert())
   conn.commit()
   cur.close()
   conn.close()
-  return render_template('login.html')
+  return render_template('common_files/login.html')
 
 @app.route('/logout')
 def logout():

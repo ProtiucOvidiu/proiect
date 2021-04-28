@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type= "text/css" href="../static/styles/index.css">
+    <script type="text/javascript" src="../../static/scripts/index.js"></script>
+  </head>
+
+  <body>
+
+    <div class="topnav" id="myTopnav">
+
+      <div class="dropdown">
+        <a href="#" class="dropbtn" target="_self">Profile</a>
+
+        <div class="dropdown-content">
+          <a href="{{ url_for('settings') }}" target="_self">Settings</a>
+          <a href="{{ url_for('contact') }}" target="_self">Contact</a>
+          <a href="#logout" target="_self">Log Out</a>
+
+        </div>
+      </div>
+      <a href="/user_home" class="homebtn" target="_self">Home</a>
+    </div>
+    <div id="side_menu" class="sidebar">
+      <a href="javascript:void(0)" class="closebtn" onclick="close_menu()">×</a>
+      <a href="user_home" target="_self">Apps</a>
+      <a href="user_groups" target="_self">Groups</a>
+      <a href="user_msg" target="_self">Messages</a>
+      <a href="user_forum" target="_self">Q&A/Forum</a>
+    </div>
+
+    <div id="main">
+      <button class="open_btn" onclick="open_menu()">☰</button>
+      <div style="padding: 30px;">
+        <h2>Contact view</h2>
+        <p>List of contact info.</p>
+      </div>
+    </div>
+
+  </body>
+</html>
