@@ -4,17 +4,25 @@ from flask import Flask, flash, redirect, render_template, request, session, abo
 import mysql.connector as mariadb
 import os
 import operator
+import re
 from sign_up import sign_up_pers
 app = Flask(__name__, static_url_path="/static")
-conn = mariadb.connect(host='127.0.0.1', user='root', password='cvscvs', database='test')
+conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
 @app.route('/')
 def home():
   if not session.get('logged_in'):
     return render_template('login.html')
   else:
     return render_template('index.html')
+    
+def check_email(Email):
+    email_regex = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
+    if email_regex.match(Email):
+      return True
+    else:
+      return False
 
-@app.route('/login', methods=['POST']) 
+@app.route('/login', methods=['POST','GET']) 
 def do_admin_login():
   login = request.form
   passWord = login['password']
@@ -22,11 +30,19 @@ def do_admin_login():
   userName = login['email-username']
   cont = True
   check = 0
-  cur = conn.cursor(buffered=  True)
-  data = cur.execute("SELECT username, email, password FROM users WHERE password= %s ", (passWord,))
+  cur = conn.cursor(buffered = True)
+  if check_email(Email):
+    data = cur.execute("SELECT username, email, password FROM users WHERE email= %s ", (Email,))  #check dupa username sau email
+  else:
+    data = cur.execute("SELECT username, email, password FROM users WHERE username= %s ", (userName,))
+
   data = cur.fetchall()
+
+  if login.get('sign_up'):
+    return render_template('sign_up.html')
+    
   if not data:
-    error = 'Wrong password or email '
+    error = 'Invalid credentials'
     flash(error)
     return render_template('login.html')
 
@@ -39,6 +55,8 @@ def do_admin_login():
     flash(error)
     return render_template('login.html', error = error, username = userName, password = passWord)
 
+  #if login['sing_up']:
+  #  return render_template('sing_up.html') #spre sign-up
   cur.close()
   conn.close()
   if cont:
