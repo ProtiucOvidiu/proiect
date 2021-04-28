@@ -4,7 +4,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type= "text/css" href="../static/styles/index.css">
-    <script type="text/javascript" src="../static/scripts/index.js"></script>
+    <script type="text/javascript" src="../../static/scripts/index.js"></script>
   </head>
 
   <body>
@@ -15,27 +15,30 @@
         <a href="#" class="dropbtn" target="_self">Profile</a>
 
         <div class="dropdown-content">
-          <a href="settings.html" target="_self">Settings</a>
-          <a href="contact.html" target="_self">Contact</a>
+          <a href="/settings" target="_self">Settings</a>
+          <a href="/contact" target="_self">Contact</a>
           <a href="#logout" target="_self">Log Out</a>
 
         </div>
       </div>
-      <a href="index.html" class="homebtn" target="_self">Home</a>
+      <a href="/admin_home" class="homebtn" target="_self">Home</a>
     </div>
     <div id="side_menu" class="sidebar">
       <a href="javascript:void(0)" class="closebtn" onclick="close_menu()">×</a>
-      <a href="index.html" target="_self">Apps</a>
-      <a href="user_groups.html" target="_self">Groups</a>
-      <a href="user_msg.html" target="_self">Messages</a>
-      <a href="user_forum.html" target="_self">Q&A/Forum</a>
+      <a href="/admin_home" target="_self">Apps</a>
+      <a href="/admin_groups" target="_self">Groups</a>
+      <a href="/admin_add" target="_self">Add user/group/perm</a>
+      <a href="/admin_modify" target="_self">Modify user/group/perm</a>
+      <a href="/admin_delete" target="_self">Delete user/group/perm</a>
+      <a href="/admin_msg" target="_self">Messages</a>
+      <a href="/admin_forum" target="_self">Q&A/Forum</a>
     </div>
 
     <div id="main">
       <button class="open_btn" onclick="open_menu()">☰</button>
       <div style="padding: 30px;">
-        <h2>Settings view</h2>
-        <p>List of settings.</p>
+        <h2>Groups view</h2>
+        <p>List of groups.</p>
       </div>
     </div>
 
