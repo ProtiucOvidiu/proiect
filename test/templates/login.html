@@ -4,95 +4,109 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel= "stylesheet" type= "text/css" href= "/static/styles/style.css">
-  <style>
-    *{
-      box-sizing: border-box;
+  <link rel= "stylesheet" type= "text/css" href= "templates/static/styles/style.css">
+  <script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+  <style>*{
+    box-sizing: border-box;
+    }
+    *:focus {
+    outline: none;
+    }
+    body { 
+    font-family: Arial;
+    background-color: #447c8a;
+    padding: 50px;
+    }
+    .sign_up {
+    margin: 20px auto;
+    width: 300px;
+    }
+    .login {
+        margin: 20px auto;
+        width: 300px;
+    }
+    .sign_up-screen {
+    background-color: #FFF;
+    padding: 20px;
+    border-radius: 5px
+    }
+    .login-screen {
+        background-color: #FFF;
+        padding: 20px;
+        border-radius: 5px
+    }
+    .app-title {
+    text-align: center;
+    color: #777;
+    }
+    .sign_up-form {
+    text-align: center;
+    }
+    .login-form {
+        text-align: center;
+    }
+    .control-group {
+    margin-bottom: 10px;
+    }
+    input {
+    text-align: center;
+    background-color: #ECF0F1;
+    border: 2px solid transparent;
+    border-radius: 3px;
+    font-size: 16px;
+    font-weight: 200;
+    padding: 10px 0;
+    width: 250px;
+    transition: border .5s;
+    }
+    input:focus {
+    border: 2px solid #3498DB;
+    box-shadow: none;
+    }
+    .btn {
+    border: 10px solid transparent;
+    background: #E55423;
+    color: #ffffff;
+    font-size: 16px;
+    line-height: 25px;
+    padding: 10px 10px;
+    text-decoration: none;
+    text-shadow: none;
+    border-radius: 3px;
+    box-shadow: none;
+    transition: 0.25s;
+    display: block;
+    width: 250px;
+    margin: 0 auto;
+    }
+    .btn:hover {
+    background-color: #E55423;
+    }
+    .login-link {
+    font-size: 12px;
+    color: #444;
+    display: block;
+    margin-top: 12px;
+    }  
+
+    .alert-error {
+        padding: 8px;
+        background-color: red;
+        color: white;
       }
-      *:focus {
-      outline: none;
-      }
-      body { 
-      font-family: Arial;
-      background-color: #447c8a;
-      padding: 50px;
-      }
-      .sign_up {
-      margin: 20px auto;
-      width: 300px;
-      }
-      .login {
-          margin: 20px auto;
-          width: 300px;
-      }
-      .sign_up-screen {
-      background-color: #FFF;
-      padding: 20px;
-      border-radius: 5px
-      }
-      .login-screen {
-          background-color: #FFF;
-          padding: 20px;
-          border-radius: 5px
-      }
-      .app-title {
-      text-align: center;
-      color: #777;
-      }
-      .sign_up-form {
-      text-align: center;
-      }
-      .login-form {
-          text-align: center;
-      }
-      .control-group {
-      margin-bottom: 10px;
-      }
-      input {
-      text-align: center;
-      background-color: #ECF0F1;
-      border: 2px solid transparent;
-      border-radius: 3px;
-      font-size: 16px;
-      font-weight: 200;
-      padding: 10px 0;
-      width: 250px;
-      transition: border .5s;
-      }
-      input:focus {
-      border: 2px solid #3498DB;
-      box-shadow: none;
-      }
-      .btn {
-      border: 10px solid transparent;
-      background: #E55423;
-      color: #ffffff;
-      font-size: 16px;
-      line-height: 25px;
-      padding: 10px 10px;
-      text-decoration: none;
-      text-shadow: none;
-      border-radius: 3px;
-      box-shadow: none;
-      transition: 0.25s;
-      display: block;
-      width: 250px;
-      margin: 0 auto;
-      }
-      .btn:hover {
-      background-color: #E55423;
-      }
-      .login-link {
-      font-size: 12px;
-      color: #444;
-      display: block;
-      margin-top: 12px;
-      }  
-  </style>
+    .remeber {
+      -webkit-appearance: checkbox;
+      -moz-appearance: checkbox;
+      appearance: checkbox;
+      display: inline-block;
+      width: auto;
+      margin-left: 10px;
+    }
+    </style>
   <title>Log in</title>
 </head>
 <body>
-  <form action="/login" method="POST">
+  <form action="{{ url_for('do_admin_login')}}" method="POST">
     <div class="login">
       <div class="login-screen">
         <div class="app-title">
@@ -100,22 +114,45 @@
         </div>
       <div class="login-form">
         <div class="control-group">
-            <input type="text" class="login-field" value="" placeholder="email or username" name="email-username">
+            <input type="text" class="login-field" value="" placeholder="email or username" name="email-username" >
             <label class="login-field-icon fui-user" for="login-name"></label>
         <div class="control-group">
-            <input type="password" class="login-field" value="" placeholder="password" name="password">
+            <input type="password" class="login-field" value="" placeholder="password" name="password" autocomplete="on" >
             <label class="login-field-icon fui-lock" for="login-pass"></label>
         </div>
           <div class="button" style="padding: 10px 10px 10px;" >
-            <input type="submit" value="Sign up" class="btn">
+            <button type="submit" name="sign_up" value="sign_up" class="btn"> Sign up </button>
           </div>
           <div class="button" style="padding: 10px 10px 20px;" >
-            <input type="submit" value="Log in" class="btn">
+            <button type="submit" name="login" value="login" class="btn" onclick="remeberMe()"> Log in </button>
+          </div class="button" style="padding: 10px 10px 20px;"> 
+          <!--- {% with messages = get_flashed_messages() %}
+          {% if messages %}
+                {% for msg in messages %}
+                    <p>{{msg}}</p>
+                  {% endfor %}
+                {% endif %}
+          {% endwith %} -->
+          {% block content %}
+          <div class="container">
+              {% for message in get_flashed_messages() %}
+              <div class="alert alert-warning">
+                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+                  {{ message }}
+              </div>
+              {% endfor %}
+              {% block page_content %}{% endblock %}
           </div>
+          {% endblock %}
        </div>
+      </div>
+      <div>
+        <!--- <input type="checkbox" value="rememberMe" id="rememberMe" class="remeber"> <label for="rememberMe">Remember me</label> -->
+        <label class="checkbox">
+          <input type="checkbox" value="rememberMe" id="rememberMe" class="remeber"> Remeber me 
+        </label>
       </div>
      </div>
     </form>
 </body>
 </html>
-
