@@ -2,5 +2,52 @@ Insert into test.users(username,password,full_name,email,phone_number) values ("
 "ovi.pro@yahoo.com", "0773978453");
 
 
-Insert into sql11402476.groups(name,string_permissions,description) values ("Admins","221221", "O mica descr");
+Insert into test.groups(name,description) values ("Users", "We are the users");
+Insert into test.groups(name,description) values ("Admins", "We are the admins");
 
+
+Insert into test.permissions(name,description) values ("Vizualizare","Acest user poate vizualiza");
+Insert into test.permissions(name,description) values ("Editare","Acest user poate edita");
+Insert into test.permissions(name,description) values ("Stergere","Acest user poate sterge");
+
+
+Insert into test.user_groups_relation(user_id,group_id_1,group_id_2,group_id_3) values (1,1,2,3);
+
+Insert into test.groups_perm_relation(group_id,perm_id_1,perm_id_2,perm_id_3) values (1,1,2,3);
+
+
+SELECT 
+    p.name
+FROM
+    permissions p
+        INNER JOIN
+    (SELECT 
+        gp.perm_id_1, gp.perm_id_2, gp.perm_id_3
+    FROM
+        user_groups_relation ug
+    INNER JOIN users u ON u.id = ug.user_id
+    INNER JOIN groups_perm_relation gp ON ug.group_id_1 = gp.group_id) temp ON p.id = temp.perm_id_3;
+    
+SELECT 
+    p.name
+FROM
+    permissions p,
+        
+    (SELECT 
+        gp.perm_id_1, gp.perm_id_2, gp.perm_id_3
+    FROM
+        user_groups_relation ug
+    INNER JOIN users u ON u.id = ug.user_id
+    INNER JOIN groups_perm_relation gp ON ug.group_id_1 = gp.group_id) a where a.;
+    
+SELECT 
+    p.name
+FROM
+    permissions p,
+        
+    (SELECT 
+        gp.perm_id_1 , gp.perm_id_2, gp.perm_id_3
+    FROM
+        user_groups_relation ug
+    INNER JOIN users u ON u.id = ug.user_id
+    INNER JOIN groups_perm_relation gp ON ug.group_id_1 = gp.group_id) a where a.perm_id_1 = p.id or a.perm_id_2 = p.id or a.perm_id_3 = p.id ;

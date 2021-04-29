@@ -10,7 +10,7 @@ CREATE TABLE `users` (
   `password` varchar(255),
   `full_name` varchar(255),
   `email` varchar(255),
-  `phone_number` number(10)
+  `phone_number` int(10)
 );
 
 CREATE TABLE `groups` (
@@ -43,13 +43,13 @@ CREATE TABLE `groups_perm_relation` (
 
 ALTER TABLE `user_groups_relation` ADD FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 
-ALTER TABLE `groups_perm_relation` ADD FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`);
-
 ALTER TABLE `user_groups_relation` ADD FOREIGN KEY (`group_id_1`) REFERENCES `groups` (`id`);
 
 ALTER TABLE `user_groups_relation` ADD FOREIGN KEY (`group_id_2`) REFERENCES `groups` (`id`);
 
 ALTER TABLE `user_groups_relation` ADD FOREIGN KEY (`group_id_3`) REFERENCES `groups` (`id`);
+
+ALTER TABLE `groups_perm_relation` ADD FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`);
 
 ALTER TABLE `groups_perm_relation` ADD FOREIGN KEY (`perm_id_1`) REFERENCES `permissions` (`id`);
 

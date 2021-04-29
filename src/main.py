@@ -1,6 +1,6 @@
 from flask import Flask
 from flask import Flask, flash, redirect, render_template, request, session, abort, flash, url_for
-# from passlib.hash import sha256_crypt
+from passlib.hash import sha256_crypt
 import mysql.connector as mariadb
 import os
 import operator
@@ -9,7 +9,7 @@ from sign_up import sign_up_pers
 from global_variables import app
 import user, admin, settings, contact
 
-conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
+conn = mariadb.connect(host='127.0.0.1', user='root', password='cvscvs', database='test')
 @app.route('/')
 def home():
   if not session.get('logged_in'):
@@ -30,6 +30,9 @@ def do_admin_login():
   passWord = login['password']
   Email = login['email-username']
   userName = login['email-username']
+  passwd = sha256_crypt.hash(passWord)
+  print(f'pass = {passwd} \n {passWord}')
+
   cont = True
   check = 0
   cur = conn.cursor(buffered = True)
@@ -78,6 +81,9 @@ def do_admin_sign_up():
   password = request_sign['password']
   pass_conf = request_sign['confirm_password']
 
+  if request_sign['login']:
+    return render_template('login.html')
+  
   sign_up_pers1 = sign_up_pers(full_name, user_name, email, phone, password, pass_conf)
   cur.execute(sign_up_pers1.select())
   users_rows = cur.fetchall()
@@ -89,8 +95,10 @@ def do_admin_sign_up():
   if not (sign_up_pers1.check_pass(pass_conf) and sign_up_pers1.check_email()):
     flash('Please check your sign up details and try again.')
     return render_template('common_files/sign_up.html')
+
+  pass_hash = sha256_crypt.hash(password)
   
-  data = cur.execute(sign_up_pers1.insert())
+  cur.execute(sign_up_pers1.insert(pass_hash))
   conn.commit()
   cur.close()
   conn.close()
