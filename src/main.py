@@ -9,7 +9,7 @@ from sign_up import sign_up_pers
 from global_variables import app
 import user, admin, settings, contact
 
-conn = mariadb.connect(host='127.0.0.1', user='root', password='cvscvs', database='test')
+conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
 @app.route('/')
 def home():
   if not session.get('logged_in'):
@@ -31,7 +31,7 @@ def do_admin_login():
   Email = login['email-username']
   userName = login['email-username']
   passwd = sha256_crypt.hash(passWord)
-  print(f'pass = {passwd} \n {passWord}')
+  #print(f'pass = {passwd} \n {passWord}')
 
   cont = True
   check = 0
@@ -44,7 +44,7 @@ def do_admin_login():
   data = cur.fetchall()
 
   if login.get('sign_up'):
-    return render_template('sign_up.html')
+    return render_template('common_files/sign_up.html')
     
   if not data:
     error = 'Invalid credentials'
@@ -81,8 +81,8 @@ def do_admin_sign_up():
   password = request_sign['password']
   pass_conf = request_sign['confirm_password']
 
-  if request_sign['login']:
-    return render_template('login.html')
+  if request_sign.get('login'):
+    return render_template('common_files/login.html')
   
   sign_up_pers1 = sign_up_pers(full_name, user_name, email, phone, password, pass_conf)
   cur.execute(sign_up_pers1.select())
