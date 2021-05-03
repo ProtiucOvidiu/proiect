@@ -9,7 +9,10 @@ from sign_up import sign_up_pers
 from global_variables import *
 import user, admin, settings, contact
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> Added groups table for user
 @app.route('/')
 def home():
   if not session.get('logged_in'):
@@ -35,6 +38,7 @@ def do_admin_login():
 
   cont = True
   check = 0
+  conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
   cur = conn.cursor(buffered = True)
   if check_email(Email):
     data = cur.execute("SELECT id, username, email, password FROM users WHERE email= %s ", (Email,))  #check dupa username sau email
@@ -42,6 +46,8 @@ def do_admin_login():
     data = cur.execute("SELECT id, username, email, password FROM users WHERE username= %s ", (userName,))
 
   data = cur.fetchall()
+  cur.close()
+  conn.close()
 
   cur.close()
   conn.close()
@@ -70,13 +76,11 @@ def do_admin_login():
     session['logged_in'] = True
   else:
     flash('error')
-
+    
   # save the username in a global variable so that you can access it from other scripts
   set_user(data[0][0], data[0][1])
-  #print(str(data[0][0])+ " " + str(data[0][1]))
-  #print(user_id[0])
-  #print(user_name[0])
 
+  # return the appropriate page
   return home()
 
 @app.route('/sign_up', methods=['POST', 'GET']) 

@@ -37,6 +37,21 @@
       <div style="padding: 15px;">
         <h2>Groups view</h2>
         <p>List of groups.</p>
+        <table style="border: 5px solid black; padding: 10px; float: center;">
+          <tr>
+            <th style="border: 1px solid black; padding: 10px; float: center;">Group name</th>
+            <th style="border: 1px solid black; padding: 10px; float: center;">Is a part of?</th>
+            <th style="border: 1px solid black; padding: 10px; float: center;">Request access</th>
+          </tr>
+          {% for key, value in groups.items() %}
+          <tr style="border: 1px solid black; padding: 10px; float: center;">
+            <td style="border: 1px solid black; padding: 10px; float: center;">{{ key }}</td>
+            <td style="border: 1px solid black; padding: 10px; float: center;">{{ value }}</td>
+            <td style="border: 1px solid black; padding: 10px; float: center;"><button>Request access</button></td>
+          </tr>
+          {% endfor %}
+        </table>
+         
       </div>
     </div>
 

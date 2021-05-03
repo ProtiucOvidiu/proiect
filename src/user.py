@@ -2,7 +2,7 @@ from flask import Flask
 from flask import Flask, flash, redirect, render_template, request, session, abort, flash, url_for
 import mysql.connector as mariadb
 
-from global_variables import app
+from global_variables import *
 
 
 @app.route('/user_home')
@@ -59,8 +59,49 @@ def temp_str(group_names, abbreviation):
 
 @app.route('/user_groups')
 def user_groups_run():
-    return render_template('user_files/user_groups.html')
     
+    # database connection to get the groups
+    conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', 
+           password='kS7DsFkJep', database='sql11402476')
+    cur = conn.cursor(buffered=True)
+
+    # list of queries
+    queries = []
+    # get all the groups 
+    queries.append("SELECT name FROM groups;")
+    # create query to get the groups that the current user is a part of
+    queries.append("SELECT g.name FROM groups g, (SELECT ug.group_id_1,"
+    + "ug.group_id_2, ug.group_id_3 FROM user_groups_relation ug "
+    + "INNER JOIN users u ON u.id = ug.user_id WHERE u.username = '" 
+    + user_name[0] + "') result WHERE g.id = result.group_id_1" 
+    + " OR g.id = result.group_id_2 OR g.id = result.group_id_3;")
+
+    # get all the group names
+    cur.execute(queries[0])
+    group_names = cur.fetchall()
+
+    # get all the group names for this user
+    cur.execute(queries[1])
+    user_groups = cur.fetchall()        
+
+    # close the connection
+    cur.close()
+    conn.close()
+
+    groups = {}
+    for group_row in user_groups:
+        if is_group_in_list(group_names, group_row[0]):
+            groups[ group_row[0] ] = "Yes"
+        else:
+            groups[ group_row[0] ] = "No"
+
+    return render_template('user_files/user_groups.html', groups = groups)
+
+def is_group_in_list(group_names, group):
+    for group_row in group_names:
+        if group == group_row[0]:
+            return True
+    return False    
 
 @app.route('/user_msg')
 def user_msg_run():
