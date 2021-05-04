@@ -4,6 +4,7 @@ import mysql.connector as mariadb
 
 from global_variables import *
 
+#=============================================================================#
 
 @app.route('/user_home')
 def user_home_run():
@@ -88,6 +89,7 @@ def user_groups_run():
     cur.close()
     conn.close()
 
+    # create the dictionary with {name, yes/no} pairs
     groups = {}
     for group_row in user_groups:
         if is_group_in_list(group_names, group_row[0]):
@@ -95,22 +97,26 @@ def user_groups_run():
         else:
             groups[ group_row[0] ] = "No"
 
+    # return the page with all the data stored in the groups variable
     return render_template('user_files/user_groups.html', groups = groups)
 
 def is_group_in_list(group_names, group):
+    # verify if a specific group name is in the list or not
     for group_row in group_names:
         if group == group_row[0]:
             return True
     return False    
 
+#=============================================================================#
+
 @app.route('/user_msg')
 def user_msg_run():
     return render_template('user_files/user_msg.html')
 
+#=============================================================================#
 
 @app.route('/user_forum')
 def user_forum_run():
     return render_template('user_files/user_forum.html')
 
-
-
+#=============================================================================#

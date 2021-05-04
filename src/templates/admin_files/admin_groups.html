@@ -4,7 +4,11 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type= "text/css" href="../static/styles/index.css">
+    <link rel="stylesheet" type= "text/css" href="../static/styles/groups.css">
     <script type="text/javascript" src="../../static/scripts/index.js"></script>
+
+    
+
   </head>
 
   <body>
@@ -37,8 +41,33 @@
     <div id="main">
       <button class="open_btn" onclick="open_menu()">☰</button>
       <div style="padding: 30px;">
+
         <h2>Groups view</h2>
         <p>List of groups.</p>
+
+        <div class="container">
+          <div class="row gutters">
+            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+              <table>                
+                  <tr>
+                    <th>Group name</th>
+                    <th>Is a part of?</th>
+                    <th>Request access</th>
+                  </tr>   
+
+                  {% for key, value in groups.items() %}
+                <tr>
+                  <td id="{{ key }}">{{ key }}</td>
+                  <td>{{ value }}</td>
+                  <td><button class="request_btn">Request access</button></td>
+                </tr>
+                {% endfor %}
+               
+              </table>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
