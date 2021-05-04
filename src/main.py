@@ -30,8 +30,6 @@ def do_admin_login():
   passWord = login['password']
   Email = login['email-username']
   userName = login['email-username']
-  passwd = sha256_crypt.hash(passWord)
-  print(f'pass = {passwd} \n {passWord}')
 
   cont = True
   check = 0

@@ -1,13 +1,61 @@
 from flask import Flask
 from flask import Flask, flash, redirect, render_template, request, session, abort, flash, url_for
+import mysql.connector as mariadb
 
 from global_variables import app
 
 
 @app.route('/user_home')
 def user_home_run():
-    return render_template('user_files/user_home.html')
+    # database connection to get the groups
+    conn = mariadb.connect(host='127.0.0.1', user='root', password='cvscvs', database='test')
+    cur = conn.cursor(buffered=True)
 
+    # list of queries
+    queries = []
+    # get all the pemission columns 
+    queries.append("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS " 
+    "where table_name = 'groups_perm_relation' "
+    "order by ordinal_position;")
+
+    # get all the group names
+    cur.execute(queries[0])
+    group_names = cur.fetchall()
+
+    # create query to get the pemissions of the user
+    queries.append("SELECT "
+    "perm.name FROM permissions perm, "
+    "(SELECT "+ temp_str(group_names, "gp") +" FROM user_groups_relation ug "
+    "INNER JOIN users u ON u.id = ug.user_id "
+    "INNER JOIN groups_perm_relation gp ON ug.group_id_1 = gp.group_id) temp "
+    "where " + temp_str(group_names, "perm") + ";")
+
+    # get all the permissions names for this user
+    cur.execute(queries[1])
+    permissions = cur.fetchall()   
+
+    # close the connection
+    cur.close()
+    conn.close()
+
+    # return the page with all the data stored in the permissions variable
+    return render_template('user_files/user_home.html', permissions = permissions)
+
+def temp_str(group_names, abbreviation):
+    temp = ""
+    for i in range(0,len(group_names)-2):
+        if abbreviation == "gp":
+            if i == len(group_names)-3:
+                temp += f"gp.perm_id_{i+1} "
+            else:
+                temp += f"gp.perm_id_{i+1}, "
+        else:
+            if i == len(group_names)-3:
+                temp += f"temp.perm_id_{i+1} = perm.id "
+            else:
+                temp += f"temp.perm_id_{i+1} = perm.id or "
+    
+    return temp
 
 @app.route('/user_groups')
 def user_groups_run():

@@ -7,6 +7,58 @@
     <script type="text/javascript" src="../../static/scripts/index.js"></script>
   </head>
 
+  <style>
+    .container {
+      padding: 100px; 
+      position: relative;	
+    }
+
+    table {
+        height: 400px;
+        width: 800px;
+        border-collapse: collapse;
+        border: 2.5px solid lightgray;
+        font-size: 18px;
+    }
+
+    th {
+        padding: 5px 15px 5px 15px;
+        border-collapse: collapse;
+        border: 2.5px solid lightgray;
+        text-align: center;
+        color: darkslategray;
+        background-color: #36a9ab;
+    }
+
+    tr {
+        
+        border-collapse: collapse;
+        border: 2.5px solid lightgray;
+    }
+
+    td {
+        padding: 5px 40px 5px 40px;
+        border-collapse: collapse;
+        border: 2.5px solid lightgray;
+        text-align: center;
+        color: darkslategray;
+        background-color: #E0F5F5;
+    }
+
+    #link {
+        font-size: 18px;
+        color: darkslategray;
+        background: none;
+        border: none;
+        padding: 10px;
+    }
+
+    #link:hover {
+      background-color: #36a9ab;
+    }
+
+  </style>
+
   <body>
 
     <div class="topnav" id="myTopnav">
@@ -36,6 +88,20 @@
       <div style="padding: 30px;">
         <h2>Apps view</h2>
         <p>List of permissions.</p>
+        
+        <table>
+          <tr>
+            <th>App Name</th>
+            <th>Link</th>
+          </tr>
+          {% for perm in permissions %}
+          <tr>
+            <td id="{{ perm[0] }}">{{ perm[0] }}</td>
+            <td><a href="#" id="link">The app</a></td></tr>
+          </tr>
+          {% endfor %}
+        </table> 
+        
       </div>
     </div>
 
