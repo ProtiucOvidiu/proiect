@@ -8,7 +8,7 @@ from global_variables import app
 @app.route('/user_home')
 def user_home_run():
     # database connection to get the groups
-    conn = mariadb.connect(host='127.0.0.1', user='root', password='cvscvs', database='test')
+    conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
     cur = conn.cursor(buffered=True)
 
     # list of queries

@@ -9,13 +9,13 @@ from sign_up import sign_up_pers
 from global_variables import app
 import user, admin, settings, contact
 
-conn = mariadb.connect(host='127.0.0.1', user='root', password='cvscvs', database='test')
+conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
 @app.route('/')
 def home():
   if not session.get('logged_in'):
     return render_template('common_files/login.html')
   else:
-    return render_template('user_files/user_home.html')
+    return user.user_home_run()
     
 def check_email(Email):
     email_regex = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
