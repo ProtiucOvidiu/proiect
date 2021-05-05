@@ -19,30 +19,6 @@ Insert into test.groups_perm_relation(group_id,perm_id_1,perm_id_2,perm_id_3) va
 SELECT 
     p.name
 FROM
-    permissions p
-        INNER JOIN
-    (SELECT 
-        gp.perm_id_1, gp.perm_id_2, gp.perm_id_3
-    FROM
-        user_groups_relation ug
-    INNER JOIN users u ON u.id = ug.user_id
-    INNER JOIN groups_perm_relation gp ON ug.group_id_1 = gp.group_id) temp ON p.id = temp.perm_id_3;
-    
-SELECT 
-    p.name
-FROM
-    permissions p,
-        
-    (SELECT 
-        gp.perm_id_1, gp.perm_id_2, gp.perm_id_3
-    FROM
-        user_groups_relation ug
-    INNER JOIN users u ON u.id = ug.user_id
-    INNER JOIN groups_perm_relation gp ON ug.group_id_1 = gp.group_id) a where a.;
-    
-SELECT 
-    p.name
-FROM
     permissions p,
         
     (SELECT 
@@ -51,3 +27,18 @@ FROM
         user_groups_relation ug
     INNER JOIN users u ON u.id = ug.user_id
     INNER JOIN groups_perm_relation gp ON ug.group_id_1 = gp.group_id) a where a.perm_id_1 = p.id or a.perm_id_2 = p.id or a.perm_id_3 = p.id ;
+    
+
+
+    
+ALTER TABLE groups_perm_relation
+ADD COLUMN perm_id_4 INT(11) AFTER perm_id_3;
+
+ALTER TABLE groups_perm_relation
+DROP COLUMN perm_id_4;
+
+UPDATE groups_perm_relation 
+SET 
+    perm_id_4 = 4
+WHERE
+    id = 1;

@@ -15,7 +15,7 @@ def home():
   if not session.get('logged_in'):
     return render_template('common_files/login.html')
   else:
-    return render_template('user_files/user_home.html')
+    return user.user_home_run()
     
 def check_email(Email):
     email_regex = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
@@ -31,7 +31,6 @@ def do_admin_login():
   Email = login['email-username']
   userName = login['email-username']
   passwd = sha256_crypt.hash(passWord)
-  #print(f'pass = {passwd} \n {passWord}')
 
   cont = True
   check = 0
