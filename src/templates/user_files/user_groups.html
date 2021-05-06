@@ -45,22 +45,26 @@
         <div class="container">
           <div class="row gutters">
             <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-              <table>                
-                  <tr>
-                    <th>Group name</th>
-                    <th>Is a part of?</th>
-                    <th>Request access</th>
-                  </tr>   
+              <div class="card h-100">
+                <div class="card-body">
+                  <table>                
+                      <tr>
+                        <th>Group name</th>
+                        <th>Is a part of?</th>
+                        <th>Request access</th>
+                      </tr>   
 
-                  {% for key, value in groups.items() %}
-                <tr>
-                  <td id="{{ key }}">{{ key }}</td>
-                  <td>{{ value }}</td>
-                  <td><button class="request_btn">Request access</button></td>
-                </tr>
-                {% endfor %}
-               
-              </table>
+                      {% for key, value in groups.items() %}
+                    <tr>
+                      <td id="{{ key }}">{{ key }}</td>
+                      <td>{{ value }}</td>
+                      <td><a href="#" class="request_link">Request access</a></td>
+                    </tr>
+                    {% endfor %}
+                  
+                  </table>
+                </div>
+              </div>
             </div>
           </div>
         </div>

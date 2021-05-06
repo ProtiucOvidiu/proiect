@@ -9,15 +9,22 @@ from sign_up import sign_up_pers
 from global_variables import *
 import user, admin, settings, contact
 
-<<<<<<< HEAD
-
-=======
->>>>>>> Added groups table for user
 @app.route('/')
 def home():
   if not session.get('logged_in'):
     return render_template('common_files/login.html')
   else:
+    # connection to the db
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+          database=DB_DATABASE)
+    cur = conn.cursor(buffered = True)
+
+    # get the id of the first group for this user which represents the
+    # admins' group
+    query = "SELECT group_id_1 FROM user_groups_relation WHERE user_id = "
+    + data[0][0] + ";"
+    cur.execute(query)
+    is_admin = cur.fetchall()
     return user.user_home_run()
     
 def check_email(Email):
@@ -31,51 +38,55 @@ def check_email(Email):
 def do_admin_login():
   conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
   login = request.form
-  passWord = login['password']
-  Email = login['email-username']
-  userName = login['email-username']
-  passwd = sha256_crypt.hash(passWord)
+  password = login['password']
+  email = login['email-username']
+  username = login['email-username']
 
-  cont = True
   check = 0
-  conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
+  conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
   cur = conn.cursor(buffered = True)
-  if check_email(Email):
-    data = cur.execute("SELECT id, username, email, password FROM users WHERE email= %s ", (Email,))  #check dupa username sau email
+  if check_email(email):
+    data = cur.execute("SELECT id, username, email, password FROM users WHERE email= %s ", (email,))  #check dupa username sau email
   else:
-    data = cur.execute("SELECT id, username, email, password FROM users WHERE username= %s ", (userName,))
+    data = cur.execute("SELECT id, username, email, password FROM users WHERE username= %s ", (username,))
 
   data = cur.fetchall()
+
+ 
+
+  # close the connection
   cur.close()
   conn.close()
 
-  cur.close()
-  conn.close()
-
+  # if the sign up button was pressed
   if login.get('sign_up'):
     return render_template('common_files/sign_up.html')
-    
+
+  # if there is no data from db aka there is no user stored in db with that
+  # username or email  
   if not data:
     error = 'Invalid credentials'
     flash(error)
     return render_template('common_files/login.html')
 
+  # check the username/email if it matches with the one stored
   for i in data[:][0]:
-    if i == Email or i == userName or i == passWord:
+    if i == email or i == username:
       check += 1
+  
+  # verify if the hash matches the string from the form 
+  if sha256_crypt.verify(password, data[0][2]):
+    check += 1
 
   if check != 2:
     error = 'Wrong password or email'
     flash(error)
-    return render_template('common_files/login.html', error = error, username = userName, password = passWord)
+    return render_template('common_files/login.html', error = error)
 
-  #if login['sing_up']:
-  #  return render_template('sing_up.html') #spre sign-up
-
-  if cont:
-    session['logged_in'] = True
-  else:
-    flash('error')
+  # if it reaches this code than it means that all the login details are 
+  # correct
+  session['logged_in'] = True
     
   # save the username in a global variable so that you can access it from other scripts
   set_user(data[0][0], data[0][1])
@@ -85,7 +96,8 @@ def do_admin_login():
 
 @app.route('/sign_up', methods=['POST', 'GET']) 
 def do_admin_sign_up():
-  conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
+  conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
   cur = conn.cursor(buffered=True)
   request_sign = request.form
   full_name = request_sign['full_name'] 

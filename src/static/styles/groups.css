@@ -5,23 +5,22 @@
 
 table {
     height: 400px;
-		width: 800px;
+	width: 800px;
     border-collapse: collapse;
     border: 2.5px solid lightgray;
-		font-size: 18px;
+	font-size: 18px;
 }
 
 th {
     padding: 5px 15px 5px 15px;
     border-collapse: collapse;
     border: 2.5px solid lightgray;
-		text-align: center;
-		color: darkslategray;
-		background-color: #36a9ab;
+	text-align: center;
+	color: darkslategray;
+	background-color: #36a9ab;
 }
 
 tr {
-    
     border-collapse: collapse;
     border: 2.5px solid lightgray;
 }
@@ -30,19 +29,33 @@ td {
     padding: 5px 40px 5px 40px;
     border-collapse: collapse;
     border: 2.5px solid lightgray;
-		text-align: center;
-		color: darkslategray;
-		background-color: #E0F5F5;
+	text-align: center;
+	color: darkslategray;
+	background-color: #E0F5F5;
 }
 
-.request_btn {
-	  font-size: 18px;
-		color: darkslategray;
-		background: none;
-		border: none;
-		padding: 10px;
+.request_link {
+	font-size: 18px;
+	color: darkslategray;
+	background: none;
+	border: none;
+	padding: 10px;
+	text-decoration: none !important;
 }
 
-.request_btn:hover {
-	 background-color: #36a9ab;
+.request_link:hover {
+	background-color: #36a9ab;
+}
+
+.request_link:active, .request_link:visited {
+	text-decoration: none;
+}
+
+.card {
+    background: #272E48;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    border: 0;
+    margin-bottom: 1rem;
 }

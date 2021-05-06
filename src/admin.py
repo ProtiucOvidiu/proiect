@@ -8,8 +8,9 @@ from global_variables import *
 
 @app.route('/admin_home')
 def admin_home_run():
-     # database connection to get the groups
-    conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
+    # database connection to get the groups
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+           database=DB_DATABASE)
     cur = conn.cursor(buffered=True)
 
     # list of queries
@@ -62,8 +63,8 @@ def temp_str(group_names, abbreviation):
 def admin_groups_run():
 
      # database connection to get the groups
-    conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', 
-           password='kS7DsFkJep', database='sql11402476')
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+           database=DB_DATABASE)
     cur = conn.cursor(buffered=True)
 
     # list of queries

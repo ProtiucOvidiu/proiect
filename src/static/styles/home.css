@@ -41,8 +41,13 @@
       background: none;
       border: none;
       padding: 10px;
+      text-decoration: none !important;
   }
 
   #link:hover {
-    background-color: #36a9ab;
+      background-color: #36a9ab;
+      text-decoration: none !important;
+  }
+  #link:active, #link:visited {
+      text-decoration: none !important;
   }
