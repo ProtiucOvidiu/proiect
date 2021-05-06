@@ -8,37 +8,30 @@ import re
 def settings():
     conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
     cur = conn.cursor(buffered = True)
+    #id from global_varibles gotten from login
     id = str(user_id[0])
-    username= str(user_name[0]) #username-ul primit global in momentul login-ului
-    #query1= "SELECT id from sql11402476.users where username= '" + username +"';"
-    #cur.execute(query1)
-    #query1 = cur.fetchall()
-    #query1 = str(query1)
-    #for i in query1[0]:
-    #    query1 = str(i)
-    #print(query1)
+    #username from global_varibles gotten from login
+    username= str(user_name[0]) 
+    #select all data from user where id matches
     query = "SELECT * from sql11402476.users WHERE id ='" + id + "';"
     cur.execute(query)
     query = cur.fetchall()
     cur.close()
     conn.close()
+    #return settings and display user`s information (id, full_name, email, phone_number)
     return render_template('common_files/settings.html', users = query)
 
 @app.route('/settings_update', methods = ['POST'])
 def settings_update():
+    #empty dictonary to store information about the user
     date_user = {}
     username = str(user_name[0])
     id = str(user_id[0])
     counter = 0
-
-    #query= "SELECT id from sql11402476.users where username= '" + username +"';"
-    conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
-    cur = conn.cursor(buffered = True)
-    #cur.execute(query)
-    #query = cur.fetchone()[0]
-
+    # site method for update form is POST
     if request.method == 'POST':
         if request.form.get('full_name'):
+            #if user completed full_name field it will be added to dictonary
             date_user['full_name'] = request.form.get('full_name')
             counter +=1
         if request.form.get('username'):
@@ -69,19 +62,21 @@ def settings_update():
         elif not request.form.get('password') and not request.form.get('new_password'):
             date_user['password'] = 0
         
-        #print('=========================')
-        #print(date_user)
     
     sql = "UPDATE sql11402476.users SET "
+    # looping throught dictonary and create the query to find which dates must be updated
     for key, value in date_user.items():
         if value != 0:
             sql += key + "= " + "'" + value + "'" 
             sql += ","
     
+    # remove the last character ", "
     sql = sql[:-1]
-    #query = str(query)
-    sql += " WHERE id = " + id + ";" #update dupa id user, nu dupa username, altfel nu merge
-    #print(sql)
+    #update from id user
+    sql += " WHERE id = " + id + ";" 
+    conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
+    cur = conn.cursor(buffered = True)
+
     if counter!=0:
         cur.execute(sql)
         flash("Succesfully updated!")

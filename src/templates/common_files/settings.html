@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type= "text/css" href="../static/styles/settings.css">
     <script type="text/javascript" src="../../static/scripts/index.js"></script>
+    <link rel="stylesheet" type= "text/css" href="../static/styles/index.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   </head>
-
+ 
   <body>
     <div class="topnav" id="myTopnav">
       <div class="dropdown">
@@ -32,31 +33,46 @@
     </div>
 
     <div id="main">
-      <form action="{{url_for('settings_update')}}" method="POST">  
       <button class="open_btn" onclick="open_menu()">☰</button>
+      <form action="{{url_for('settings_update')}}" method="POST">  
       <div style="padding: 100px;">
         <div class="container">
           <div class="row gutters">
             <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
               <div class="card h-100">
-                <div class="card-body">
-                  <div class="account-settings">
-                    <div class="user-profile">
-                      <div class="user-avatar">   
-                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="Avatar" style="width: 50px; height: 50px; padding-bottom: 10px">
-                      </div>
+                <div class="card-body" >
+                  <div>
+                    <img src="static/img/avatar_pi.png" alt="Avatar" style="width: 150px; height: 150px; padding-bottom: 20px; display: block; margin-left: auto; margin-right: auto;">
+                  </div>
+                  <div>
                       {% for i in users %}
-                      <h5 class="user-name">Username: {{i.1}}</h5>
-                      <h5 class="user-email">Full name: {{i.3}}</h6>
-                      <h5>Email: {{i.4}}</h5>
-                      <h5>Phone: {{i.5}}</h6>
+                      <h5 class="mb-2 text-primary" style="text-align: center;"> Account information</h5>
+                      <div style="padding-bottom: 20px; padding-top: 15px;">
+                      <table>
+                        <tr>
+                          <th > Username: </th>
+                          <td class="text"> {{i.1}}</td>
+                        </tr>
+                        <tr> 
+                          <th> Full name: </th>
+                          <td> {{i.3}} </td>
+                        </tr>
+                        <tr>
+                          <th> Email: </th>
+                          <td> {{i.4}}</td>
+                        </tr>
+                        <tr>
+                          <th> Phone: </th>
+                          <td> {{i.5}}</td>
+                        </tr>  
+                      </table>
+                    </div>
                       {% endfor %}
                     </div>
-                    <div class="about">
-                      <h5 class="mb-2 text-primary">About</h5>
+                    <div class="">
+                      <h5 class="mb-2 text-primary" style="text-align: center;">About us</h5>
                       <p>I'm Yuki. Full Stack Designer I enjoy creating user-centric, delightful and human experiences.</p>
                     </div>
-                  </div>
                 </div>
               </div>
             </div>
