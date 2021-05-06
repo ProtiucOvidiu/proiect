@@ -6,10 +6,10 @@ import os
 import operator
 import re
 from sign_up import sign_up_pers
-from global_variables import app
+from global_variables import *
 import user, admin, settings, contact
 
-conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
+
 @app.route('/')
 def home():
   if not session.get('logged_in'):
@@ -26,6 +26,7 @@ def check_email(Email):
 
 @app.route('/login', methods=['POST','GET']) 
 def do_admin_login():
+  conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
   login = request.form
   passWord = login['password']
   Email = login['email-username']
@@ -36,11 +37,14 @@ def do_admin_login():
   check = 0
   cur = conn.cursor(buffered = True)
   if check_email(Email):
-    data = cur.execute("SELECT username, email, password FROM users WHERE email= %s ", (Email,))  #check dupa username sau email
+    data = cur.execute("SELECT id, username, email, password FROM users WHERE email= %s ", (Email,))  #check dupa username sau email
   else:
-    data = cur.execute("SELECT username, email, password FROM users WHERE username= %s ", (userName,))
+    data = cur.execute("SELECT id, username, email, password FROM users WHERE username= %s ", (userName,))
 
   data = cur.fetchall()
+
+  cur.close()
+  conn.close()
 
   if login.get('sign_up'):
     return render_template('common_files/sign_up.html')
@@ -61,16 +65,23 @@ def do_admin_login():
 
   #if login['sing_up']:
   #  return render_template('sing_up.html') #spre sign-up
-  cur.close()
-  conn.close()
+
   if cont:
     session['logged_in'] = True
   else:
     flash('error')
+
+  # save the username in a global variable so that you can access it from other scripts
+  set_user(data[0][0], data[0][1])
+  #print(str(data[0][0])+ " " + str(data[0][1]))
+  #print(user_id[0])
+  #print(user_name[0])
+
   return home()
 
 @app.route('/sign_up', methods=['POST', 'GET']) 
 def do_admin_sign_up():
+  conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
   cur = conn.cursor(buffered=True)
   request_sign = request.form
   full_name = request_sign['full_name'] 
