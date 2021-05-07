@@ -19,6 +19,39 @@ Insert into test.groups_perm_relation(group_id,perm_id_1,perm_id_2,perm_id_3) va
 SELECT 
     p.name
 FROM
+    permissions p
+        INNER JOIN
+    (SELECT 
+        gp.perm_id_1, gp.perm_id_2, gp.perm_id_3
+    FROM
+        user_groups_relation ug
+    INNER JOIN users u ON u.id = ug.user_id
+    INNER JOIN groups_perm_relation gp ON ug.group_id_1 = gp.group_id) temp ON p.id = temp.perm_id_3;
+    
+SELECT 
+    p.name
+FROM
+    permissions p,
+        
+    (SELECT 
+        gp.perm_id_1, gp.perm_id_2, gp.perm_id_3
+    FROM
+        user_groups_relation ug
+    INNER JOIN users u ON u.id = ug.user_id
+    INNER JOIN groups_perm_relation gp ON ug.group_id_1 = gp.group_id) a where a.;
+
+# Select grupuri pentru un utilizator anume
+SELECT g.name FROM groups g,
+(
+	SELECT ug.group_id_1, ug.group_id_2, ug.group_id_3 FROM user_groups_relation ug
+	INNER JOIN users u ON u.id = ug.user_id
+	WHERE u.username = 'ovi'
+) result
+WHERE g.id = result.group_id_1 OR g.id = result.group_id_2 OR g.id = result.group_id_3;
+    
+SELECT 
+    p.name
+FROM
     permissions p,
         
     (SELECT 

@@ -1,12 +1,14 @@
 from flask import Flask
 from flask import Flask, flash, redirect, render_template, request, session, abort, flash, url_for
 import mysql.connector as mariadb
+from passlib.hash import sha256_crypt
 from global_variables import *
 import re
 
 @app.route('/settings', methods =['POST','GET'])
 def settings():
-    conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+          database=DB_DATABASE)
     cur = conn.cursor(buffered = True)
     #id from global_varibles gotten from login
     id = str(user_id[0])
@@ -55,7 +57,7 @@ def settings_update():
             flash("Not a valid email. Try again.")
         if request.form.get('password') and  request.form.get('new_password'):
             if request.form.get('password') == request.form.get('new_password'):
-                date_user['password'] = request.form.get('password')
+                date_user['password'] = sha256_crypt.hash(request.form.get('password'))
                 counter +=1
             else:
                 flash("Password doesn`t match")
