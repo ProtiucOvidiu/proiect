@@ -14,18 +14,27 @@ def home():
   if not session.get('logged_in'):
     return render_template('common_files/login.html')
   else:
+    # get the id of the first group for this user which represents the
+    # admins' group
+    query = "SELECT group_id_1 FROM user_groups_relation WHERE user_id = " + str(user_id[0])
+    
     # connection to the db
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
           database=DB_DATABASE)
     cur = conn.cursor(buffered = True)
 
-    # get the id of the first group for this user which represents the
-    # admins' group
-    query = "SELECT group_id_1 FROM user_groups_relation WHERE user_id = "
-    + data[0][0] + ";"
     cur.execute(query)
     is_admin = cur.fetchall()
-    return user.user_home_run()
+    
+     # close the connection
+    cur.close()
+    conn.close()
+
+    # check if the user is an admin or not
+    if str(is_admin[0][0]) == '1':
+      return admin.admin_home_run()
+    else:
+      return user.user_home_run()
     
 def check_email(Email):
     email_regex = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
@@ -51,9 +60,7 @@ def do_admin_login():
   else:
     data = cur.execute("SELECT id, username, email, password FROM users WHERE username= %s ", (username,))
 
-  data = cur.fetchall()
-
- 
+  data = cur.fetchall() 
 
   # close the connection
   cur.close()
@@ -76,7 +83,7 @@ def do_admin_login():
       check += 1
   
   # verify if the hash matches the string from the form 
-  if sha256_crypt.verify(password, data[0][2]):
+  if sha256_crypt.verify(password, data[0][3]):
     check += 1
 
   if check != 2:

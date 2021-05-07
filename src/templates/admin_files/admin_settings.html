@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type= "text/css" href="../static/styles/settings.css">
+    <script type="text/javascript" src="../../static/scripts/index.js"></script>
+    <link rel="stylesheet" type= "text/css" href="../static/styles/index.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </head>
+ 
+  <body>
+    <div class="topnav" id="myTopnav">
+      <div class="dropdown">
+        <a href="#" class="dropbtn" target="_self">Profile</a>
+
+        <div class="dropdown-content">
+            <a href="/settings" target="_self">Settings</a>
+            <a href="/contact" target="_self">Contact</a>
+            <a href="#logout" target="_self">Log Out</a>
+  
+          </div>
+        </div>
+        <a href="/admin_home" class="homebtn" target="_self">Home</a>
+      </div>
+
+      <div id="side_menu" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="close_menu()">×</a>
+        <a href="/admin_home" target="_self">Apps</a>
+        <a href="/admin_groups" target="_self">Groups</a>
+        <a href="/admin_add" target="_self">Add user/group/perm</a>
+        <a href="/admin_modify" target="_self">Modify user/group/perm</a>
+        <a href="/admin_delete" target="_self">Delete user/group/perm</a>
+        <a href="/admin_msg" target="_self">Messages</a>
+        <a href="/admin_forum" target="_self">Q&A/Forum</a>
+      </div>
+
+    <div id="main">
+      <button class="open_btn" onclick="open_menu()">☰</button>
+      <form action="{{url_for('settings_update')}}" method="POST">  
+      <div style="padding: 100px;">
+        <div class="container">
+          <div class="row gutters">
+            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
+              <div class="card h-100">
+                <div class="card-body" >
+                  <div>
+                    <img src="static/img/avatar_pi.png" alt="Avatar" >
+                  </div>
+                  <div>
+                      {% for i in users %}
+                      <h5 class="mb-2 text-primary" style="text-align: center;"> Account information</h5>
+                      <div class="table_div">
+                      <table>
+                        <tr>
+                          <th > Username: </th>
+                          <td class="text"> {{i.1}}</td>
+                        </tr>
+                        <tr> 
+                          <th> Full name: </th>
+                          <td> {{i.3}} </td>
+                        </tr>
+                        <tr>
+                          <th> Email: </th>
+                          <td> {{i.4}}</td>
+                        </tr>
+                        <tr>
+                          <th> Phone: </th>
+                          <td> {{i.5}}</td>
+                        </tr>  
+                      </table>
+                    </div>
+                      {% endfor %}
+                    </div>
+                   
+                </div>
+              </div>
+            </div>
+            <div class="col-xl-9 col-lg-9 col-md-12 col-sm-12 col-12">
+              <div class="card h-100">
+                <div class="card-body">
+                  <div class="row gutters">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                      <h6 class="mb-3 text-primary">Personal Details</h6>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                      <div class="form-group">
+                        <label for="fullName"> Change Full name</label>
+                        <input type="text" class="form-control" name="full_name" placeholder="Enter new full name">
+                      </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                      <div class="form-group">
+                        <label for="UserName"> Change Username</label>
+                        <input type="text" class="form-control" name="username" placeholder="Enter new Username">
+                      </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                      <div class="form-group">
+                        <label for="phone"> Change Phone number</label>
+                        <input type="text" class="form-control" name="phone_number" placeholder="Enter new phone number">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row gutters">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+                      <h6 class="mb-3 text-primary">Account settings</h6>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                      <div class="form-group">
+                        <label for="password"> Change Password</label>
+                        <input type="password" class="form-control" name="password" placeholder="Enter new Password">
+                      </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                      <div class="form-group">
+                        <label for="new_password"> New password</label>
+                        <input type="password" class="form-control" name="new_password" placeholder="Confirm new password">
+                      </div>
+                    </div>
+                    <div class="col-xl-6 col-lg-6 col-md-6 col-sm-6 col-12">
+                      <div class="form-group">
+                        <label for="email"> Change Email</label>
+                        <input type="text" class="form-control" name="email" placeholder="Enter new Email">
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row gutters">
+                    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">                    
+                      <div class="text-right">
+                        {% with messages = get_flashed_messages() %}
+                            {% if messages %}
+                              {% for msg in messages %}
+                                <p>{{msg}}</p>
+                              {% endfor %}
+                            {% endif %}
+                          {% endwith %} 
+                        <button type="submit" id="submit" name="update" class="btn btn-primary">Update</button>
+                        <button type="reset" id="reset" name="cancel" class="btn btn-secondary">Cancel</button>               
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          </div>
+    </form>
+    </div>
+  </body>
+</html>
