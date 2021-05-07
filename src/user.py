@@ -4,15 +4,10 @@ import mysql.connector as mariadb
 
 from global_variables import *
 
-#=============================================================================#
+#==============================================================================#
 
 @app.route('/user_home')
-def user_home_run():
-    # database connection to get the groups
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-           database=DB_DATABASE)
-    cur = conn.cursor(buffered=True)
-
+def user_home_run():  
     # list of queries
     queries = []
     # get all the pemission columns 
@@ -20,25 +15,36 @@ def user_home_run():
     "where table_name = 'groups_perm_relation' "
     "order by ordinal_position;")
 
-    # get all the group names
-    cur.execute(queries[0])
-    group_names = cur.fetchall()
+    # database connection 
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+    try:
+        cur = conn.cursor(buffered=True)
+        # get all the group names
+        cur.execute(queries[0])
+        group_names = cur.fetchall()
 
-    # create query to get the pemissions of the user
-    queries.append("SELECT "
-    "perm.name FROM permissions perm, "
-    "(SELECT "+ temp_str(group_names, "gp") +" FROM user_groups_relation ug "
-    "INNER JOIN users u ON u.id = ug.user_id "
-    "INNER JOIN groups_perm_relation gp ON ug.group_id_1 = gp.group_id) temp "
-    "where " + temp_str(group_names, "perm") + ";")
+        # create query to get the pemissions of the user
+        queries.append("SELECT "
+        "perm.name FROM permissions perm, "
+        "(SELECT "+ temp_str(group_names, "gp") +" FROM user_groups_relation ug "
+        "INNER JOIN users u ON u.id = ug.user_id "
+        "INNER JOIN groups_perm_relation gp ON ug.group_id_1 = gp.group_id) temp "
+        "where " + temp_str(group_names, "perm") + ";")
 
-    # get all the permissions names for this user
-    cur.execute(queries[1])
-    permissions = cur.fetchall()   
+        # get all the permissions names for this user
+        cur.execute(queries[1])
+        permissions = cur.fetchall()   
 
-    # close the connection
-    cur.close()
-    conn.close()
+        # close the connection
+        cur.close()
+        conn.close()
+    except sqlite3.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if conn:
+            conn.close()
+            print('Connection to db was closed!')
 
     # return the page with all the data stored in the permissions variable
     return render_template('user_files/user_home.html', permissions = permissions)
@@ -59,14 +65,10 @@ def temp_str(group_names, abbreviation):
     
     return temp
 
+#==============================================================================#
+
 @app.route('/user_groups')
 def user_groups_run():
-    
-    # database connection to get the groups
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-           database=DB_DATABASE)
-    cur = conn.cursor(buffered=True)
-
     # list of queries
     queries = []
     # get all the groups 
@@ -74,50 +76,176 @@ def user_groups_run():
     # create query to get the groups that the current user is a part of
     queries.append("SELECT g.name FROM groups g, (SELECT ug.group_id_1,"
     + "ug.group_id_2, ug.group_id_3 FROM user_groups_relation ug "
-    + "INNER JOIN users u ON u.id = ug.user_id WHERE u.username = '" 
-    + user_name[0] + "') result WHERE g.id = result.group_id_1" 
+    + "INNER JOIN users u ON u.id = ug.user_id WHERE u.id = " 
+    + str(user_id[0]) + ") result WHERE g.id = result.group_id_1" 
     + " OR g.id = result.group_id_2 OR g.id = result.group_id_3;")
 
-    # get all the group names
-    cur.execute(queries[0])
-    group_names = cur.fetchall()
+    # database connection to get the groups
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+    try:
+        cur = conn.cursor(buffered=True)
 
-    # get all the group names for this user
-    cur.execute(queries[1])
-    user_groups = cur.fetchall()        
+        # get all the group names
+        cur.execute(queries[0])
+        group_names = cur.fetchall()
 
-    # close the connection
-    cur.close()
-    conn.close()
+        # get all the group names for this user
+        cur.execute(queries[1])
+        user_groups = cur.fetchall()        
+
+        # close the connection
+        cur.close()
+        conn.close()
+    except sqlite3.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if conn:
+            conn.close()
+            print('Connection to db was closed!')
 
     # create the dictionary with {name, yes/no} pairs
     groups = {}
-    for group_row in user_groups:
-        if is_group_in_list(group_names, group_row[0]):
-            groups[ group_row[0] ] = "Yes"
+    for name in group_names:
+        if is_group_in_list(name[0], user_groups):
+            groups[ name[0] ] = "Yes"
         else:
-            groups[ group_row[0] ] = "No"
+            groups[ name[0] ] = "No"
 
     # return the page with all the data stored in the groups variable
     return render_template('user_files/user_groups.html', groups = groups)
 
-def is_group_in_list(group_names, group):
+def is_group_in_list(name, user_groups):
     # verify if a specific group name is in the list or not
-    for group_row in group_names:
-        if group == group_row[0]:
+    for group_row in user_groups:
+        if group_row[0] == name:
             return True
     return False    
 
-#=============================================================================#
+#==============================================================================#
 
 @app.route('/user_msg')
 def user_msg_run():
     return render_template('user_files/user_msg.html')
 
-#=============================================================================#
+#==============================================================================#
 
 @app.route('/user_forum')
 def user_forum_run():
     return render_template('user_files/user_forum.html')
 
-#=============================================================================#
+#==============================================================================#
+
+@app.route('/user_settings', methods =['POST','GET'])
+def user_settings_run():
+    #id from global_varibles gotten from login
+    id = str(user_id[0])
+    #username from global_varibles gotten from login
+    username= str(user_name[0]) 
+
+    # database connection
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+    try:
+        cur = conn.cursor(buffered = True)
+
+        #select all data from user where id matches
+        query = "SELECT * from users WHERE id ='" + id + "';"
+        cur.execute(query)
+        query = cur.fetchall()
+        cur.close()
+        conn.close()
+
+    except sqlite3.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if conn:
+            conn.close()
+            print('Connection to db was closed!')
+
+    #return settings and display user`s information (id, full_name, email, phone_number)
+    return render_template('user_files/user_settings.html', users = query)
+
+#==============================================================================#
+
+@app.route('/user_settings_update', methods = ['POST'])
+def user_settings_update():
+    #empty dictonary to store information about the user
+    date_user = {}
+    username = str(user_name[0])
+    id = str(user_id[0])
+    counter = 0
+    # site method for update form is POST
+    if request.method == 'POST':
+        if request.form.get('full_name'):
+            #if user completed full_name field it will be added to dictonary
+            date_user['full_name'] = request.form.get('full_name')
+            counter +=1
+        if request.form.get('username'):
+            date_user['username'] = request.form.get('username')
+            counter +=1
+        else: 
+            date_user['username'] = 0
+        if request.form.get('phone_number') and check_phone(request.form.get('phone_number')):
+            date_user['phone_number'] = request.form.get('phone_number')
+            counter +=1
+        elif not request.form.get('phone_number'):
+            date_user['phone_number'] = 0
+        else:
+             flash("Invalid phone number")
+        if request.form.get('email') and check_email(request.form.get('email')) :
+            date_user['email'] = request.form.get('email')
+            counter +=1
+        elif not request.form.get('email'):
+            date_user['email'] = 0
+        else:
+            flash("Not a valid email. Try again.")
+        if request.form.get('password') and  request.form.get('new_password'):
+            if request.form.get('password') == request.form.get('new_password'):
+                date_user['password'] = sha256_crypt.hash(request.form.get('password'))
+                counter +=1
+            else:
+                flash("Password doesn`t match")
+        elif not request.form.get('password') and not request.form.get('new_password'):
+            date_user['password'] = 0
+        
+    
+    sql = "UPDATE users SET "
+    # looping throught dictonary and create the query to find which dates must be updated
+    for key, value in date_user.items():
+        if value != 0:
+            sql += key + "= " + "'" + value + "'" 
+            sql += ","
+    
+    # remove the last character ", "
+    sql = sql[:-1]
+    #update from id user
+    sql += " WHERE id = " + id + ";" 
+    # database connection 
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+    try:
+        cur = conn.cursor(buffered = True)
+
+        if counter!=0:
+            cur.execute(sql)
+            flash("Succesfully updated!")
+
+        conn.commit()
+        cur.close()
+        conn.close()
+    except sqlite3.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if conn:
+            conn.close()
+            print('Connection to db was closed!')
+    return user_settings_run()
+
+#==============================================================================#
+
+@app.route('/user_contact')
+def user_contact_run():
+    return render_template('user_files/user_contact.html')
+
+#==============================================================================#

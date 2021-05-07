@@ -7,7 +7,9 @@ import operator
 import re
 from sign_up import sign_up_pers
 from global_variables import *
-import user, admin, settings, contact
+import user, admin
+
+#==============================================================================#
 
 @app.route('/')
 def home():
@@ -20,32 +22,33 @@ def home():
     
     # connection to the db
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-          database=DB_DATABASE)
-    cur = conn.cursor(buffered = True)
-
-    cur.execute(query)
-    is_admin = cur.fetchall()
+        database=DB_DATABASE)
+    try:
+      cur = conn.cursor(buffered = True)
+      cur.execute(query)
+      is_admin = cur.fetchall()
     
-     # close the connection
-    cur.close()
-    conn.close()
+      # close the connection
+      cur.close()
+      conn.close()
+    except sqlite3.Error as error:
+        print("Failed to read data from table", error)
+    finally:
+      if conn:
+        conn.close()
+        print('Connection to db was closed!')
+
 
     # check if the user is an admin or not
     if str(is_admin[0][0]) == '1':
       return admin.admin_home_run()
     else:
       return user.user_home_run()
-    
-def check_email(Email):
-    email_regex = re.compile(r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$")
-    if email_regex.match(Email):
-      return True
-    else:
-      return False
+
+#==============================================================================#
 
 @app.route('/login', methods=['POST','GET']) 
 def do_admin_login():
-  conn = mariadb.connect(host='sql11.freemysqlhosting.net', user='sql11402476', password='kS7DsFkJep', database='sql11402476')
   login = request.form
   password = login['password']
   email = login['email-username']
@@ -54,17 +57,25 @@ def do_admin_login():
   check = 0
   conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
         database=DB_DATABASE)
-  cur = conn.cursor(buffered = True)
-  if check_email(email):
-    data = cur.execute("SELECT id, username, email, password FROM users WHERE email= %s ", (email,))  #check dupa username sau email
-  else:
-    data = cur.execute("SELECT id, username, email, password FROM users WHERE username= %s ", (username,))
+  try:
+    
+    cur = conn.cursor(buffered = True)
+    if check_email(email):
+      data = cur.execute("SELECT id, username, email, password FROM users WHERE email= %s ", (email,))  #check dupa username sau email
+    else:
+      data = cur.execute("SELECT id, username, email, password FROM users WHERE username= %s ", (username,))
 
-  data = cur.fetchall() 
+    data = cur.fetchall() 
 
-  # close the connection
-  cur.close()
-  conn.close()
+    # close the connection
+    cur.close()
+    conn.close()
+  except Error as error:
+        print("Failed to read data from table", error)
+  finally:
+    if (conn):
+      conn.close()
+      print('Connection to db was closed!')
 
   # if the sign up button was pressed
   if login.get('sign_up'):
@@ -101,11 +112,10 @@ def do_admin_login():
   # return the appropriate page
   return home()
 
+#==============================================================================#
+
 @app.route('/sign_up', methods=['POST', 'GET']) 
 def do_admin_sign_up():
-  conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
-  cur = conn.cursor(buffered=True)
   request_sign = request.form
   full_name = request_sign['full_name'] 
   user_name = request_sign['user_name']
@@ -118,30 +128,50 @@ def do_admin_sign_up():
     return render_template('common_files/login.html')
   
   sign_up_pers1 = sign_up_pers(full_name, user_name, email, phone, password, pass_conf)
-  cur.execute(sign_up_pers1.select())
-  users_rows = cur.fetchall()
-  for row in users_rows:
-      if user_name == row[0]:
-        flash('Invalid User Name.')
-        return render_template('common_files/sign_up.html')
-
-  if not (sign_up_pers1.check_pass(pass_conf) and sign_up_pers1.check_email()):
-    flash('Please check your sign up details and try again.')
-    return render_template('common_files/sign_up.html')
-
-  pass_hash = sha256_crypt.hash(password)
   
-  cur.execute(sign_up_pers1.insert(pass_hash))
-  conn.commit()
-  cur.close()
-  conn.close()
+  conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+       database=DB_DATABASE)
+  try:
+    cur = conn.cursor(buffered=True)
+    cur.execute(sign_up_pers1.select())
+    users_rows = cur.fetchall()
+    for row in users_rows:
+        if user_name == row[0]:
+          flash('Invalid User Name.')
+          return render_template('common_files/sign_up.html')
+
+    if not (sign_up_pers1.check_pass(pass_conf) and sign_up_pers1.check_email()):
+      flash('Please check your sign up details and try again.')
+      return render_template('common_files/sign_up.html')
+
+    pass_hash = sha256_crypt.hash(password)
+    
+    cur.execute(sign_up_pers1.insert(pass_hash))
+    conn.commit()
+    cur.close()
+    conn.close()
+  except sqlite3.Error as error:
+        print("Failed to read data from table", error)
+  finally:
+    if conn:
+      conn.close()
+      print('Connection to db was closed!')
+
   return render_template('common_files/login.html')
+
+#==============================================================================#
 
 @app.route('/logout')
 def logout():
   session['logged_in'] = False
+  unset_user()
   return home()
+
+#==============================================================================#
 
 if __name__ == "__main__":
   app.secret_key = os.urandom(12)
   app.run(debug=True, host='0.0.0.0', port=5000)
+
+
+#==============================================================================#

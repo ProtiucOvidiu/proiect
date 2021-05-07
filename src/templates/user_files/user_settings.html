@@ -17,9 +17,9 @@
       <div class="dropdown">
         <a href="#" class="dropbtn" target="_self">Profile</a>
         <div class="dropdown-content">
-          <a href="{{ url_for('settings') }}" target="_self">Settings</a>
-          <a href="{{ url_for('contact') }}" target="_self">Contact</a>
-          <a href="#logout" target="_self">Log Out</a>
+          <a href="/user_settings" target="_self">Settings</a>
+          <a href="/user_contact" target="_self">Contact</a>
+          <a href="/logout" target="_self">Log Out</a>
         </div>
       </div>
       <a href="/user_home" class="homebtn" target="_self">Home</a>
@@ -34,7 +34,7 @@
 
     <div id="main">
       <button class="open_btn" onclick="open_menu()">☰</button>
-      <form action="{{url_for('settings_update')}}" method="POST">  
+      <form action="{{url_for('user_settings_update')}}" method="POST">  
       <div style="padding: 100px;">
         <div class="container">
           <div class="row gutters">
