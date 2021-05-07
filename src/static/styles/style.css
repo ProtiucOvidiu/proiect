@@ -86,3 +86,10 @@
         background-color: red;
         color: white;
       }
+
+    form a {
+        text-decoration: none;
+        font-size: 17px;
+        color: brown;
+        padding: 0 0 0 120px;
+      }
