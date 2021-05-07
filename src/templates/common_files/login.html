@@ -24,7 +24,7 @@
             <label class="login-field-icon fui-lock" for="login-pass"></label>
         </div>
           <div class="button" style="padding: 10px 10px 20px;" >
-            <button type="submit" name="login" value="login" class="btn" onclick="remeberMe()"> Log in </button>
+            <button type="submit" name="login" value="login" class="btn" > Log in </button>
           </div class="button" style="padding: 10px 10px 20px;"> 
           <div class="button" style="padding: 10px 10px 10px;" >
             <button name="sign_up" value="sign_up" class="btn"> Sign up </button>
@@ -49,12 +49,8 @@
           {% endblock %}
        </div>
       </div>
-      <div>
         <!--- <input type="checkbox" value="rememberMe" id="rememberMe" class="remeber"> <label for="rememberMe">Remember me</label> -->
-        <label class="checkbox">
-          <input type="checkbox" value="rememberMe" id="rememberMe" class="remeber"> Remeber me 
-        </label>
-      </div>
+        <a href="/reset"> Forgot password? </a>
      </div>
     </form>
 </body>

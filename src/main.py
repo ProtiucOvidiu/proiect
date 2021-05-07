@@ -169,6 +169,30 @@ def logout():
 
 #==============================================================================#
 
+@app.route('/reset')
+def reset():
+  return render_template('common_files/reset.html')
+
+#==============================================================================#
+
+@app.route('/reset_password', methods = ['POST','GET'])
+def reset_password():
+  conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, database=DB_DATABASE)
+  cur = conn.cursor(buffered=True)
+  if request.method == 'POST':
+    if request.form.get('email'):
+      sql = "SELECT id from users WHERE email = " + "'" + email + "'"
+      cur.execute(sql)
+      sql = cur.fetchone()[0]
+      print(sql)
+      email = request.form.get('email')
+  
+  # trimitere mail cu parola reseta temporar
+  # 
+  conn.close()
+  cur.close()
+  return reset()
+
 if __name__ == "__main__":
   app.secret_key = os.urandom(12)
   app.run(debug=True, host='0.0.0.0', port=5000)
