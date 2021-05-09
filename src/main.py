@@ -40,7 +40,14 @@ def home():
 
 
     # check if the user is an admin or not
-    if str(is_admin[0][0]) == '1':
+    if is_admin:
+      adm = str(is_admin[0][0])
+    else:
+      return user.user_home_run()
+
+
+    #print(adm)
+    if adm == '1':
       return admin.admin_home_run()
     else:
       return user.user_home_run()

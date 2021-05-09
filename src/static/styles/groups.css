@@ -1,11 +1,11 @@
 .container {
 	padding: 100px; 
-	position: relative;	
+	align-items: center;
+    justify-content: center;
+    display: flex;
 }
 
 table {
-    height: 400px;
-	width: 800px;
     border-collapse: collapse;
     border: 2.5px solid lightgray;
 	font-size: 18px;
@@ -13,6 +13,7 @@ table {
 
 th {
     padding: 5px 15px 5px 15px;
+	width: 250px;
     border-collapse: collapse;
     border: 2.5px solid lightgray;
 	text-align: center;
@@ -21,12 +22,14 @@ th {
 }
 
 tr {
+	height: 75px;
     border-collapse: collapse;
     border: 2.5px solid lightgray;
 }
 
 td {
     padding: 5px 40px 5px 40px;
+	width: 250px;
     border-collapse: collapse;
     border: 2.5px solid lightgray;
 	text-align: center;

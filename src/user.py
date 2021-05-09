@@ -29,7 +29,8 @@ def user_home_run():
         "perm.name FROM permissions perm, "
         "(SELECT "+ temp_str(group_names, "gp") +" FROM user_groups_relation ug "
         "INNER JOIN users u ON u.id = ug.user_id "
-        "INNER JOIN groups_perm_relation gp ON ug.group_id_1 = gp.group_id) temp "
+        "INNER JOIN groups_perm_relation gp ON ug.group_id_1 = gp.group_id WHERE u.id = " 
+        + str(user_id[0])+ ") temp " +
         "where " + temp_str(group_names, "perm") + ";")
 
         # get all the permissions names for this user
@@ -39,7 +40,7 @@ def user_home_run():
         # close the connection
         cur.close()
         conn.close()
-    except sqlite3.Error as error:
+    except mariadb.Error as error:
             print("Failed to read data from table", error)
     finally:
         if conn:
