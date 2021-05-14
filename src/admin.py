@@ -39,7 +39,7 @@ def admin_home_run():
         # close the connection
         cur.close()
         conn.close()
-    except sqlite3.Error as error:
+    except mariadb.Error as error:
             print("Failed to read data from table", error)
     finally:
         if conn:
@@ -96,7 +96,7 @@ def admin_groups_run():
         # close the connection
         cur.close()
         conn.close()
-    except sqlite3.Error as error:
+    except mariadb.Error as error:
             print("Failed to read data from table", error)
     finally:
         if (conn):
@@ -171,7 +171,7 @@ def admin_settings_run():
         query = cur.fetchall()
         cur.close()
         conn.close()
-    except sqlite3.Error as error:
+    except mariadb.Error as error:
             print("Failed to read data from table", error)
     finally:
         if conn:
@@ -250,7 +250,7 @@ def admin_settings_update():
         conn.commit()
         cur.close()
         conn.close()
-    except sqlite3.Error as error:
+    except mariadb.Error as error:
             print("Failed to read data from table", error)
     finally:
         if conn:

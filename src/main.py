@@ -31,7 +31,7 @@ def home():
       # close the connection
       cur.close()
       conn.close()
-    except sqlite3.Error as error:
+    except mariadb.Error as error:
         print("Failed to read data from table", error)
     finally:
       if conn:
@@ -157,7 +157,7 @@ def do_admin_sign_up():
     conn.commit()
     cur.close()
     conn.close()
-  except sqlite3.Error as error:
+  except mariadb.Error as error:
         print("Failed to read data from table", error)
   finally:
     if conn:
