@@ -1,4 +1,3 @@
-from flask import Flask
 from flask import Flask, flash, redirect, render_template, request, session, abort, flash, url_for
 import mysql.connector as mariadb
 
@@ -8,6 +7,9 @@ from global_variables import *
 
 @app.route('/admin_home')
 def admin_home_run():
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+
     # list of queries
     queries = []
     # get all the pemission columns 
@@ -50,6 +52,10 @@ def admin_home_run():
     return render_template('admin_files/admin_home.html', permissions = permissions)
 
 def temp_str(group_names, abbreviation):
+    # if the user is not logged in, redirect him/her to the login page
+    if not session.get('logged_in'):
+        return render_template('common_files/login.html')
+
     temp = ""
     for i in range(0,len(group_names)-2):
         if abbreviation == "gp":
@@ -69,6 +75,9 @@ def temp_str(group_names, abbreviation):
 
 @app.route('/admin_groups')
 def admin_groups_run():
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+
     # list of queries
     queries = []
     # get all the groups 
@@ -125,36 +134,54 @@ def is_group_in_list(group_names, group):
 
 @app.route('/admin_add')
 def admin_add_run():
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+
     return render_template('admin_files/admin_add.html')
     
 #==============================================================================#
 
 @app.route('/admin_modify')
 def admin_modify_run():
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+
     return render_template('admin_files/admin_modify.html')
     
 #==============================================================================#
 
 @app.route('/admin_delete')
 def admin_delete_run():
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+
     return render_template('admin_files/admin_delete.html')
     
 #==============================================================================#
 
 @app.route('/admin_msg')
 def admin_msg_run():
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+
     return render_template('admin_files/admin_msg.html')
 
 #==============================================================================#
 
 @app.route('/admin_forum')
 def admin_forum_run():
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+
     return render_template('admin_files/admin_forum.html')
 
 #==============================================================================#
 
 @app.route('/admin_settings', methods =['POST','GET'])
 def admin_settings_run():
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+
     #id from global_varibles gotten from login
     id = str(user_id[0])
     #username from global_varibles gotten from login
@@ -185,6 +212,9 @@ def admin_settings_run():
 
 @app.route('/admin_settings_update', methods = ['POST'])
 def admin_settings_update():
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+
     #empty dictonary to store information about the user
     date_user = {}
     username = str(user_name[0])
@@ -263,6 +293,9 @@ def admin_settings_update():
 
 @app.route('/admin_contact')
 def admin_contact_run():
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+    
     return render_template('admin_files/admin_contact.html')
 
 #==============================================================================#

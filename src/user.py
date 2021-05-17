@@ -1,4 +1,3 @@
-from flask import Flask
 from flask import Flask, flash, redirect, render_template, request, session, abort, flash, url_for
 import mysql.connector as mariadb
 
@@ -8,6 +7,9 @@ from global_variables import *
 
 @app.route('/user_home')
 def user_home_run():  
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+        
     # list of queries
     queries = []
     # get all the pemission columns 
@@ -70,6 +72,9 @@ def temp_str(group_names, abbreviation):
 
 @app.route('/user_groups')
 def user_groups_run():
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+
     # list of queries
     queries = []
     # get all the groups 
@@ -78,8 +83,9 @@ def user_groups_run():
     queries.append("SELECT g.name FROM groups g, (SELECT ug.group_id_1,"
     + "ug.group_id_2, ug.group_id_3 FROM user_groups_relation ug "
     + "INNER JOIN users u ON u.id = ug.user_id WHERE u.id = " 
-    + str(user_id[0]) + ") result WHERE g.id = result.group_id_1" 
-    + " OR g.id = result.group_id_2 OR g.id = result.group_id_3;")
+    + str(user_id[0]) + ") result WHERE " + create_group_query())
+
+    print(queries[1])
 
     # database connection to get the groups
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
@@ -127,18 +133,27 @@ def is_group_in_list(name, user_groups):
 
 @app.route('/user_msg')
 def user_msg_run():
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+
     return render_template('user_files/user_msg.html')
 
 #==============================================================================#
 
 @app.route('/user_forum')
 def user_forum_run():
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+
     return render_template('user_files/user_forum.html')
 
 #==============================================================================#
 
 @app.route('/user_settings', methods =['POST','GET'])
 def user_settings_run():
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+
     #id from global_varibles gotten from login
     id = str(user_id[0])
     #username from global_varibles gotten from login
@@ -171,6 +186,9 @@ def user_settings_run():
 
 @app.route('/user_settings_update', methods = ['POST'])
 def user_settings_update():
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+
     #empty dictonary to store information about the user
     date_user = {}
     username = str(user_name[0])
@@ -247,6 +265,9 @@ def user_settings_update():
 
 @app.route('/user_contact')
 def user_contact_run():
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+
     return render_template('user_files/user_contact.html')
 
 #==============================================================================#

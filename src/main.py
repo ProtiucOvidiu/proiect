@@ -16,9 +16,8 @@ def home():
   if not session.get('logged_in'):
     return render_template('common_files/login.html')
   else:
-    # get the id of the first group for this user which represents the
-    # admins' group
-    query = "SELECT group_id_1 FROM user_groups_relation WHERE user_id = " + str(user_id[0])
+    # get the is_admin column for the current user user
+    query = "SELECT is_admin FROM users WHERE id = " + str(user_id[0]) + ";" 
     
     # connection to the db
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
@@ -40,14 +39,7 @@ def home():
 
 
     # check if the user is an admin or not
-    if is_admin:
-      adm = str(is_admin[0][0])
-    else:
-      return user.user_home_run()
-
-
-    #print(adm)
-    if adm == '1':
+    if is_admin[0][0] == 1:
       return admin.admin_home_run()
     else:
       return user.user_home_run()
