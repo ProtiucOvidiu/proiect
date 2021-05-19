@@ -104,12 +104,37 @@ def admin_add_run():
     
 #==============================================================================#
 
-@app.route('/admin_modify')
+@app.route('/admin_modify', methods = ['POST', 'GET'])
 def admin_modify_run():
     # if the user is not logged in, redirect him/her to the login page
     is_logged_in()
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+    try:
+        query = "select * from groups;"
+        query2 = "select * from permissions;"
+        cur = conn.cursor(buffered = True)
+        cur.execute(query)
+        groups = cur.fetchall()
+        cur.execute(query2)
+        permissions = cur.fetchall()
+        print(groups)
+        print(permissions)
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if conn:
+            conn.close()
+    print('Connection to db was closed!')
+    if request.method == 'POST':
+        pass
+    elif request.method == 'GET':
+         return render_template('admin_files/admin_modify.html')
+    
 
-    return render_template('admin_files/admin_modify.html')
+    return render_template('admin_files/admin_modify.html', groups = groups, permissions = permissions)
     
 #==============================================================================#
 
