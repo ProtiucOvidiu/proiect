@@ -106,20 +106,37 @@ def admin_add_run():
 
 @app.route('/admin_modify', methods = ['POST', 'GET'])
 def admin_modify_run():
+    modify = request.form
+    update_query = "UPDATE groups"
+    query = "select * from groups;"
+    query2 = "select * from permissions;"
     # if the user is not logged in, redirect him/her to the login page
     is_logged_in()
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
     try:
-        query = "select * from groups;"
-        query2 = "select * from permissions;"
+        conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
         cur = conn.cursor(buffered = True)
         cur.execute(query)
         groups = cur.fetchall()
         cur.execute(query2)
         permissions = cur.fetchall()
-        print(groups)
-        print(permissions)
+        if request.method == 'POST':
+            if (modify.get('id') and modify.get('name')) or \
+            (modify.get('id') and modify.get('description')):    
+                if modify.get('name') and modify.get('description') == '':
+                    update_query += " SET name = \'" + modify['name'] + '\''
+                elif modify.get('name'):
+                    update_query += " SET name = \'" + modify['name'] + '\','
+                if modify.get('description') and modify.get('name'):
+                    update_query += " description = \'" + modify['description'] + '\''
+                else:
+                    update_query += " SET description = \'" + modify['description'] + '\''
+                update_query += " WHERE id = " + modify['id'] + ';'
+                cur.execute(update_query)
+                conn.commit()
+        elif request.method == 'GET':
+            return render_template('admin_files/admin_modify.html', groups = groups, 
+            permissions = permissions)
         cur.close()
         conn.close()
     except mariadb.Error as error:
@@ -127,14 +144,9 @@ def admin_modify_run():
     finally:
         if conn:
             conn.close()
-    print('Connection to db was closed!')
-    if request.method == 'POST':
-        pass
-    elif request.method == 'GET':
-         return render_template('admin_files/admin_modify.html')
-    
 
-    return render_template('admin_files/admin_modify.html', groups = groups, permissions = permissions)
+    return render_template('admin_files/admin_modify.html', groups = groups, 
+    permissions = permissions)
     
 #==============================================================================#
 
