@@ -17,16 +17,15 @@ body {
     padding-top: 60px;
   }
   
-  .sidebar a {
+  .sidebar a, .dropdown-side-btn {
     padding: 8px 8px 8px 32px;
-    text-decoration: none;
+    text-decoration: none!important;
     font-size: 25px;
     color: white;
     display: block;
-    transition: 0.3s;
   }
   
-  .sidebar a:hover {
+  .sidebar a:hover, .dropdown-side-btn:hover {
     color: #9CC5A1;
   }
   
@@ -56,6 +55,31 @@ body {
     background-color: #3BB8BA
       /*#216869;*/
     ;
+  }
+
+  /* Down arrow styling */
+  .fa-caret-down {
+    float: right;
+    padding-right: 8px;
+  }
+
+  /* Dropdown side menu button */
+  .dropdown-side-btn {
+    border: none!important;
+    text-align: left;
+    background-color: #36A9AB;
+  }
+
+  /* Dropdown side menu button when active*/
+  .dropdown-side-btn:active {
+    border: none!important;
+  }
+
+  /* Div where all the elements are stored */
+  .dropdown-side-menu {
+    display: none;
+    background-color: #2e8d8f;
+    transition: 13s;
   }
   
  
@@ -87,7 +111,7 @@ body {
   }
 
   .topnav .dropbtn {
-    text-decoration: none;
+    text-decoration: none!important;
     background-color: #36A9AB;
     color: white;
     padding: 16px;
@@ -98,7 +122,7 @@ body {
   }
   
   .topnav .homebtn {
-    text-decoration: none;
+    text-decoration: none!important;
     background-color: #36A9AB;
     color: white;
     padding: 16px;
@@ -129,7 +153,7 @@ body {
     top: 5;
     color: black;
     padding: 12px 16px;
-    text-decoration: none;
+    text-decoration: none!important;
     display: block;
   }
   
@@ -179,4 +203,5 @@ body {
       text-align: left;
     }
   }
-  
+
+

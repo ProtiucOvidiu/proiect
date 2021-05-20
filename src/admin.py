@@ -83,11 +83,12 @@ def admin_groups_run():
     # get all the groups 
     queries.append("SELECT name FROM groups;")
     # create query to get the groups that the current user is a part of
-    queries.append("SELECT g.name FROM groups g, (SELECT ug.group_id_1,"
-    + "ug.group_id_2, ug.group_id_3 FROM user_groups_relation ug "
+    queries.append("SELECT g.name FROM groups g, (SELECT " 
+    + create_group_query(',') + " FROM user_groups_relation ug "
     + "INNER JOIN users u ON u.id = ug.user_id WHERE u.username = '" 
-    + user_name[0] + "') result WHERE g.id = result.group_id_1" 
-    + " OR g.id = result.group_id_2 OR g.id = result.group_id_3;")
+    + user_name[0] + "') result WHERE " + create_group_query('='))
+
+    print(queries[1])
 
     # database connection to get the groups
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
@@ -123,13 +124,6 @@ def admin_groups_run():
     # return the page with all the data stored in the groups variable
     return render_template('admin_files/admin_groups.html', groups = groups)
 
-def is_group_in_list(group_names, group):
-    # verify if a specific group name is in the list or not
-    for group_row in group_names:
-        if group == group_row[0]:
-            return True
-    return False
-
 #==============================================================================#
 
 @app.route('/admin_add')
@@ -150,13 +144,159 @@ def admin_modify_run():
     
 #==============================================================================#
 
-@app.route('/admin_delete')
-def admin_delete_run():
+@app.route('/delete_user')
+def delete_user_run():
     # if the user is not logged in, redirect him/her to the login page
     is_logged_in()
 
-    return render_template('admin_files/admin_delete.html')
+    users = []
+    query = ("SELECT id, username, full_name, email, phone_number, is_admin FROM users ORDER BY id;")
+
+    # database connection to get the groups
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+
+    try:
+        cur = conn.cursor(buffered=True)
+        
+        # get all the usernames and fullnames
+        cur.execute(query)
+        users = cur.fetchall()
+
+        # close the connection
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if (conn):
+            conn.close()
+            print('Connection to db was closed!')
     
+    return render_template('admin_files/admin_delete_user.html', users = users)
+    
+@app.route('/delete_user_exec', methods=['POST'])
+def execute_delete_user():
+    # get the list of ids that the admin wants to delete
+    delete = request.form.getlist('checks')
+
+    ids_string = form_delete_id_string(delete)    
+    queries = []
+    queries.append("DELETE FROM user_groups_relation WHERE user_id IN " + ids_string)
+    queries.append("DELETE FROM users WHERE id IN " + ids_string)
+
+    # database connection to get the groups
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+
+    try:
+        cur = conn.cursor(buffered=True)
+        
+        # delete all the data related to the user/s
+        for q in queries:
+            print("Query:----- " + q)
+            cur.execute(q)     
+        conn.commit()
+
+        # close the connection
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if (conn):
+            conn.close()
+            print('Connection to db was closed!')
+
+    return delete_user_run()
+    
+
+#==============================================================================#
+
+@app.route('/delete_group')
+def delete_group_run():
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+
+    groups = []
+    query = "SELECT * FROM groups ORDER BY id;"
+
+    # database connection to get the groups
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+
+    try:
+        cur = conn.cursor(buffered=True)
+        
+        # get all the groups
+        cur.execute(query)
+        groups = cur.fetchall()
+
+        # close the connection
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if (conn):
+            conn.close()
+            print('Connection to db was closed!')
+
+    return render_template('admin_files/admin_delete_group.html', groups = groups)
+
+@app.route('/delete_group_exec', methods = ['POST'])
+def execute_delete_group():
+    # get the list of ids that the admin wants to delete
+    delete = request.form.getlist('checks')
+
+    queries = []
+    ids_string = form_delete_id_string(delete)
+    query = "DELETE FROM groups_perm_relation WHERE group_id IN " + ids_string
+    user_groups_res = []
+    for id in delete:
+        print("id: " + id)
+        queries.append("SELECT * FROM user_groups_relation WHERE " + create_delete_group_query(id))
+    
+    create_list_of_all_group_id_columns()
+    
+    # database connection to get the groups
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+
+    try:
+        cur = conn.cursor(buffered=True)
+        
+        # get all the user-group rows that are affected
+        for q in queries:
+            cur.execute(q)
+            user_groups_res = cur.fetchall()
+
+        for u in user_groups_res:
+            print("---------- " + str(u))
+
+        # close the connection
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if (conn):
+            conn.close()
+            print('Connection to db was closed!')
+    
+    return delete_group_run()
+
+
+
+#==============================================================================#
+
+@app.route('/delete_perm')
+def delete_perm_run():
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+
+    return render_template('admin_files/admin_delete_perm.html')
+
 #==============================================================================#
 
 @app.route('/admin_msg')

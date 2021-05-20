@@ -80,10 +80,10 @@ def user_groups_run():
     # get all the groups 
     queries.append("SELECT name FROM groups;")
     # create query to get the groups that the current user is a part of
-    queries.append("SELECT g.name FROM groups g, (SELECT ug.group_id_1,"
-    + "ug.group_id_2, ug.group_id_3 FROM user_groups_relation ug "
-    + "INNER JOIN users u ON u.id = ug.user_id WHERE u.id = " 
-    + str(user_id[0]) + ") result WHERE " + create_group_query())
+    queries.append("SELECT g.name FROM groups g, (SELECT " 
+    + create_group_query(',') + " FROM user_groups_relation ug "
+    + "INNER JOIN users u ON u.id = ug.user_id WHERE u.username = '" 
+    + user_name[0] + "') result WHERE " + create_group_query('='))
 
     print(queries[1])
 
@@ -121,13 +121,6 @@ def user_groups_run():
 
     # return the page with all the data stored in the groups variable
     return render_template('user_files/user_groups.html', groups = groups)
-
-def is_group_in_list(name, user_groups):
-    # verify if a specific group name is in the list or not
-    for group_row in user_groups:
-        if group_row[0] == name:
-            return True
-    return False    
 
 #==============================================================================#
 
