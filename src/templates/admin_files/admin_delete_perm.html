@@ -66,11 +66,12 @@
                     <th>Group Description</th>
                   </tr>
                 <!---->
-                  {% for group in groups %}
+                  {% for perm in perms %}
                   <tr>
-                    <td><input type="checkbox" value="{{ ids[0] }}"> </td>
-                    <td>{{ group[0] }}</td>
-                    <td>{{ group[1] }}</td>
+                    <td><input type="checkbox" value="{{ perm[0] }}" name="checks"> </td>
+                    <td>{{ perm[0] }}</td>
+                    <td>{{ perm[1] }}</td>
+                    <td>{{ perm[2] }}</td>
                   </tr>
                   {% endfor %}  
                   

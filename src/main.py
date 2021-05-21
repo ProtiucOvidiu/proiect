@@ -16,30 +16,8 @@ def home():
   if not session.get('logged_in'):
     return render_template('common_files/login.html')
   else:
-    # get the is_admin column for the current user user
-    query = "SELECT is_admin FROM users WHERE id = " + str(user_id[0]) + ";" 
-    
-    # connection to the db
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
-    try:
-      cur = conn.cursor(buffered = True)
-      cur.execute(query)
-      is_admin = cur.fetchall()
-    
-      # close the connection
-      cur.close()
-      conn.close()
-    except mariadb.Error as error:
-        print("Failed to read data from table", error)
-    finally:
-      if conn:
-        conn.close()
-        print('Connection to db was closed!')
-
-
-    # check if the user is an admin or not
-    if is_admin[0][0] == 1:
+    is_admin = is_user_admin()
+    if is_admin:
       return admin.admin_home_run()
     else:
       return user.user_home_run()
@@ -69,7 +47,7 @@ def do_admin_login():
     # close the connection
     cur.close()
     conn.close()
-  except Error as error:
+  except mariadb.Error as error:
         print("Failed to read data from table", error)
   finally:
     if (conn):

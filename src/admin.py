@@ -1,6 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort, flash, url_for
 import mysql.connector as mariadb
-
+from passlib.hash import sha256_crypt
 from global_variables import *
 
 #==============================================================================#
@@ -12,30 +12,24 @@ def admin_home_run():
 
     # list of queries
     queries = []
-    # get all the pemission columns 
-    queries.append("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS " 
-    "where table_name = 'groups_perm_relation' "
-    "order by ordinal_position;")
+
+    # create query to get the pemissions of the user
+    queries.append(
+        "SELECT p.name FROM permissions p "
+        "INNER JOIN groups_perm_relation gp ON gp.perm_id = p.id "
+        "WHERE gp.group_id IN ( "
+        "SELECT g.id FROM groups g "
+        "INNER JOIN user_groups_relation ug ON ug.group_id = g.id "
+        "WHERE ug.user_id = " + str(user_id[0]) + ");")
 
     # database connection 
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
         database=DB_DATABASE)
     try:
-        cur = conn.cursor(buffered=True)
-        # get all the group names
-        cur.execute(queries[0])
-        group_names = cur.fetchall()
-
-        # create query to get the pemissions of the user
-        queries.append("SELECT "
-        "perm.name FROM permissions perm, "
-        "(SELECT "+ temp_str(group_names, "gp") +" FROM user_groups_relation ug "
-        "INNER JOIN users u ON u.id = ug.user_id "
-        "INNER JOIN groups_perm_relation gp ON ug.group_id_1 = gp.group_id) temp "
-        "where " + temp_str(group_names, "perm") + ";")
+        cur = conn.cursor(buffered=True)       
 
         # get all the permissions names for this user
-        cur.execute(queries[1])
+        cur.execute(queries[0])
         permissions = cur.fetchall()   
 
         # close the connection
@@ -51,26 +45,6 @@ def admin_home_run():
     # return the page with all the data stored in the permissions variable
     return render_template('admin_files/admin_home.html', permissions = permissions)
 
-def temp_str(group_names, abbreviation):
-    # if the user is not logged in, redirect him/her to the login page
-    if not session.get('logged_in'):
-        return render_template('common_files/login.html')
-
-    temp = ""
-    for i in range(0,len(group_names)-2):
-        if abbreviation == "gp":
-            if i == len(group_names)-3:
-                temp += f"gp.perm_id_{i+1} "
-            else:
-                temp += f"gp.perm_id_{i+1}, "
-        else:
-            if i == len(group_names)-3:
-                temp += f"temp.perm_id_{i+1} = perm.id "
-            else:
-                temp += f"temp.perm_id_{i+1} = perm.id or "
-    
-    return temp
-
 #==============================================================================#
 
 @app.route('/admin_groups')
@@ -83,12 +57,10 @@ def admin_groups_run():
     # get all the groups 
     queries.append("SELECT name FROM groups;")
     # create query to get the groups that the current user is a part of
-    queries.append("SELECT g.name FROM groups g, (SELECT " 
-    + create_group_query(',') + " FROM user_groups_relation ug "
-    + "INNER JOIN users u ON u.id = ug.user_id WHERE u.username = '" 
-    + user_name[0] + "') result WHERE " + create_group_query('='))
-
-    print(queries[1])
+    queries.append(
+        "SELECT g.id, g.name FROM groups g "
+        "INNER JOIN user_groups_relation ug ON ug.group_id = g.id "
+        "WHERE ug.user_id = " + str(user_id[0]) + ";")
 
     # database connection to get the groups
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
@@ -113,16 +85,10 @@ def admin_groups_run():
             conn.close()
             print('Connection to db was closed!')
 
-    # create the dictionary with {name, yes/no} pairs
-    groups = {}
-    for group_row in admin_groups:
-        if is_group_in_list(group_names, group_row[0]):
-            groups[ group_row[0] ] = "Yes"
-        else:
-            groups[ group_row[0] ] = "No"
-
-    # return the page with all the data stored in the groups variable
-    return render_template('admin_files/admin_groups.html', groups = groups)
+    # return the page with all the data stored in the groups variable which is a
+    # dictionary with {name, yes/no} pairs
+    return render_template('admin_files/admin_groups.html', 
+        groups = create_group_dict(group_names, admin_groups))
 
 #==============================================================================#
 
@@ -150,7 +116,7 @@ def delete_user_run():
     is_logged_in()
 
     users = []
-    query = ("SELECT id, username, full_name, email, phone_number, is_admin FROM users ORDER BY id;")
+    query = ("SELECT * FROM users ORDER BY id;")
 
     # database connection to get the groups
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
@@ -182,7 +148,6 @@ def execute_delete_user():
 
     ids_string = form_delete_id_string(delete)    
     queries = []
-    queries.append("DELETE FROM user_groups_relation WHERE user_id IN " + ids_string)
     queries.append("DELETE FROM users WHERE id IN " + ids_string)
 
     # database connection to get the groups
@@ -193,9 +158,7 @@ def execute_delete_user():
         cur = conn.cursor(buffered=True)
         
         # delete all the data related to the user/s
-        for q in queries:
-            print("Query:----- " + q)
-            cur.execute(q)     
+        cur.execute(queries[0])     
         conn.commit()
 
         # close the connection
@@ -249,15 +212,8 @@ def execute_delete_group():
     # get the list of ids that the admin wants to delete
     delete = request.form.getlist('checks')
 
-    queries = []
     ids_string = form_delete_id_string(delete)
-    query = "DELETE FROM groups_perm_relation WHERE group_id IN " + ids_string
-    user_groups_res = []
-    for id in delete:
-        print("id: " + id)
-        queries.append("SELECT * FROM user_groups_relation WHERE " + create_delete_group_query(id))
-    
-    create_list_of_all_group_id_columns()
+    query = "DELETE FROM groups WHERE id IN " + ids_string
     
     # database connection to get the groups
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
@@ -265,14 +221,10 @@ def execute_delete_group():
 
     try:
         cur = conn.cursor(buffered=True)
-        
-        # get all the user-group rows that are affected
-        for q in queries:
-            cur.execute(q)
-            user_groups_res = cur.fetchall()
 
-        for u in user_groups_res:
-            print("---------- " + str(u))
+        # execute the query and commit the change
+        cur.execute(query)
+        conn.commit()
 
         # close the connection
         cur.close()
@@ -286,8 +238,6 @@ def execute_delete_group():
     
     return delete_group_run()
 
-
-
 #==============================================================================#
 
 @app.route('/delete_perm')
@@ -295,7 +245,64 @@ def delete_perm_run():
     # if the user is not logged in, redirect him/her to the login page
     is_logged_in()
 
-    return render_template('admin_files/admin_delete_perm.html')
+    perms = []
+    query = "SELECT * FROM permissions ORDER BY id;"
+
+    # database connection to get the groups
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+
+    try:
+        cur = conn.cursor(buffered=True)
+        
+        # get all the groups
+        cur.execute(query)
+        perms = cur.fetchall()
+
+        # close the connection
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if (conn):
+            conn.close()
+            print('Connection to db was closed!')
+
+    return render_template('admin_files/admin_delete_perm.html', perms = perms)
+
+#==============================================================================#
+
+@app.route('/delete_perm_exec', methods=['POST'])
+def execute_delete_perm():
+     # get the list of ids that the admin wants to delete
+    delete = request.form.getlist('checks')
+
+    ids_string = form_delete_id_string(delete)
+    query = "DELETE FROM permissions WHERE id IN " + ids_string
+    
+    # database connection to get the groups
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+
+    try:
+        cur = conn.cursor(buffered=True)
+
+        # execute the query and commit the change
+        cur.execute(query)
+        conn.commit()
+
+        # close the connection
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if (conn):
+            conn.close()
+            print('Connection to db was closed!')
+            
+    return redirect('/delete_perm')
 
 #==============================================================================#
 

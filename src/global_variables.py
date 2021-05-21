@@ -12,11 +12,16 @@ user_id = []
 
 #==============================================================================#
 
-# database login details
-DB_HOST = 'sql11.freemysqlhosting.net'
-DB_USER = 'sql11402476'
-DB_PASSWORD = 'kS7DsFkJep'
-DB_DATABASE = 'sql11402476'
+# database login details to freemysql_hosting
+#DB_HOST = 'sql11.freemysqlhosting.net'
+#DB_USER = 'sql11402476'
+#DB_PASSWORD = 'kS7DsFkJep'
+#DB_DATABASE = 'sql11402476'
+
+DB_HOST = '127.0.0.1'
+DB_USER = 'root'
+DB_PASSWORD = 'cvscvs'
+DB_DATABASE = 'sky_security'
 
 #==============================================================================#
 
@@ -65,52 +70,6 @@ def check_phone(phone_number):
 
 #==============================================================================#
 ###
-# Form the query used to load all the groups that a user is a part of
-# if control = '=' creates the second part of the query, else creates
-# the list of group_id_ columns separated by a comma
-###
-def create_group_query(control):
-
-    # get all the group_id_ columns 
-    query_1 = str("SELECT column_name FROM information_schema.columns where " 
-    "table_name = 'user_groups_relation' order by ordinal_position;")
-
-    # database connection 
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
-
-    try:
-        cur = conn.cursor(buffered=True)
-        # get all the group column names
-        cur.execute(query_1)
-        group_columns = cur.fetchall()
-    except mariadb.Error as error:
-        print("Failed to read data from table", error)
-    finally:
-        if conn:
-            conn.close()
-            print('Connection to db was closed!')
-
-    query_2 = ""
-
-    for i in range(0, len(group_columns) - 2):
-        if control == "=":
-            if i == len(group_columns) - 3:
-                query_2 += f"g.id = result.group_id_{i + 1};"
-                break
-            else:
-                query_2 += f"g.id = result.group_id_{i + 1} OR "
-        else:
-            if i == len(group_columns) - 3:
-                query_2 += f"ug.group_id_{i + 1}"
-                break
-            else:
-                query_2 += f"ug.group_id_{i + 1}, "
-
-    return query_2    
-
-#==============================================================================#
-###
 # Redirect the user to the login page if it's not logged in
 ###
 def is_logged_in():
@@ -131,6 +90,20 @@ def is_group_in_list(group_names, group):
 
 #==============================================================================#
 ###
+# Create the dictionary that stores if the current user is a part of the group
+# or not - dictionary with {name, yes/no} pairs
+###
+def create_group_dict(group_names, admin_groups):
+    groups = {}
+    for group_row in admin_groups:
+        if is_group_in_list(group_names, group_row[1]):
+            groups[ group_row[0] ] = "Yes"
+        else:
+            groups[ group_row[0] ] = "No"
+    return groups
+
+#==============================================================================#
+###
 # Creates a string with the specified ids in the form of (1, 2, 3);
 ###
 def form_delete_id_string(delete):
@@ -144,85 +117,53 @@ def form_delete_id_string(delete):
     return ids_string
 #==============================================================================#
 ###
-# Creates the query that deletes the id of a group from the user_groups_relation and replacing the row
-# which contains the specific id
+# Check if a user is an admin and update it in the db 
 ###
-def create_delete_group_query(id):
 
-    # get all the group_id_ columns 
-    query_1 = str("SELECT column_name FROM information_schema.columns where " 
-    "table_name = 'user_groups_relation' order by ordinal_position;")
+def is_user_admin():
+    queries = []
+    queries.append("SELECT is_admin FROM users WHERE id = " + str(user_id[0]))
 
-    # database connection 
+    # connection to the db
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
         database=DB_DATABASE)
-
     try:
-        cur = conn.cursor(buffered=True)
-        # get all the group column names
-        cur.execute(query_1)
-        group_columns = cur.fetchall()
-    except mariadb.Error as error:
-        print("Failed to read data from table", error)
-    finally:
-        if conn:
-            conn.close()
-            print('Connection to db was closed!')
+      cur = conn.cursor(buffered = True)
+      cur.execute(queries[0])
+      is_admin_in_db = cur.fetchall()
 
-    query_2 = ""
-    for i in range(0, len(group_columns) - 2):
-        
-        if i == len(group_columns) - 3:
-            query_2 += f"group_id_{i + 1} = " + id + ";"
-            break
-        else:
-            query_2 += f"group_id_{i + 1} = " + id + " OR "
-
-    return query_2
-
-#==============================================================================#
-###
-# Creates a list separated by a comma of all the group_id_x columns from the 
-# user_groups_relation table
-###
-def create_list_of_all_group_id_columns():
-    # get all the group_id_ columns 
-    query_1 = str("SELECT column_name FROM information_schema.columns where " 
-    "table_name = 'user_groups_relation' order by ordinal_position;")
-
-    # database connection 
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
-
-    try:
-        cur = conn.cursor(buffered=True)
-        # get all the group column names
-        cur.execute(query_1)
-        group_columns = cur.fetchall()
-    except mariadb.Error as error:
-        print("Failed to read data from table", error)
-    finally:
-        if conn:
-            conn.close()
-            print('Connection to db was closed!')
-
-    groups = ""
-    for i in range(2, len(group_columns) - 1):
-        if i != len(group_columns) - 1:
-            groups += str(group_columns[0][i]) + ","
-        else:
-            groups += str(group_columns[0][i])
+      is_admin = is_admin_in_db[0]
     
-    print(groups)
+      if(is_admin_in_db[0] == 0):
+        queries.append("SELECT g.id FROM groups g"
+            "INNER JOIN user_groups_relation ug ON ug.group_id = g.id"
+            "WHERE ug.user_id = " + str(user_id[0]))
+        cur.execute(queries[1])
+        group_ids = cur.fetchall()
+
+        is_in_admin_group = 0
+        for id in group_ids:
+            if id[0] == 1:
+                is_in_admin_group = 1
+                break
+
+        if is_in_admin_group & (not is_admin_in_db):
+            queries.append("UPDATE users SET is_admin = 1 WHERE id = " 
+                + str(user_id[0]))
+            cur.execute(queries[2])
+            conn.commit()
+            is_admin = 1
+
+      # close the connection
+      cur.close()
+      conn.close()
+    except mariadb.Error as error:
+        print("Failed to read data from table", error)
+    finally:
+      if conn:
+        conn.close()
+        print('Connection to db was closed!')
+    
+    return is_admin
 
 #==============================================================================#
-###
-# Creates a query to insert values back into the user_groups_relation without the 
-# deleted group
-###
-def create_reinsert_query():
-    query = "INSERT INTO user_groups_relation(user_id, "
-
-#==============================================================================#
-
-
