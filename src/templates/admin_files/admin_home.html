@@ -5,11 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type= "text/css" href="../static/styles/index.css">
     <link rel="stylesheet" type= "text/css" href="../static/styles/home.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!--Link pentru sageata-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
     <script type="text/javascript" src="../../static/scripts/index.js"></script>
   </head>
-
   <body>
 
     <div class="topnav" id="myTopnav">
@@ -31,7 +32,14 @@
       <a href="javascript:void(0)" class="closebtn" onclick="close_menu()">×</a>
       <a href="/admin_home" target="_self">Apps</a>
       <a href="/admin_groups" target="_self">Groups</a>
-      <a href="/admin_add" target="_self">Add user/group/perm</a>
+      <button class="dropdown-side-btn">Add user/group/perm
+        <i class="fa fa-caret-down"></i>
+      </button>
+          <div class="dropdown-side-menu">
+              <a href="/add_user">Add user</a>
+              <a href="#">Add group</a>
+              <a href="#">Add permissions</a>
+          </div>
       <a href="/admin_modify" target="_self">Modify user/group/perm</a>
 
       <button class="dropdown-side-btn" id="drop-side-btn">Delete

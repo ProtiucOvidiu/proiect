@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, request, session, abort, flash, url_for
+from flask import Flask, flash, redirect, render_template, request, session, abort, url_for
 import mysql.connector as mariadb
 from passlib.hash import sha256_crypt
 from global_variables import *
@@ -7,7 +7,7 @@ from global_variables import *
 
 @app.route('/admin_home')
 def admin_home_run():
-    # if the user is not logged in, redirect him/her to the login page
+   # if the user is not logged in, redirect him/her to the login page
     is_logged_in()
 
     # list of queries
@@ -100,7 +100,7 @@ def admin_add_run():
     # if the user is not logged in, redirect him/her to the login page
     is_logged_in()
 
-    return render_template('admin_files/admin_add.html')
+    return render_template('admin_files/admin_add_user.html')
     
 #==============================================================================#
 
@@ -449,3 +449,152 @@ def admin_contact_run():
     return render_template('admin_files/admin_contact.html')
 
 #==============================================================================#
+
+@app.route('/add_user')
+def admin_add_user():
+    query1 = "SELECT id, name FROM groups ORDER BY id;"
+    query2 = "SELECT id, name FROM permissions;"
+
+    # database connection 
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+    try:
+        cur = conn.cursor(buffered = True)
+        cur.execute(query1)
+        groups = cur.fetchall()
+        cur.execute(query2)
+        perms = cur.fetchall()
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if conn:
+            conn.close()
+            print('Connection to db was closed!')
+
+    return render_template('admin_files/admin_add_user.html', groups = groups, perms = perms)
+
+#==============================================================================#
+
+@app.route('/submit_user', methods = ['GET','POST'])
+def submit_user_form():
+    #get the list of group/groups
+    g = request.form.getlist('groups')
+    #get the list of extra perms
+    p = request.form.getlist('perms')
+    l = []
+
+    print('--------')
+    print(g)
+    print(p)
+    if request.method == 'POST':
+        full_name = str(request.form.get('first_name')) + " " + str(request.form.get('last_name'))
+        l.append(full_name)
+        if check_email(request.form.get('email')):
+            l.append(request.form.get('email'))
+        else:
+            flash("Invalid email. Try again!")
+        if check_phone(request.form.get('phone_number')):
+            l.append(request.form.get('phone_number'))
+        else:
+            flash("Invalid phone number. Try again!")
+        if request.form.get('password') == request.form.get('confirm_password'):
+            l.append(sha256_crypt.hash(request.form.get('password')))
+        else:
+            flash('Password does not correspond. Try again!')
+        if check_username(request.form.get('username')) == True:
+            l.append(request.form.get('username'))
+        else:
+            flash("Username already exist!")
+            return redirect('/add_user')
+
+    print(l)
+    print("==================")
+    
+    if len(l) == 5 and g:
+        flash("Succesfully created user!")
+    create_query(g, l)
+    return redirect('/add_user')
+
+#==============================================================================#
+def create_query(groups, lista):
+    query = ""
+    user_name = str(lista[4])
+    user_query = ( "INSERT INTO users (username, password, full_name, email, " 
+    "phone_number, is_admin) VALUES ( '" + user_name + "' , '" + str(lista[3])
+    + "', '" + str(lista[0]) + "', '" + str(lista[1]) + "', '" + str(lista[2]) + "', ")
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+    try:
+        user_id = "SELECT id FROM users WHERE username = '" + user_name + "' ;"
+        cur = conn.cursor(buffered = True)
+
+        if groups[0] == '1':
+            user_query += "1);"
+        else:
+            user_query += "0);"
+            
+        print(user_query)
+        cur.execute(user_query)
+        conn.commit()
+
+        cur.execute(user_id)
+        user_id = str(cur.fetchone()[0])
+        print(user_id)
+        query = "INSERT INTO user_groups_relation (user_id, group_id) VALUES (" + str(user_id) + ", "
+        queries = []
+        
+        for i in range(0, len(groups)):
+            #query += str(groups[i]) + ");"
+            #queries.append(query)
+            #query = query[:-3]
+            queries.append(query + str(groups[i])+ ");")
+
+        for i in range(0,len(queries)):
+            cur.execute(str(queries[i]))
+            conn.commit()
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if conn:
+            conn.close()
+            print('Connection to db was closed!')
+
+    return query
+
+#==============================================================================#
+def check_username(username):
+    check = True
+    user_query = "SELECT username FROM users;"
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+    try:
+        cur = conn.cursor(buffered = True)
+        cur.execute(user_query)
+        user_query = cur.fetchall()
+        for i in user_query:
+            if i[0] == username:
+                check = False
+                break
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if conn:
+            conn.close()
+            print('Connection to db was closed!')
+    print(check)
+    return check
+#==============================================================================#
+
+@app.route('/add_group')
+def admin_add_group():
+    return render_template('admin_files/admin_add_group.html')
+
+@app.route('/add_perms')
+def admin_add_perms():
+    return render_template('admin_files/admin_add_perm.html')
