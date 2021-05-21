@@ -107,8 +107,16 @@ def admin_add_run():
 @app.route('/admin_modify', methods = ['POST', 'GET'])
 def admin_modify_run():
     modify = request.form
-    query = "select * from groups;"
-    query2 = "select * from permissions;"
+    query = ("SELECT distinct g.* FROM groups g "
+        "INNER JOIN user_groups_relation ug ON ug.group_id = g.id "
+        "WHERE ug.user_id = " + str(user_id[0]) + ";")
+    query2 = (
+        "SELECT distinct p.* FROM permissions p "
+        "INNER JOIN groups_perm_relation gp ON gp.perm_id = p.id "
+        "WHERE gp.group_id IN ( "
+        "SELECT g.id FROM groups g "
+        "INNER JOIN user_groups_relation ug ON ug.group_id = g.id "
+        "WHERE ug.user_id = " + str(user_id[0]) + ");")
     # if the user is not logged in, redirect him/her to the login page
     is_logged_in()
     try:

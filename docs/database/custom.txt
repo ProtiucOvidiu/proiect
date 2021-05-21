@@ -1,5 +1,5 @@
-Insert into test.users(username,password,full_name,email,phone_number) values ("ovi", "cvscvs", "Ovi Pro",
-"ovi.pro@yahoo.com", "0773978453");
+Insert into test.users(username,password,full_name,email,phone_number, is_admin) values ("ovi", "cvscvs", "Ovi Pro",
+"ovi.pro@yahoo.com", "0773978453", 1);
 
 
 Insert into test.groups(name,description) values ("Users", "We are the users");
@@ -11,9 +11,12 @@ Insert into test.permissions(name,description) values ("Editare","Acest user poa
 Insert into test.permissions(name,description) values ("Stergere","Acest user poate sterge");
 
 
-Insert into test.user_groups_relation(user_id,group_id_1,group_id_2,group_id_3) values (1,1,2,3);
-
-Insert into test.groups_perm_relation(group_id,perm_id_1,perm_id_2,perm_id_3) values (1,1,2,3);
+Insert into test.user_groups_relation(user_id,group_id) values (1,1);
+Insert into test.user_groups_relation(user_id,group_id) values (2,1);
+Insert into test.user_groups_relation(user_id,group_id) values (2,1);
+Insert into test.user_groups_relation(user_id,group_id) values (2,2);
+Insert into test.groups_perm_relation(group_id,perm_id) values (2,2);
+Insert into test.groups_perm_relation(group_id,perm_id) values (2,1);
 
 
 SELECT 
