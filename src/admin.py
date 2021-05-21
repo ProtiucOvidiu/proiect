@@ -107,6 +107,7 @@ def admin_add_run():
 @app.route('/admin_modify', methods = ['POST', 'GET'])
 def admin_modify_run():
     modify = request.form
+    print('\n\n\n\n'+str(user_id[0])+'\n\n\n\n')
     query = ("SELECT distinct g.* FROM groups g "
         "INNER JOIN user_groups_relation ug ON ug.group_id = g.id "
         "WHERE ug.user_id = " + str(user_id[0]) + ";")
@@ -117,13 +118,14 @@ def admin_modify_run():
         "SELECT g.id FROM groups g "
         "INNER JOIN user_groups_relation ug ON ug.group_id = g.id "
         "WHERE ug.user_id = " + str(user_id[0]) + ");")
+    query3 = "Select * from users;"
     # if the user is not logged in, redirect him/her to the login page
     is_logged_in()
     try:
         conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
         database=DB_DATABASE)
         cur = conn.cursor(buffered = True)
-        (groups, perm) = temp(query, query2)
+        (groups, perm, users) = temp(query, query2, query3)
         if request.method == 'POST':
                 if update_group(modify) != '':
                     cur.execute(update_group(modify))
@@ -131,7 +133,7 @@ def admin_modify_run():
                     cur.execute(update_permissions(modify))
                 conn.commit()
         elif request.method == 'GET':
-            return render_template('admin_files/admin_modify.html', groups = groups, perm = perm)
+            return render_template('admin_files/admin_modify.html', groups = groups, perm = perm, users = users)
         cur.close()
         conn.close()
     except mariadb.Error as error:
@@ -139,13 +141,14 @@ def admin_modify_run():
     finally:
         if conn:
             conn.close()
-    (groups, perm) = temp(query, query2)
-    return render_template('admin_files/admin_modify.html', groups = groups, perm = perm)
+    (groups, perm, users) = temp(query, query2, query3)
+    return render_template('admin_files/admin_modify.html', groups = groups, perm = perm,  users = users)
 
 # use this function to get groups and permission, without reloading the page
-def temp(query, query2):
+def temp(query, query2, query3):
     groups = ''
     permissions = ''
+    users = ''
     try: 
         conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
         database=DB_DATABASE)
@@ -154,6 +157,8 @@ def temp(query, query2):
         groups = cur.fetchall()
         cur.execute(query2)
         permissions = cur.fetchall()
+        cur.execute(query3)
+        users = cur.fetchall()
         cur.close()
         conn.close()
     except mariadb.Error as error:
@@ -161,7 +166,7 @@ def temp(query, query2):
     finally:
         if conn:
             conn.close()
-    return (groups, permissions)
+    return (groups, permissions, users)
 
 # The actual function for update data in groups
 def update_group(modify):
