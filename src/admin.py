@@ -452,7 +452,7 @@ def admin_contact_run():
 
 @app.route('/add_user')
 def admin_add_user():
-    query1 = "SELECT id, name FROM groups;"
+    query1 = "SELECT id, name FROM groups ORDER BY id;"
     query2 = "SELECT id, name FROM permissions;"
 
     # database connection 
@@ -500,42 +500,60 @@ def submit_user_form():
         else:
             flash("Invalid phone number. Try again!")
         if request.form.get('password') == request.form.get('confirm_password'):
-            l.append(request.form.get('password'))
+            l.append(sha256_crypt.hash(request.form.get('password')))
         else:
             flash('Password does not correspond. Try again!')
-        l.append(request.form.get('username'))
+        if check_username(request.form.get('username')) == True:
+            l.append(request.form.get('username'))
+        else:
+            flash("Username already exist!")
+            return redirect('/add_user')
 
     print(l)
+    print("==================")
     
     if len(l) == 5 and g:
         flash("Succesfully created user!")
     create_query(g, l)
-    return admin_add_user()
+    return redirect('/add_user')
 
 #==============================================================================#
 def create_query(groups, lista):
     query = ""
     user_name = str(lista[4])
-    user_query = "INSER INTO users (username, password, full_name, email, phone_number) VALUES (" + user_name + ", " 
-    query = "INSERT INTO user_groups_relation (user_id, "
+    user_query = ( "INSERT INTO users (username, password, full_name, email, " 
+    "phone_number, is_admin) VALUES ( '" + user_name + "' , '" + str(lista[3])
+    + "', '" + str(lista[0]) + "', '" + str(lista[1]) + "', '" + str(lista[2]) + "', ")
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
         database=DB_DATABASE)
     try:
         user_id = "SELECT id FROM users WHERE username = '" + user_name + "' ;"
         cur = conn.cursor(buffered = True)
+
+        if groups[0] == '1':
+            user_query += "1);"
+        else:
+            user_query += "0);"
+            
+        print(user_query)
+        cur.execute(user_query)
+        conn.commit()
+
         cur.execute(user_id)
         user_id = str(cur.fetchone()[0])
-        for i in range(0,len(groups)):
-            if i != len(groups)-1:
-                query += "group_id_" + str(i+1) + ", "
-            else:
-                query += "group_id_" + str(i+1) + ") VALUES ("
-            query += str(user_id) + ", "
-            for i in range(0, len(groups)):
-                if i != len(groups)-1:
-                    query += str(groups[i]) + ", "
-                else:
-                    query += str(groups[i])+ ");" 
+        print(user_id)
+        query = "INSERT INTO user_groups_relation (user_id, group_id) VALUES (" + str(user_id) + ", "
+        queries = []
+        
+        for i in range(0, len(groups)):
+            #query += str(groups[i]) + ");"
+            #queries.append(query)
+            #query = query[:-3]
+            queries.append(query + str(groups[i])+ ");")
+
+        for i in range(0,len(queries)):
+            cur.execute(str(queries[i]))
+            conn.commit()
         cur.close()
         conn.close()
     except mariadb.Error as error:
@@ -545,9 +563,32 @@ def create_query(groups, lista):
             conn.close()
             print('Connection to db was closed!')
 
-    print(query)
     return query
 
+#==============================================================================#
+def check_username(username):
+    check = True
+    user_query = "SELECT username FROM users;"
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+    try:
+        cur = conn.cursor(buffered = True)
+        cur.execute(user_query)
+        user_query = cur.fetchall()
+        for i in user_query:
+            if i[0] == username:
+                check = False
+                break
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if conn:
+            conn.close()
+            print('Connection to db was closed!')
+    print(check)
+    return check
 #==============================================================================#
 
 @app.route('/add_group')
