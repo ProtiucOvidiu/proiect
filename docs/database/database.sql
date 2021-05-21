@@ -27,7 +27,7 @@ CREATE TABLE `groups` (
   `name` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=euckr;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=euckr;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -36,7 +36,7 @@ CREATE TABLE `groups` (
 
 LOCK TABLES `groups` WRITE;
 /*!40000 ALTER TABLE `groups` DISABLE KEYS */;
-INSERT INTO `groups` VALUES (1,'Users','We are the users'),(2,'Admins','We are the admins');
+INSERT INTO `groups` VALUES (1,'Users','We are the users'),(2,'Admins','We are the admins'),(3,'Pesti','Aici putem vedea pesti'),(4,'Google','Search on Google');
 /*!40000 ALTER TABLE `groups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -56,7 +56,7 @@ CREATE TABLE `groups_perm_relation` (
   KEY `perm_id` (`perm_id`),
   CONSTRAINT `groups_perm_relation_ibfk_1` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`) ON DELETE CASCADE,
   CONSTRAINT `groups_perm_relation_ibfk_2` FOREIGN KEY (`perm_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=euckr;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=euckr;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -65,7 +65,7 @@ CREATE TABLE `groups_perm_relation` (
 
 LOCK TABLES `groups_perm_relation` WRITE;
 /*!40000 ALTER TABLE `groups_perm_relation` DISABLE KEYS */;
-INSERT INTO `groups_perm_relation` VALUES (1,1,1),(2,1,2);
+INSERT INTO `groups_perm_relation` VALUES (1,1,1),(2,1,2),(3,1,1),(4,1,2),(5,1,3),(6,2,4);
 /*!40000 ALTER TABLE `groups_perm_relation` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -81,7 +81,7 @@ CREATE TABLE `permissions` (
   `name` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=euckr;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=euckr;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -90,7 +90,7 @@ CREATE TABLE `permissions` (
 
 LOCK TABLES `permissions` WRITE;
 /*!40000 ALTER TABLE `permissions` DISABLE KEYS */;
-INSERT INTO `permissions` VALUES (1,'Vizualizare','Acest user poate vizualiza'),(2,'Editare','Acest user poate edita'),(3,'Stergere','Acest user poate sterge');
+INSERT INTO `permissions` VALUES (1,'Vizualizare','Acest user poate vizualiza'),(2,'Editare','Acest user poate edita'),(3,'Stergere','Acest user poate sterge'),(4,'Pesti-vizualizare','Acest user poate vizualiza'),(5,'Pesti-editare','Acest user poate edita'),(6,'Pesti-Stergere','Acest user poate sterge'),(7,'Cautare-Google','Acest user poate cauta pe google');
 /*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -110,7 +110,7 @@ CREATE TABLE `user_groups_relation` (
   KEY `group_id` (`group_id`),
   CONSTRAINT `user_groups_relation_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
   CONSTRAINT `user_groups_relation_ibfk_2` FOREIGN KEY (`group_id`) REFERENCES `groups` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=euckr;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=euckr;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -119,7 +119,7 @@ CREATE TABLE `user_groups_relation` (
 
 LOCK TABLES `user_groups_relation` WRITE;
 /*!40000 ALTER TABLE `user_groups_relation` DISABLE KEYS */;
-INSERT INTO `user_groups_relation` VALUES (1,1,1),(2,1,2);
+INSERT INTO `user_groups_relation` VALUES (1,1,1),(2,1,2),(3,1,1),(4,1,2),(5,2,1),(6,3,1),(7,3,2),(8,4,1),(9,5,1),(10,5,2),(11,6,1);
 /*!40000 ALTER TABLE `user_groups_relation` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -139,7 +139,7 @@ CREATE TABLE `users` (
   `phone_number` varchar(15) DEFAULT NULL,
   `is_admin` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=euckr;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=euckr;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -148,7 +148,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'ovi','cvscvs','Ovi Pro','ovi.pro@yahoo.com','0773978453',1);
+INSERT INTO `users` VALUES (1,'ovi','cvscvs','Ovi Pro','ovi.pro@yahoo.com','0773978453',1),(2,'ovi','$5$rounds=535000$LoMOqM6Qy5BRSVtK$oxGFftJds1oUIgmwiyZmbwmrytNjE9JRb5ygeq.CXM5','Ovi Pro','ovi.pro@yahoo.com','0773978453',1),(3,'mario','$5$rounds=535000$LoMOqM6Qy5BRSVtK$oxGFftJds1oUIgmwiyZmbwmrytNjE9JRb5ygeq.CXM5','Mario Stuart','mario.stuart@yahoo.com','0773324313',0),(4,'andrei','$5$rounds=535000$LoMOqM6Qy5BRSVtK$oxGFftJds1oUIgmwiyZmbwmrytNjE9JRb5ygeq.CXM5','Andrei Milano','andrei@yahoo.com','0723224313',1),(5,'ion','$5$rounds=535000$LoMOqM6Qy5BRSVtK$oxGFftJds1oUIgmwiyZmbwmrytNjE9JRb5ygeq.CXM5','Ion Vesa','ion_vesa@yahooss.com','0723446313',0),(6,'george','$5$rounds=535000$LoMOqM6Qy5BRSVtK$oxGFftJds1oUIgmwiyZmbwmrytNjE9JRb5ygeq.CXM5','George Vesa','g_vesa@yahooss.com','0767446313',1),(7,'andi','$5$rounds=535000$LoMOqM6Qy5BRSVtK$oxGFftJds1oUIgmwiyZmbwmrytNjE9JRb5ygeq.CXM5','Andi Popescu','andi_pop@yahooss.com','0790046313',0);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -161,4 +161,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-05-20 18:42:21
+-- Dump completed on 2021-05-21 19:08:06
