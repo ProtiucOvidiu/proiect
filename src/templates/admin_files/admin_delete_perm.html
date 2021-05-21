@@ -19,7 +19,9 @@
     <div class="topnav" id="myTopnav">
 
       <div class="dropdown">
-        <a href="#" class="dropbtn" target="_self">Profile</a>
+        <button class="dropbtn">Profile  
+          <i class="fa fa-caret-down" style="text-align: right;"></i>  
+        </button>
 
         <div class="dropdown-content">
           <a href="/admin_settings" target="_self">Settings</a>
@@ -37,8 +39,8 @@
         <a href="/admin_add" target="_self">Add user/group/perm</a>
         <a href="/admin_modify" target="_self">Modify user/group/perm</a>
   
-        <button class="dropdown-side-btn" id="drop-side-btn">Delete user/group/app
-          <i class="fa fa-caret-down"></i>
+        <button class="dropdown-side-btn" id="drop-side-btn">Delete
+          <i class="fa fa-caret-down" style="text-align: right"></i>
         </button>
         <div class="dropdown-side-menu">
           <a href="/delete_user" target="_self">Delete an user</a>
@@ -52,40 +54,43 @@
 
     <div id="main">
       <button class="open_btn" onclick="open_menu()">☰</button>
-      <div style="padding: 30px;">
+      <div class="main-container">
         <h2>Delete one or more apps</h2>
-      </div>
-      <div style="position: relative;" class="form_container">
-        <div id="group_form" class="">
-          
-            <div class="form_row">
-              <form action="{{ url_for('execute_delete_perm') }}" method="POST">
-                <div class="table_scroll">
-                  <table>
-                    <tr>
-                      <th>Check</th>
-                      <th>ID</th>
-                      <th>App Name</th>
-                      <th>App Description</th>
-                    </tr>
-                  <!---->
-                    {% for perm in perms %}
-                    <tr>
-                      <td><input type="checkbox" value="{{ perm[0] }}" name="checks"> </td>
-                      <td>{{ perm[0] }}</td>
-                      <td>{{ perm[1] }}</td>
-                      <td>{{ perm[1] }}</td>
-                    </tr>
-                    {% endfor %}  
-                    
-                  </table>
-                </div>
-                
-                <div class="button_rows">
-                  <button type="reset" class="submit_btn">Clear selection</button>
-                <button type="submit" class="submit_btn">Delete selected apps(s)</button>
-                </div>
-              </form>
+
+        <form action="{{ url_for('execute_delete_perm') }}" method="POST">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead class="thead-info">
+                <tr>
+                  <th scope="col">Check</th>
+                  <th scope="col">ID</th>
+                  <th scope="col">App Name</th>
+                  <th scope="col">App Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if perms|length %}
+                  {% for perm in perms %}
+                  <tr>
+                    <td><input type="checkbox" value="{{ perm[0] }}" name="checks"> </td>
+                    <td>{{ perm[0] }}</td>
+                    <td>{{ perm[1] }}</td>
+                    <td>{{ perm[1] }}</td>
+                  </tr>
+                  {% endfor %}  
+                {% else %}
+                <tr>
+                  <td colspan="4">There are no apps defined! Check the database</td>
+                </tr>
+                {% endif %}
+              </tbody>   
+            </table>
+          </div>          
+          <div class="button_rows">
+            <button type="submit" class="btn btn-info">Delete selected apps(s)</button>
+            <button type="reset"  class="btn btn-info">Clear selection</button>
+          </div>
+        </form>
             </div>          
         </div>
       </div>  

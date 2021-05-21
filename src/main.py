@@ -173,11 +173,11 @@ def reset_password():
   cur = conn.cursor(buffered=True)
   if request.method == 'POST':
     if request.form.get('email'):
+      email = request.form.get('email')
       sql = "SELECT id from users WHERE email = " + "'" + email + "'"
       cur.execute(sql)
       sql = cur.fetchone()[0]
       print(sql)
-      email = request.form.get('email')
   
   # trimitere mail cu parola reseta temporar
   # 

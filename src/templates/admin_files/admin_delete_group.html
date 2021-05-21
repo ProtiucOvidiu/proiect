@@ -19,7 +19,9 @@
     <div class="topnav" id="myTopnav">
 
       <div class="dropdown">
-        <a href="#" class="dropbtn" target="_self">Profile</a>
+        <button class="dropbtn">Profile  
+          <i class="fa fa-caret-down" style="text-align: right;"></i>  
+        </button>
 
         <div class="dropdown-content">
           <a href="/admin_settings" target="_self">Settings</a>
@@ -37,8 +39,8 @@
         <a href="/admin_add" target="_self">Add user/group/perm</a>
         <a href="/admin_modify" target="_self">Modify user/group/perm</a>
   
-        <button class="dropdown-side-btn" id="drop-side-btn">Delete user/group/app
-          <i class="fa fa-caret-down"></i>
+        <button class="dropdown-side-btn" id="drop-side-btn">Delete
+          <i class="fa fa-caret-down" style="text-align: right"></i>
         </button>
         <div class="dropdown-side-menu">
           <a href="/delete_user" target="_self">Delete an user</a>
@@ -52,40 +54,43 @@
 
     <div id="main">
       <button class="open_btn" onclick="open_menu()">☰</button>
-      <div style="padding: 30px;">
-        <h2>Delete one or more groups</h2>
-      </div>
-      <div style="position: relative;" class="form_container">
-        <div id="group_form" class="">
-          
-            <div class="form_row">
-              <form action="{{ url_for('execute_delete_group') }}" method="POST">
-                <div class="table_scroll">
-                  <table>
-                    <tr>
-                      <th>Check</th>
-                      <th>ID</th>
-                      <th>Group Name</th>
-                      <th>Group Description</th>
-                    </tr>
-                    {% for group in groups %}
-                    <tr>
-                      <td><input type="checkbox" value="{{ group[0] }}" name="checks"> </td>
-                      <td>{{ group[0] }}</td>
-                      <td>{{ group[1] }}</td>
-                      <td>{{ group[2] }}</td>
-                    </tr>
-                    {% endfor %}  
-                    
-                  </table>
-                </div>
-                <div class="button_rows">
-                  <button type="reset" class="submit_btn">Clear selection</button>
-                <button type="submit" class="submit_btn">Delete selected group(s)</button>
-                </div>
-              </form>
-            </div>          
-        </div>
+      <div class="main-container">
+        <h2>Delete one or more groups</h2>  
+
+        <form action="{{ url_for('execute_delete_group') }}" method="POST">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead class="thead-info">
+                <tr>
+                  <th scope="col">Check</th>
+                  <th scope="col">ID</th>
+                  <th scope="col">Group Name</th>
+                  <th scope="col">Group Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if groups|length %}
+                  {% for group in groups %}
+                  <tr>
+                    <td><input type="checkbox" value="{{ group[0] }}" name="checks"> </td>
+                    <td>{{ group[0] }}</td>
+                    <td>{{ group[1] }}</td>
+                    <td>{{ group[2] }}</td>
+                  </tr>
+                  {% endfor %}  
+                {% else %}
+                  <tr>
+                    <td colspan="4">There are no groups defined! Check the database</td>
+                  </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+          <div class="button_rows">
+            <button type="submit" class="btn btn-info">Delete selected group(s)</button>
+            <button type="reset" class="btn btn-info">Clear selection</button>
+          </div>
+        </form>
       </div>  
       
     </div>

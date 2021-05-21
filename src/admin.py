@@ -58,7 +58,7 @@ def admin_groups_run():
     queries.append("SELECT name FROM groups;")
     # create query to get the groups that the current user is a part of
     queries.append(
-        "SELECT g.id, g.name FROM groups g "
+        "SELECT g.name FROM groups g "
         "INNER JOIN user_groups_relation ug ON ug.group_id = g.id "
         "WHERE ug.user_id = " + str(user_id[0]) + ";")
 
@@ -87,8 +87,11 @@ def admin_groups_run():
 
     # return the page with all the data stored in the groups variable which is a
     # dictionary with {name, yes/no} pairs
-    return render_template('admin_files/admin_groups.html', 
-        groups = create_group_dict(group_names, admin_groups))
+    groups = create_group_dict(group_names, admin_groups)
+    #for key, value in groups.items():
+    #    print(key + "-------" + value)
+    return render_template('admin_files/admin_groups.html', groups = groups
+        )
 
 #==============================================================================#
 

@@ -4,9 +4,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type= "text/css" href="../static/styles/index.css">
-    <!--
     <link rel="stylesheet" type= "text/css" href="../static/styles/home.css">
-    -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script type="text/javascript" src="../../static/scripts/index.js"></script>
   </head>
@@ -16,7 +14,9 @@
     <div class="topnav" id="myTopnav">
 
       <div class="dropdown">
-        <a href="#" class="dropbtn" target="_self">Profile</a>
+        <button class="dropbtn">Profile  
+          <i class="fa fa-caret-down" style="text-align: right;"></i>  
+        </button>
 
         <div class="dropdown-content">
           <a href="/user_settings" target="_self">Settings</a>
@@ -37,7 +37,7 @@
 
     <div id="main">
       <button class="open_btn" onclick="open_menu()">☰</button>
-      <div style="padding: 30px;">
+      <div class="main-container">
         <h2>Apps view</h2>
         <p>List of permissions.</p>
         
@@ -54,7 +54,7 @@
                     {% for perm in permissions %}
                     <tr>
                       <td scope="row" id="{{ perm[0] }}">{{ perm[0] }}</td>
-                      <td><a href="#" id="link">The app</a></td></tr>
+                      <td><a href="#" class="link-style">The app</a></td></tr>
                     </tr>
                     {% endfor %}
                   
