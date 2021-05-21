@@ -1,3 +1,5 @@
+# Parola e: 'cvscvs' pentru toti userii
+
 Insert into test.users(username,password,full_name,email,phone_number, is_admin) values ("ovi", "$5$rounds=535000$LoMOqM6Qy5BRSVtK$oxGFftJds1oUIgmwiyZmbwmrytNjE9JRb5ygeq.CXM5", "Ovi Pro",
 "ovi.pro@yahoo.com", "0773978453", 1);
 

@@ -151,7 +151,6 @@ def admin_add_run():
 @app.route('/admin_modify', methods = ['POST', 'GET'])
 def admin_modify_run():
     modify = request.form
-    print('\n\n\n\n'+str(user_id[0])+'\n\n\n\n')
     query = ("SELECT distinct g.* FROM groups g "
         "INNER JOIN user_groups_relation ug ON ug.group_id = g.id "
         "WHERE ug.user_id = " + str(user_id[0]) + ";")
@@ -162,7 +161,7 @@ def admin_modify_run():
         "SELECT g.id FROM groups g "
         "INNER JOIN user_groups_relation ug ON ug.group_id = g.id "
         "WHERE ug.user_id = " + str(user_id[0]) + ");")
-    query3 = "Select * from users;"
+    query3 = "Select id, username from users;"
     # if the user is not logged in, redirect him/her to the login page
     is_logged_in()
     try:
@@ -175,6 +174,12 @@ def admin_modify_run():
                     cur.execute(update_group(modify))
                 if update_permissions(modify) != '':
                     cur.execute(update_permissions(modify))
+                (insert_user_group, remove_user_group) = update_user_group(modify)
+                cur.execute(insert_user_group)
+                print(insert_user_group)
+                if remove_user_group != '':
+                    cur.execute(remove_user_group)
+                print(remove_user_group)
                 conn.commit()
         elif request.method == 'GET':
             return render_template('admin_files/admin_modify.html', groups = groups, perm = perm, users = users)
@@ -243,6 +248,30 @@ def update_permissions(modify):
             update_query += " SET description = \'" + modify['desc_perm'] + '\''
         update_query += " WHERE id = " + modify['id_perm'] + ';'
     return update_query
+
+def update_user_group(modify):
+    insert_query = ''
+    remove_query = ''
+    if (modify.get('id_user') and modify.get('add_group')):
+        insert_query +=("Insert into user_groups_relation(user_id, group_id) "
+        "values(" + modify['id_user'] + ", " + modify['add_group'] + ");")
+    elif (modify.get('id_user') and modify.get('remove_group')):
+        remove_query += ("DELETE FROM user_groups_relation "
+        "WHERE user_id = " + modify['id_user'] + " and group_id = " + modify['remove_group'] + ";")
+    return (insert_query, remove_query)
+
+def update_user_perm(modify):
+    insert_query = ''
+    remove_query = ''
+    if (modify.get('id_group') and modify.get('add_perm')):
+        insert_query +=("Insert into groups_perm_relation(group_id, perm_id) "
+        "values(" + modify['id_group'] + ", " + modify['add_perm'] + ");")
+    elif (modify.get('id_group') and modify.get('remove_perm')):
+        remove_query += ("DELETE FROM groups_perm_relation "
+        "WHERE group_id = " + modify['id_group'] + " and perm_id = " + modify['remove_perm'] + ";")
+    return (insert_query, remove_query)
+
+
 #==============================================================================#
 
 @app.route('/delete_user')
