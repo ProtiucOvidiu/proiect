@@ -4,8 +4,10 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type= "text/css" href="../static/styles/index.css">
+    <!--
     <link rel="stylesheet" type= "text/css" href="../static/styles/home.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css%22%3E">
+    -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script type="text/javascript" src="../../static/scripts/index.js"></script>
   </head>
 
@@ -39,24 +41,31 @@
         <h2>Apps view</h2>
         <p>List of permissions.</p>
         
-        <div class="container">
-          <div class="row gutters">
-            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-              <table>
-                <tr>
-                  <th>App Name</th>
-                  <th>Link</th>
-                </tr>
-                {% for perm in permissions %}
-                <tr>
-                  <td id="{{ perm[0] }}">{{ perm[0] }}</td>
-                  <td><a href="#" id="link">The app</a></td></tr>
-                </tr>
-                {% endfor %}
+             <div class="table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead class="thead-info">
+                  <tr>
+                    <th scope="col">App Name</th>
+                    <th scope="col">Link</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% if permissions|length %}
+                    {% for perm in permissions %}
+                    <tr>
+                      <td scope="row" id="{{ perm[0] }}">{{ perm[0] }}</td>
+                      <td><a href="#" id="link">The app</a></td></tr>
+                    </tr>
+                    {% endfor %}
+                  
+                  {% else %}
+                  <tr>
+                    <td colspan="2">There are no apps!</td>
+                  </tr>
+                  {% endif %}
+                </tbody>
               </table>
             </div>
-          </div>
-        </div> 
         
       </div>
     </div>

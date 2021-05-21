@@ -4,6 +4,8 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type= "text/css" href="../static/styles/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!--Link pentru sageata-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script type="text/javascript" src="../../static/scripts/index.js"></script>
   </head>
 
@@ -29,7 +31,16 @@
       <a href="/admin_groups" target="_self">Groups</a>
       <a href="/admin_add" target="_self">Add user/group/perm</a>
       <a href="/admin_modify" target="_self">Modify user/group/perm</a>
-      <a href="/admin_delete" target="_self">Delete user/group/perm</a>
+
+      <button class="dropdown-side-btn" id="drop-side-btn">Delete user/group/app
+        <i class="fa fa-caret-down"></i>
+      </button>
+      <div class="dropdown-side-menu">
+        <a href="/delete_user" target="_self">Delete an user</a>
+        <a href="/delete_group" target="_self">Delete a group</a>
+        <a href="/delete_perm" target="_self">Delete a permission</a>
+      </div>
+
       <a href="/admin_msg" target="_self">Messages</a>
       <a href="/admin_forum" target="_self">Q&A/Forum</a>
     </div>
@@ -41,6 +52,21 @@
         <p>List of options.</p>
       </div>
     </div>
-
+    <script>
+      var dropdown = document.getElementsByClassName("dropdown-side-btn");
+      var i;
+    
+      for (i = 0; i < dropdown.length; i++) {
+      dropdown[i].addEventListener("click", function() {
+      this.classList.toggle("active");
+      var dropdownContent = this.nextElementSibling;
+      if (dropdownContent.style.display === "block") {
+      dropdownContent.style.display = "none";
+      } else {
+      dropdownContent.style.display = "block";
+      }
+      });
+      }
+     </script>
   </body>
 </html>

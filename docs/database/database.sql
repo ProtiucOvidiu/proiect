@@ -10,7 +10,8 @@ CREATE TABLE `users` (
   `password` varchar(255),
   `full_name` varchar(255),
   `email` varchar(255),
-  `phone_number` int(10)
+  `phone_number` int(10),
+  'is_admin' int(1)
 );
 
 CREATE TABLE `groups` (

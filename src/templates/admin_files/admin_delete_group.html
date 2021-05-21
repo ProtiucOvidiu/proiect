@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!--Link pentru sageata-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type= "text/css" href="../static/styles/index.css">
+    <link rel="stylesheet" type= "text/css" href="../../static/styles/delete.css">
+    <script type="text/javascript" src="../../static/scripts/index.js"></script>
+    <script>
+     
+    </script>
+    
+  </head>
+
+  <body>
+
+    <div class="topnav" id="myTopnav">
+
+      <div class="dropdown">
+        <a href="#" class="dropbtn" target="_self">Profile</a>
+
+        <div class="dropdown-content">
+          <a href="/admin_settings" target="_self">Settings</a>
+          <a href="/admin_contact" target="_self">Contact</a>
+          <a href="/logout" target="_self">Log Out</a>
+
+        </div>
+      </div>
+      <a href="/admin_home" class="homebtn" target="_self">Home</a>
+    </div>
+    <div id="side_menu" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="close_menu()">×</a>
+        <a href="/admin_home" target="_self">Apps</a>
+        <a href="/admin_groups" target="_self">Groups</a>
+        <a href="/admin_add" target="_self">Add user/group/perm</a>
+        <a href="/admin_modify" target="_self">Modify user/group/perm</a>
+  
+        <button class="dropdown-side-btn" id="drop-side-btn">Delete user/group/app
+          <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-side-menu">
+          <a href="/delete_user" target="_self">Delete an user</a>
+          <a href="/delete_group" target="_self">Delete a group</a>
+          <a href="/delete_perm" target="_self">Delete a permission</a>
+        </div>
+  
+        <a href="/admin_msg" target="_self">Messages</a>
+        <a href="/admin_forum" target="_self">Q&A/Forum</a>
+      </div>
+
+    <div id="main">
+      <button class="open_btn" onclick="open_menu()">☰</button>
+      <div style="padding: 30px;">
+        <h2>Delete one or more groups</h2>
+      </div>
+      <div style="position: relative;" class="form_container">
+        <div id="group_form" class="">
+          
+            <div class="form_row">
+              <form action="{{ url_for('execute_delete_group') }}" method="POST">
+                <div class="table_scroll">
+                  <table>
+                    <tr>
+                      <th>Check</th>
+                      <th>ID</th>
+                      <th>Group Name</th>
+                      <th>Group Description</th>
+                    </tr>
+                    {% for group in groups %}
+                    <tr>
+                      <td><input type="checkbox" value="{{ group[0] }}" name="checks"> </td>
+                      <td>{{ group[0] }}</td>
+                      <td>{{ group[1] }}</td>
+                      <td>{{ group[2] }}</td>
+                    </tr>
+                    {% endfor %}  
+                    
+                  </table>
+                </div>
+                <div class="button_rows">
+                  <button type="reset" class="submit_btn">Clear selection</button>
+                <button type="submit" class="submit_btn">Delete selected group(s)</button>
+                </div>
+              </form>
+            </div>          
+        </div>
+      </div>  
+      
+    </div>
+    </div>
+    <script>
+        var dropdown = document.getElementsByClassName("dropdown-side-btn");
+        var i;
+      
+        for (i = 0; i < dropdown.length; i++) {
+        dropdown[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var dropdownContent = this.nextElementSibling;
+        if (dropdownContent.style.display === "block") {
+        dropdownContent.style.display = "none";
+        } else {
+        dropdownContent.style.display = "block";
+        }
+        });
+        }
+       </script>     
+    
+  </body>
+</html>

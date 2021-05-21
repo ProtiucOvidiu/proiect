@@ -12,32 +12,25 @@ def user_home_run():
         
     # list of queries
     queries = []
-    # get all the pemission columns 
-    queries.append("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS " 
-    "where table_name = 'groups_perm_relation' "
-    "order by ordinal_position;")
+
+     # create query to get the pemissions of the user
+    queries.append(
+        "SELECT p.name FROM permissions p "
+        "INNER JOIN groups_perm_relation gp ON gp.perm_id = p.id "
+        "WHERE gp.group_id IN ( "
+        "SELECT g.id FROM groups g "
+        "INNER JOIN user_groups_relation ug ON ug.group_id = g.id "
+        "WHERE ug.user_id = " + str(user_id[0]) + ");")
 
     # database connection 
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
         database=DB_DATABASE)
     try:
-        cur = conn.cursor(buffered=True)
-        # get all the group names
-        cur.execute(queries[0])
-        group_names = cur.fetchall()
-
-        # create query to get the pemissions of the user
-        queries.append("SELECT "
-        "perm.name FROM permissions perm, "
-        "(SELECT "+ temp_str(group_names, "gp") +" FROM user_groups_relation ug "
-        "INNER JOIN users u ON u.id = ug.user_id "
-        "INNER JOIN groups_perm_relation gp ON ug.group_id_1 = gp.group_id WHERE u.id = " 
-        + str(user_id[0])+ ") temp " +
-        "where " + temp_str(group_names, "perm") + ";")
+        cur = conn.cursor(buffered=True)       
 
         # get all the permissions names for this user
-        cur.execute(queries[1])
-        permissions = cur.fetchall()   
+        cur.execute(queries[0])
+        permissions = cur.fetchall()    
 
         # close the connection
         cur.close()
@@ -80,12 +73,10 @@ def user_groups_run():
     # get all the groups 
     queries.append("SELECT name FROM groups;")
     # create query to get the groups that the current user is a part of
-    queries.append("SELECT g.name FROM groups g, (SELECT ug.group_id_1,"
-    + "ug.group_id_2, ug.group_id_3 FROM user_groups_relation ug "
-    + "INNER JOIN users u ON u.id = ug.user_id WHERE u.id = " 
-    + str(user_id[0]) + ") result WHERE " + create_group_query())
-
-    print(queries[1])
+    queries.append(
+        "SELECT g.id, g.name FROM groups g "
+        "INNER JOIN user_groups_relation ug ON ug.group_id = g.id "
+        "WHERE ug.user_id = " + str(user_id[0]) + ";")
 
     # database connection to get the groups
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
@@ -111,23 +102,10 @@ def user_groups_run():
             conn.close()
             print('Connection to db was closed!')
 
-    # create the dictionary with {name, yes/no} pairs
-    groups = {}
-    for name in group_names:
-        if is_group_in_list(name[0], user_groups):
-            groups[ name[0] ] = "Yes"
-        else:
-            groups[ name[0] ] = "No"
-
-    # return the page with all the data stored in the groups variable
-    return render_template('user_files/user_groups.html', groups = groups)
-
-def is_group_in_list(name, user_groups):
-    # verify if a specific group name is in the list or not
-    for group_row in user_groups:
-        if group_row[0] == name:
-            return True
-    return False    
+   # return the page with all the data stored in the groups variable which is a
+    # dictionary with {name, yes/no} pairs
+    return render_template('user_files/user_groups.html', 
+        groups = create_group_dict(group_names, user_groups))
 
 #==============================================================================#
 

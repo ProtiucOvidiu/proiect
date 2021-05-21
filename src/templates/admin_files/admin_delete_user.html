@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" encoding="utf-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type= "text/css" href="../static/styles/index.css">
+    <!--
+    <link rel="stylesheet" type= "text/css" href="../../static/styles/delete.css">
+    -->
+    <script type="text/javascript" src="../../static/scripts/index.js"></script>
+  
+    
+  </head>
+
+  <body>
+
+    <div class="topnav" id="myTopnav">
+
+      <div class="dropdown">
+        <a href="#" class="dropbtn" target="_self">Profile</a>
+
+        <div class="dropdown-content">
+          <a href="/admin_settings" target="_self">Settings</a>
+          <a href="/admin_contact" target="_self">Contact</a>
+          <a href="/logout" target="_self">Log Out</a>
+
+        </div>
+      </div>
+      <a href="/admin_home" class="homebtn" target="_self">Home</a>
+    </div>
+    <div id="side_menu" class="sidebar">
+      <a href="javascript:void(0)" class="closebtn" onclick="close_menu()">×</a>
+      <a href="/admin_home" target="_self">Apps</a>
+      <a href="/admin_groups" target="_self">Groups</a>
+      <a href="/admin_add" target="_self">Add user/group/perm</a>
+      <a href="/admin_modify" target="_self">Modify user/group/perm</a>
+
+      <button class="dropdown-side-btn">Delete user/group/app
+        <i class="fa fa-caret-down"></i>
+      </button>
+      <div class="dropdown-side-menu">
+        <a href="/delete_user" target="_self">Delete an user</a>
+        <a href="/delete_group" target="_self">Delete a group</a>
+        <a href="/delete_perm" target="_self">Delete a permission</a>
+      </div>
+
+      <a href="/admin_msg" target="_self">Messages</a>
+      <a href="/admin_forum" target="_self">Q&A/Forum</a>
+    </div>
+
+    <div id="main">
+      <button class="open_btn" onclick="open_menu()">☰</button>
+      <div style="padding: 30px;">
+        <h2>Delete one or more users</h2>
+        <!--
+        <div style="position: relative;" class="form_container">
+          
+          <div id="user_form" class="">
+            
+              <div class="form_row"> -->
+                <form action="{{url_for('execute_delete_user')}}" method="POST">
+                          <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                              <thead class="thead-info">
+                                <tr>
+                                  <th scope="col">Check</th>
+                                  <th scope="col">ID</th>
+                                  <th scope="col">Username</th>
+                                  <th scope="col">Fullname</th>
+                                  <th scope="col">Email</th>
+                                  <th scope="col">Phone Number</th>
+                                  <th scope="col">Is Admin?</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% if user|length %}
+                                <tr>
+                                  <td colspan="7">There are no users defined! Check the database</td>
+                                </tr>
+
+                                {% else %}
+                                  {% for user in users %}
+                                  <tr>
+                                    <td scope="row"><input type="checkbox" value="{{ user[0] }}" name="checks"> </td>
+                                    <td>{{ user[0] }}</td>
+                                    <td>{{ user[1] }}</td>
+                                    <td>{{ user[2] }}</td>
+                                    <td>{{ user[3] }}</td>
+                                    <td>{{ user[4] }}</td>
+                                    <td>{{ user[5] }}</td>
+                                  </tr>
+                                  {% endfor %}
+                               
+                                {% endif %}
+
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <div class="button_rows">
+                          <button type="reset" class="submit_btn">Clear selection</button>
+                        <button type="submit" class="submit_btn">Delete selected user(s)</button>
+                        </div>
+                        <!--
+                        </div>
+                      </div>
+                    </div>
+                    </div>
+                  -->
+                  
+                </form>
+                <!--
+              </div>
+            
+          </div>
+        </div>
+        -->
+      </div>
+      
+      
+    </div>
+
+<script>
+  var dropdown = document.getElementsByClassName("dropdown-side-btn");
+  var i;
+
+  for (i = 0; i < dropdown.length; i++) {
+  dropdown[i].addEventListener("click", function() {
+  this.classList.toggle("active");
+  var dropdownContent = this.nextElementSibling;
+  if (dropdownContent.style.display === "block") {
+      dropdownContent.style.display = "none";
+  } else {
+      dropdownContent.style.display = "block";
+  }
+  });
+  }
+ </script>
+    
+  </body>
+</html>

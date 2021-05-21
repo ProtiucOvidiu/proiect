@@ -12,11 +12,16 @@ user_id = []
 
 #==============================================================================#
 
-# database login details
-DB_HOST = 'sql11.freemysqlhosting.net'
-DB_USER = 'sql11402476'
-DB_PASSWORD = 'kS7DsFkJep'
-DB_DATABASE = 'sql11402476'
+# database login details to freemysql_hosting
+#DB_HOST = 'sql11.freemysqlhosting.net'
+#DB_USER = 'sql11402476'
+#DB_PASSWORD = 'kS7DsFkJep'
+#DB_DATABASE = 'sql11402476'
+
+DB_HOST = '127.0.0.1'
+DB_USER = 'root'
+DB_PASSWORD = 'cvscvs'
+DB_DATABASE = 'sky_security'
 
 #==============================================================================#
 
@@ -65,49 +70,100 @@ def check_phone(phone_number):
 
 #==============================================================================#
 ###
-# Form the query used to load all the groups that a user is a part of
-###
-def create_group_query():
-
-    # get all the pemission columns 
-    query_1 = str("SELECT column_name FROM information_schema.columns where " 
-    "table_name = 'user_groups_relation' order by ordinal_position;")
-
-    # database connection 
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
-
-    try:
-        cur = conn.cursor(buffered=True)
-        # get all the group column names
-        cur.execute(query_1)
-        group_columns = cur.fetchall()
-    except mariadb.Error as error:
-        print("Failed to read data from table", error)
-    finally:
-        if conn:
-            conn.close()
-            print('Connection to db was closed!')
-
-    query_2 = ""
-
-    for i in range(0, len(group_columns) - 2):
-        
-        if i == len(group_columns) - 3:
-            query_2 += f"g.id = result.group_id_{i + 1};"
-            break
-        else:
-            query_2 += f"g.id = result.group_id_{i + 1} OR "
-
-    return query_2    
-
-#==============================================================================#
-###
 # Redirect the user to the login page if it's not logged in
 ###
 def is_logged_in():
     # if the user is not logged in, redirect him/her to the login page
     if not session.get('logged_in'):
         return render_template('common_files/login.html')
+
+#==============================================================================#
+###
+# Verify if a group name is in the list or not
+###
+def is_group_in_list(group_names, group):
+    # verify if a specific group name is in the list or not
+    for group_row in group_names:
+        if group == group_row[0]:
+            return True
+    return False
+
+#==============================================================================#
+###
+# Create the dictionary that stores if the current user is a part of the group
+# or not - dictionary with {name, yes/no} pairs
+###
+def create_group_dict(group_names, admin_groups):
+    groups = {}
+    for group_row in admin_groups:
+        if is_group_in_list(group_names, group_row[1]):
+            groups[ group_row[0] ] = "Yes"
+        else:
+            groups[ group_row[0] ] = "No"
+    return groups
+
+#==============================================================================#
+###
+# Creates a string with the specified ids in the form of (1, 2, 3);
+###
+def form_delete_id_string(delete):
+    # form the string 
+    ids_string = "("
+    for i in range(0, len(delete)):
+        if i != len(delete) - 1:
+            ids_string += delete[i] + ","
+        else:
+            ids_string += delete[i] + ");"
+    return ids_string
+#==============================================================================#
+###
+# Check if a user is an admin and update it in the db 
+###
+
+def is_user_admin():
+    queries = []
+    queries.append("SELECT is_admin FROM users WHERE id = " + str(user_id[0]))
+
+    # connection to the db
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+    try:
+      cur = conn.cursor(buffered = True)
+      cur.execute(queries[0])
+      is_admin_in_db = cur.fetchall()
+
+      is_admin = is_admin_in_db[0][0]
+    
+      if(is_admin_in_db[0] == 0):
+        queries.append("SELECT g.id FROM groups g"
+            "INNER JOIN user_groups_relation ug ON ug.group_id = g.id"
+            "WHERE ug.user_id = " + str(user_id[0]))
+        cur.execute(queries[1])
+        group_ids = cur.fetchall()
+
+        is_in_admin_group = 0
+        for id in group_ids:
+            if id[0] == 1:
+                is_in_admin_group = 1
+                break
+
+        if is_in_admin_group & (not is_admin_in_db):
+            queries.append("UPDATE users SET is_admin = 1 WHERE id = " 
+                + str(user_id[0]))
+            cur.execute(queries[2])
+            conn.commit()
+            is_admin = 1
+
+      # close the connection
+      cur.close()
+      conn.close()
+    except mariadb.Error as error:
+        print("Failed to read data from table", error)
+    finally:
+      if conn:
+        conn.close()
+        print('Connection to db was closed!')
+    
+    return is_admin
 
 #==============================================================================#
