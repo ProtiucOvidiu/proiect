@@ -36,7 +36,7 @@ CREATE TABLE `groups` (
 
 LOCK TABLES `groups` WRITE;
 /*!40000 ALTER TABLE `groups` DISABLE KEYS */;
-INSERT INTO `groups` VALUES (1,'Users','We are the users'),(2,'Admins','We are the admins'),(3,'Pesti','Aici putem vedea pesti'),(4,'Google','Search on Google');
+INSERT INTO `groups` VALUES (1,'Pesti','Aici putem vedea pesti'),(2,'Google','Search on Google');
 /*!40000 ALTER TABLE `groups` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -65,7 +65,7 @@ CREATE TABLE `groups_perm_relation` (
 
 LOCK TABLES `groups_perm_relation` WRITE;
 /*!40000 ALTER TABLE `groups_perm_relation` DISABLE KEYS */;
-INSERT INTO `groups_perm_relation` VALUES (1,1,1),(2,1,2),(3,1,1),(4,1,2),(5,1,3),(6,2,4);
+INSERT INTO `groups_perm_relation` VALUES (1,1,1),(2,1,2),(3,1,3),(4,2,4);
 /*!40000 ALTER TABLE `groups_perm_relation` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -90,7 +90,7 @@ CREATE TABLE `permissions` (
 
 LOCK TABLES `permissions` WRITE;
 /*!40000 ALTER TABLE `permissions` DISABLE KEYS */;
-INSERT INTO `permissions` VALUES (1,'Vizualizare','Acest user poate vizualiza'),(2,'Editare','Acest user poate edita'),(3,'Stergere','Acest user poate sterge'),(4,'Pesti-vizualizare','Acest user poate vizualiza'),(5,'Pesti-editare','Acest user poate edita'),(6,'Pesti-Stergere','Acest user poate sterge'),(7,'Cautare-Google','Acest user poate cauta pe google');
+INSERT INTO `permissions` VALUES (1,'Pesti-vizualizare','Acest user poate vizualiza'),(2,'Pesti-editare','Acest user poate edita'),(3,'Pesti-Stergere','Acest user poate sterge'),(4,'Cautare-Google','Acest user poate cauta pe google');
 /*!40000 ALTER TABLE `permissions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -119,7 +119,7 @@ CREATE TABLE `user_groups_relation` (
 
 LOCK TABLES `user_groups_relation` WRITE;
 /*!40000 ALTER TABLE `user_groups_relation` DISABLE KEYS */;
-INSERT INTO `user_groups_relation` VALUES (1,1,1),(2,1,2),(3,1,1),(4,1,2),(5,2,1),(6,3,1),(7,3,2),(8,4,1),(9,5,1),(10,5,2),(11,6,1);
+INSERT INTO `user_groups_relation` VALUES (1,1,1),(2,1,2),(3,2,1),(4,3,1),(5,3,2),(6,4,1),(7,5,1),(8,5,2),(9,6,1);
 /*!40000 ALTER TABLE `user_groups_relation` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -148,7 +148,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'ovi','cvscvs','Ovi Pro','ovi.pro@yahoo.com','0773978453',1),(2,'ovi','$5$rounds=535000$LoMOqM6Qy5BRSVtK$oxGFftJds1oUIgmwiyZmbwmrytNjE9JRb5ygeq.CXM5','Ovi Pro','ovi.pro@yahoo.com','0773978453',1),(3,'mario','$5$rounds=535000$LoMOqM6Qy5BRSVtK$oxGFftJds1oUIgmwiyZmbwmrytNjE9JRb5ygeq.CXM5','Mario Stuart','mario.stuart@yahoo.com','0773324313',0),(4,'andrei','$5$rounds=535000$LoMOqM6Qy5BRSVtK$oxGFftJds1oUIgmwiyZmbwmrytNjE9JRb5ygeq.CXM5','Andrei Milano','andrei@yahoo.com','0723224313',1),(5,'ion','$5$rounds=535000$LoMOqM6Qy5BRSVtK$oxGFftJds1oUIgmwiyZmbwmrytNjE9JRb5ygeq.CXM5','Ion Vesa','ion_vesa@yahooss.com','0723446313',0),(6,'george','$5$rounds=535000$LoMOqM6Qy5BRSVtK$oxGFftJds1oUIgmwiyZmbwmrytNjE9JRb5ygeq.CXM5','George Vesa','g_vesa@yahooss.com','0767446313',1),(7,'andi','$5$rounds=535000$LoMOqM6Qy5BRSVtK$oxGFftJds1oUIgmwiyZmbwmrytNjE9JRb5ygeq.CXM5','Andi Popescu','andi_pop@yahooss.com','0790046313',0);
+INSERT INTO `users` VALUES (1,'ovi','$5$rounds=535000$LoMOqM6Qy5BRSVtK$oxGFftJds1oUIgmwiyZmbwmrytNjE9JRb5ygeq.CXM5','Ovi Pro','ovi.pro@yahoo.com','0773978453',1),(2,'mario','$5$rounds=535000$LoMOqM6Qy5BRSVtK$oxGFftJds1oUIgmwiyZmbwmrytNjE9JRb5ygeq.CXM5','Mario Stuart','mario.stuart@yahoo.com','0773324313',0),(3,'andrei','$5$rounds=535000$LoMOqM6Qy5BRSVtK$oxGFftJds1oUIgmwiyZmbwmrytNjE9JRb5ygeq.CXM5','Andrei Milano','andrei@yahoo.com','0723224313',1),(4,'ion','$5$rounds=535000$LoMOqM6Qy5BRSVtK$oxGFftJds1oUIgmwiyZmbwmrytNjE9JRb5ygeq.CXM5','Ion Vesa','ion_vesa@yahooss.com','0723446313',0),(5,'george','$5$rounds=535000$LoMOqM6Qy5BRSVtK$oxGFftJds1oUIgmwiyZmbwmrytNjE9JRb5ygeq.CXM5','George Vesa','g_vesa@yahooss.com','0767446313',1),(6,'andi','$5$rounds=535000$LoMOqM6Qy5BRSVtK$oxGFftJds1oUIgmwiyZmbwmrytNjE9JRb5ygeq.CXM5','Andi Popescu','andi_pop@yahooss.com','0790046313',0);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
