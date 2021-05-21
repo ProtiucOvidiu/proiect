@@ -104,13 +104,101 @@ def admin_add_run():
     
 #==============================================================================#
 
-@app.route('/admin_modify')
+@app.route('/admin_modify', methods = ['POST', 'GET'])
 def admin_modify_run():
+    modify = request.form
+    print('\n\n\n\n'+str(user_id[0])+'\n\n\n\n')
+    query = ("SELECT distinct g.* FROM groups g "
+        "INNER JOIN user_groups_relation ug ON ug.group_id = g.id "
+        "WHERE ug.user_id = " + str(user_id[0]) + ";")
+    query2 = (
+        "SELECT distinct p.* FROM permissions p "
+        "INNER JOIN groups_perm_relation gp ON gp.perm_id = p.id "
+        "WHERE gp.group_id IN ( "
+        "SELECT g.id FROM groups g "
+        "INNER JOIN user_groups_relation ug ON ug.group_id = g.id "
+        "WHERE ug.user_id = " + str(user_id[0]) + ");")
+    query3 = "Select * from users;"
     # if the user is not logged in, redirect him/her to the login page
     is_logged_in()
+    try:
+        conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+        cur = conn.cursor(buffered = True)
+        (groups, perm, users) = temp(query, query2, query3)
+        if request.method == 'POST':
+                if update_group(modify) != '':
+                    cur.execute(update_group(modify))
+                if update_permissions(modify) != '':
+                    cur.execute(update_permissions(modify))
+                conn.commit()
+        elif request.method == 'GET':
+            return render_template('admin_files/admin_modify.html', groups = groups, perm = perm, users = users)
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if conn:
+            conn.close()
+    (groups, perm, users) = temp(query, query2, query3)
+    return render_template('admin_files/admin_modify.html', groups = groups, perm = perm,  users = users)
 
-    return render_template('admin_files/admin_modify.html')
-    
+# use this function to get groups and permission, without reloading the page
+def temp(query, query2, query3):
+    groups = ''
+    permissions = ''
+    users = ''
+    try: 
+        conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+        cur = conn.cursor(buffered = True)
+        cur.execute(query)
+        groups = cur.fetchall()
+        cur.execute(query2)
+        permissions = cur.fetchall()
+        cur.execute(query3)
+        users = cur.fetchall()
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if conn:
+            conn.close()
+    return (groups, permissions, users)
+
+# The actual function for update data in groups
+def update_group(modify):
+    update_query = ""
+    if (modify.get('id') and modify.get('name')) or \
+    (modify.get('id') and modify.get('description')): 
+        update_query = "UPDATE groups"
+        if modify.get('name') != '' and modify.get('description') != '':
+            update_query += " SET name = \'" + modify['name'] + '\', description = \''\
+            + modify['description'] + '\''
+        if modify.get('description') == '':
+            update_query += " SET name = \'" + modify['name'] + '\''
+        if modify.get('name') == '':
+            update_query += " SET description = \'" + modify['description'] + '\''
+        update_query += " WHERE id = " + modify['id'] + ';'
+    return update_query
+
+# The actual function for update data in permissions
+def update_permissions(modify):
+    update_query = ""
+    if (modify.get('id_perm') and modify.get('name_perm')) or \
+    (modify.get('id_perm') and modify.get('desc_perm')): 
+        update_query = "UPDATE permissions"
+        if modify.get('name_perm') != '' and modify.get('desc_perm') != '':
+            update_query += " SET name = \'" + modify['name_perm'] + '\', description = \''\
+            + modify['desc_perm'] + '\''
+        if modify.get('desc_perm') == '':
+            update_query += " SET name = \'" + modify['name_perm'] + '\''
+        if modify.get('name_perm') == '':
+            update_query += " SET description = \'" + modify['desc_perm'] + '\''
+        update_query += " WHERE id = " + modify['id_perm'] + ';'
+    return update_query
 #==============================================================================#
 
 @app.route('/delete_user')

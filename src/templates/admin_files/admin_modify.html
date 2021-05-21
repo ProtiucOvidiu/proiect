@@ -7,12 +7,12 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!--Link pentru sageata-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script type="text/javascript" src="../../static/scripts/index.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
   </head>
-
   <body>
-
     <div class="topnav" id="myTopnav">
-
       <div class="dropdown">
         <button class="dropbtn">Profile  
           <i class="fa fa-caret-down" style="text-align: right;"></i>  
@@ -22,7 +22,6 @@
           <a href="/admin_settings" target="_self">Settings</a>
           <a href="/admin_contact" target="_self">Contact</a>
           <a href="/logout" target="_self">Log Out</a>
-
         </div>
       </div>
       <a href="/admin_home" class="homebtn" target="_self">Home</a>
@@ -46,8 +45,17 @@
       <a href="/admin_msg" target="_self">Messages</a>
       <a href="/admin_forum" target="_self">Q&A/Forum</a>
     </div>
-
+    <!-- <style>
+      #permission, #group {
+        width: 100%;
+        padding: 50px 0;
+        text-align: center;
+        background-color: lightblue;
+        margin-top: 20px;
+      }
+      </style> -->
     <div id="main">
+     
       <button class="open_btn" onclick="open_menu()">☰</button>
       <div class="main-container">
         <h2>Modify users/groups/permissions view</h2>
@@ -70,5 +78,107 @@
       });
       }
      </script>
+
+      <script>
+        $(document).ready(function() {
+          $('#group').click(function() {
+            $('.menu').toggle();
+          });
+          $('#permission').click(function() {
+            $('.menu1').toggle();
+          });
+          $('#user').click(function() {
+            $('.menu2').toggle();
+          });
+      });
+      </script>
+      <button class="btn btn-outline-primary"  id="group" >Group</button>
+      <button  class="btn btn-outline-primary" id="permission" >Permission</button>
+      <button  class="btn btn-outline-primary" id="user" >User</button>
+      <form action="{{url_for('admin_modify_run')}}" method="POST">
+        <div class="menu" style="display: none;"> 
+          <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in groups %}
+              <tr>
+                <th scope="row">{{i.0}}</th>
+                <td contenteditable='true'>{{i.1}}</td>
+                <td contenteditable='true'>{{i.2}}</td>
+              </tr>
+              {% endfor %}
+              <tr>
+                <td><input type="number" class="form-control" name="id" placeholder="Id"></td>
+                <td ><input type="text" class="form-control" name="name" placeholder="New Name"></td>
+                <td ><input type="text" class="form-control" name="description" placeholder="New Description"></td>
+                <td><button class="btn btn-secondary" type="submit"> Run </button></td>
+              </tr>
+            </tbody>
+          </table>
+            
+        </div>
+        <div class="menu1" style="display: none;"> 
+          <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in perm %}
+              <tr>
+                <th scope="row">{{i.0}}</th>
+                <td contenteditable='true'>{{i.1}}</td>
+                <td contenteditable='true'>{{i.2}}</td>
+              </tr>
+              {% endfor %}
+              <tr>
+                <td><input type="number" class="form-control" name="id_perm" placeholder="Id"></td>
+                <td ><input type="text" class="form-control" name="name_perm" placeholder="New Name"></td>
+                <td ><input type="text" class="form-control" name="desc_perm" placeholder="New Description"></td>
+                <td><button class="btn btn-secondary" type="submit"> Run </button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="menu2" style="display: none;"> 
+          <table class="table">
+            <thead class="thead-dark">
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Description</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in users %}
+              <tr>
+                <th scope="row">{{i.0}}</th>
+                <td contenteditable='true'>{{i.0}}</td>
+                <td contenteditable='true'>{{i.0}}</td>
+              </tr>
+              {% endfor %}
+              <tr>
+                <td><input type="number" class="form-control" name="id_perm" placeholder="Id"></td>
+                <td ><input type="text" class="form-control" name="name_perm" placeholder="New Name"></td>
+                <td ><input type="text" class="form-control" name="desc_perm" placeholder="New Description"></td>
+                <td><button class="btn btn-secondary" type="submit"> Run </button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </form>
+    </div>
   </body>
 </html>
