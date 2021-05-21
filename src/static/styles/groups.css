@@ -1,10 +1,4 @@
-.container {
-	padding: 100px; 
-	align-items: center;
-    justify-content: center;
-    display: flex;
-}
-
+/*
 table {
     border-collapse: collapse;
     border: 2.5px solid lightgray;
@@ -35,7 +29,7 @@ td {
 	color: darkslategray;
 	background-color: #E0F5F5;
 }
-
+*/
 .request_link {
 	font-size: 18px;
 	color: darkslategray;

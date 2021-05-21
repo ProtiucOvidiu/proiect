@@ -15,7 +15,9 @@
     <div class="topnav" id="myTopnav">
 
       <div class="dropdown">
-        <a href="#" class="dropbtn" target="_self">Profile</a>
+        <button class="dropbtn">Profile  
+          <i class="fa fa-caret-down" style="text-align: right;"></i>  
+        </button>
 
         <div class="dropdown-content">
           <a href="/user_settings" target="_self">Settings</a>
@@ -37,36 +39,38 @@
 
     <div id="main">
       <button class="open_btn" onclick="open_menu()">☰</button>
-      <div style="padding: 15px;">
+      <div class="main-container">
 
         <h2>Groups view</h2>
         <p>List of groups.</p>
 
-        <div class="container">
-          <div class="row gutters">
-            <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
-              <!--<div class="card h-100">
-                <div class="card-body">-->
-                  <table>                
-                      <tr>
-                        <th>Group name</th>
-                        <th>Is a part of?</th>
-                        <th>Request access</th>
-                      </tr>   
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover">
+            <thead class="thead-info">
+              <tr>
+                <th scope="col">Group name</th>
+                <th scope="col">Is a part of?</th>
+                <th scope="col">Request access</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% if groups|length %}
+                {% for key, value in groups.items() %}
+                <tr>
+                  <td scope="row" id="{{ key }}">{{ key }}</td>
+                  <td>{{ value }}</td>
+                  <td><a href="#" class="request_link">Request access</a></td>
+                </tr>
+                {% endfor %}
 
-                      {% for key, value in groups.items() %}
-                    <tr>
-                      <td id="{{ key }}">{{ key }}</td>
-                      <td>{{ value }}</td>
-                      <td><a href="#" class="request_link">Request access</a></td>
-                    </tr>
-                    {% endfor %}
-                  
-                  </table>
-                <!--</div>
-              </div>-->
-            </div>
-          </div>
+              {% else %}
+                <tr>
+                  <td colspan="3">There are no groups!</td>
+                </tr>
+              {% endif %}
+            </tbody> 
+          </table>
+          
         </div>
          
       </div>

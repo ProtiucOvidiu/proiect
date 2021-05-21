@@ -4,9 +4,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type= "text/css" href="../static/styles/index.css">
-    <!--
     <link rel="stylesheet" type= "text/css" href="../static/styles/home.css">
-    -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!--Link pentru sageata-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script type="text/javascript" src="../../static/scripts/index.js"></script>
@@ -17,8 +15,9 @@
     <div class="topnav" id="myTopnav">
 
       <div class="dropdown">
-        <a href="#" class="dropbtn" target="_self">Profile</a>
-
+        <button class="dropbtn">Profile  
+          <i class="fa fa-caret-down" style="text-align: right;"></i>  
+        </button>
         <div class="dropdown-content">
           <a href="/admin_settings" target="_self">Settings</a>
           <a href="/admin_contact" target="_self">Contact</a>
@@ -35,8 +34,8 @@
       <a href="/admin_add" target="_self">Add user/group/perm</a>
       <a href="/admin_modify" target="_self">Modify user/group/perm</a>
 
-      <button class="dropdown-side-btn" id="drop-side-btn">Delete user/group/app
-        <i class="fa fa-caret-down"></i>
+      <button class="dropdown-side-btn" id="drop-side-btn">Delete
+        <i class="fa fa-caret-down" style="text-align: right"></i>
       </button>
       <div class="dropdown-side-menu">
         <a href="/delete_user" target="_self">Delete an user</a>
@@ -50,7 +49,7 @@
 
     <div id="main">
       <button class="open_btn" onclick="open_menu()">☰</button>
-      <div style="padding: 30px;">
+      <div class="main-container">
         <h2>Apps view</h2>
         <p>List of permissions.</p>
 

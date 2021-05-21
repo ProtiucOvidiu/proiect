@@ -18,7 +18,9 @@
     <div class="topnav" id="myTopnav">
 
       <div class="dropdown">
-        <a href="#" class="dropbtn" target="_self">Profile</a>
+        <button class="dropbtn">Profile  
+          <i class="fa fa-caret-down" style="text-align: right;"></i>  
+        </button>
 
         <div class="dropdown-content">
           <a href="/admin_settings" target="_self">Settings</a>
@@ -36,8 +38,8 @@
       <a href="/admin_add" target="_self">Add user/group/perm</a>
       <a href="/admin_modify" target="_self">Modify user/group/perm</a>
 
-      <button class="dropdown-side-btn" id="drop-side-btn">Delete user/group/app
-        <i class="fa fa-caret-down"></i>
+      <button class="dropdown-side-btn" id="drop-side-btn">Delete
+        <i class="fa fa-caret-down" style="text-align: right"></i>
       </button>
       <div class="dropdown-side-menu">
         <a href="/delete_user" target="_self">Delete an user</a>
@@ -51,38 +53,39 @@
 
     <div id="main">
       <button class="open_btn" onclick="open_menu()">☰</button>
-      <div style="padding: 30px;">
+      <div class="main-container">
 
         <h2>Groups view</h2>
         <p>List of groups.</p>
 
-        <div class="container">
-          <!--
-          <div class="row gutters">
-            <div class="col-xl-20 col-lg-20 col-md-12 col-sm-12 col-12">
-            -->
-              <table>                
+        <div class="table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead class="thead-info">
                   <tr>
-                    <th>Group name</th>
-                    <th>Is a part of?</th>
-                    <th>Request access</th>
-                  </tr>   
+                    <th scope="col">Group name</th>
+                    <th scope="col">Is a part of?</th>
+                    <th scope="col">Request access</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% if groups|length %}
+                    {% for key, value in groups.items() %}
+                    <tr>
+                      <td scope="row" id="{{ key }}">{{ key }}</td>
+                      <td>{{ value }}</td>
+                      <td><a href="#" class="request_link">Request access</a></td>
+                    </tr>
+                    {% endfor %}
 
-                  {% for key, value in groups.items() %}
-                <tr>
-                  <td id="{{ key }}">{{ key }}</td>
-                  <td>{{ value }}</td>
-                  <td><a href="#" class="request_link">Request access</a></td>
-                </tr>
-                {% endfor %}
-               
+                  {% else %}
+                    <tr>
+                      <td colspan="3">There are no groups!</td>
+                    </tr>
+                  {% endif %}
+                </tbody> 
               </table>
               
             </div>
-            <!--
-          </div>
-        </div>
-        -->
 
       </div>
     </div>
