@@ -30,7 +30,14 @@
       <a href="javascript:void(0)" class="closebtn" onclick="close_menu()">×</a>
       <a href="/admin_home" target="_self">Apps</a>
       <a href="/admin_groups" target="_self">Groups</a>
-      <a href="/admin_add" target="_self">Add user/group/perm</a>
+      <button class="dropdown-side-btn">Add user/group/perm
+        <i class="fa fa-caret-down"></i>
+      </button>
+          <div class="dropdown-side-menu">
+              <a href="/add_user">Add user</a>
+              <a href="#">Add group</a>
+              <a href="#">Add permissions</a>
+          </div>
       <a href="/admin_modify" target="_self">Modify user/group/perm</a>
 
       <button class="dropdown-side-btn" id="drop-side-btn">Delete
@@ -60,6 +67,108 @@
       <div class="main-container">
         <h2>Modify users/groups/permissions view</h2>
         <p>List of options.</p>
+
+        <script>
+          $(document).ready(function() {
+            $('#group').click(function() {
+              $('.menu').toggle();
+            });
+            $('#permission').click(function() {
+              $('.menu1').toggle();
+            });
+            $('#user').click(function() {
+              $('.menu2').toggle();
+            });
+        });
+        </script>
+        <button class="btn btn-outline-primary"  id="group" >Group</button>
+        <button  class="btn btn-outline-primary" id="permission" >Permission</button>
+        <button  class="btn btn-outline-primary" id="user" >User</button>
+        <form action="{{url_for('admin_modify_run')}}" method="POST">
+          <div class="menu" style="display: none;"> 
+            <table class="table">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Description</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for i in groups %}
+                <tr>
+                  <th scope="row">{{i.0}}</th>
+                  <td contenteditable='true'>{{i.1}}</td>
+                  <td contenteditable='true'>{{i.2}}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                  <td><input type="number" class="form-control" name="id" placeholder="Id"></td>
+                  <td ><input type="text" class="form-control" name="name" placeholder="New Name"></td>
+                  <td ><input type="text" class="form-control" name="description" placeholder="New Description"></td>
+                  <td><button class="btn btn-secondary" type="submit"> Run </button></td>
+                </tr>
+              </tbody>
+            </table>
+              
+          </div>
+          <div class="menu1" style="display: none;"> 
+            <table class="table">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Description</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for i in perm %}
+                <tr>
+                  <th scope="row">{{i.0}}</th>
+                  <td contenteditable='true'>{{i.1}}</td>
+                  <td contenteditable='true'>{{i.2}}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                  <td><input type="number" class="form-control" name="id_perm" placeholder="Id"></td>
+                  <td ><input type="text" class="form-control" name="name_perm" placeholder="New Name"></td>
+                  <td ><input type="text" class="form-control" name="desc_perm" placeholder="New Description"></td>
+                  <td><button class="btn btn-secondary" type="submit"> Run </button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="menu2" style="display: none;"> 
+            <table class="table">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Description</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for i in users %}
+                <tr>
+                  <th scope="row">{{i.0}}</th>
+                  <td contenteditable='true'>{{i.0}}</td>
+                  <td contenteditable='true'>{{i.0}}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                  <td><input type="number" class="form-control" name="id_perm" placeholder="Id"></td>
+                  <td ><input type="text" class="form-control" name="name_perm" placeholder="New Name"></td>
+                  <td ><input type="text" class="form-control" name="desc_perm" placeholder="New Description"></td>
+                  <td><button class="btn btn-secondary" type="submit"> Run </button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </form>
+      </div>
       </div>
     </div>
     <script>
@@ -79,106 +188,6 @@
       }
      </script>
 
-      <script>
-        $(document).ready(function() {
-          $('#group').click(function() {
-            $('.menu').toggle();
-          });
-          $('#permission').click(function() {
-            $('.menu1').toggle();
-          });
-          $('#user').click(function() {
-            $('.menu2').toggle();
-          });
-      });
-      </script>
-      <button class="btn btn-outline-primary"  id="group" >Group</button>
-      <button  class="btn btn-outline-primary" id="permission" >Permission</button>
-      <button  class="btn btn-outline-primary" id="user" >User</button>
-      <form action="{{url_for('admin_modify_run')}}" method="POST">
-        <div class="menu" style="display: none;"> 
-          <table class="table">
-            <thead class="thead-dark">
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Description</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for i in groups %}
-              <tr>
-                <th scope="row">{{i.0}}</th>
-                <td contenteditable='true'>{{i.1}}</td>
-                <td contenteditable='true'>{{i.2}}</td>
-              </tr>
-              {% endfor %}
-              <tr>
-                <td><input type="number" class="form-control" name="id" placeholder="Id"></td>
-                <td ><input type="text" class="form-control" name="name" placeholder="New Name"></td>
-                <td ><input type="text" class="form-control" name="description" placeholder="New Description"></td>
-                <td><button class="btn btn-secondary" type="submit"> Run </button></td>
-              </tr>
-            </tbody>
-          </table>
-            
-        </div>
-        <div class="menu1" style="display: none;"> 
-          <table class="table">
-            <thead class="thead-dark">
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Description</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for i in perm %}
-              <tr>
-                <th scope="row">{{i.0}}</th>
-                <td contenteditable='true'>{{i.1}}</td>
-                <td contenteditable='true'>{{i.2}}</td>
-              </tr>
-              {% endfor %}
-              <tr>
-                <td><input type="number" class="form-control" name="id_perm" placeholder="Id"></td>
-                <td ><input type="text" class="form-control" name="name_perm" placeholder="New Name"></td>
-                <td ><input type="text" class="form-control" name="desc_perm" placeholder="New Description"></td>
-                <td><button class="btn btn-secondary" type="submit"> Run </button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="menu2" style="display: none;"> 
-          <table class="table">
-            <thead class="thead-dark">
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Description</th>
-                <th scope="col"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for i in users %}
-              <tr>
-                <th scope="row">{{i.0}}</th>
-                <td contenteditable='true'>{{i.0}}</td>
-                <td contenteditable='true'>{{i.0}}</td>
-              </tr>
-              {% endfor %}
-              <tr>
-                <td><input type="number" class="form-control" name="id_perm" placeholder="Id"></td>
-                <td ><input type="text" class="form-control" name="name_perm" placeholder="New Name"></td>
-                <td ><input type="text" class="form-control" name="desc_perm" placeholder="New Description"></td>
-                <td><button class="btn btn-secondary" type="submit"> Run </button></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </form>
-    </div>
+      
   </body>
 </html>

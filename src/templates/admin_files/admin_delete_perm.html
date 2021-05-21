@@ -36,7 +36,14 @@
         <a href="javascript:void(0)" class="closebtn" onclick="close_menu()">×</a>
         <a href="/admin_home" target="_self">Apps</a>
         <a href="/admin_groups" target="_self">Groups</a>
-        <a href="/admin_add" target="_self">Add user/group/perm</a>
+        <button class="dropdown-side-btn">Add user/group/perm
+          <i class="fa fa-caret-down"></i>
+        </button>
+            <div class="dropdown-side-menu">
+                <a href="/add_user">Add user</a>
+                <a href="#">Add group</a>
+                <a href="#">Add permissions</a>
+            </div>
         <a href="/admin_modify" target="_self">Modify user/group/perm</a>
   
         <button class="dropdown-side-btn" id="drop-side-btn">Delete
