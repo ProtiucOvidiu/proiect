@@ -8,7 +8,7 @@
   <title>Sign up</title>
 </head>
 <body>
-  <form action="/sign_up" method="POST">
+  <form action="{{ url_for('do_admin_sign_up') }}" method="POST">
     <div class="sign_up">
       <div class="sign_up-screen">
         <div class="app-title"> 
@@ -34,10 +34,10 @@
           <input type="password" class="login-field" value="" placeholder="confirm password" name="confirm_password"  >
       </div>
           <div class="button" style="padding: 10px 10px 10px;" >
-            <input type="submit" value="Sign up" class="btn">
+            <button type="submit" value="Sign up" class="btn"> Sign Up </button>
           </div>
           <div class="button" style="padding: 10px 10px 20px;" >
-            <input type="submit" name="login" value="Log in" class="btn">
+            <button name="login" value="log_in" class="btn"> Login </button>
           </div>
           {% block content %}
           <div class="container">

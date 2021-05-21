@@ -4,6 +4,7 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!--Link pentru sageata-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" type= "text/css" href="../static/styles/index.css">
     <link rel="stylesheet" type= "text/css" href="../../static/styles/delete.css">
     <script type="text/javascript" src="../../static/scripts/index.js"></script>
@@ -59,24 +60,29 @@
           
             <div class="form_row">
               <form action="{{ url_for('execute_delete_group') }}" method="POST">
-                <table>
-                  <tr>
-                    <th>Check</th>
-                    <th>ID</th>
-                    <th>Group Name</th>
-                    <th>Group Description</th>
-                  </tr>
-                  {% for group in groups %}
-                  <tr>
-                    <td><input type="checkbox" value="{{ group[0] }}" name="checks"> </td>
-                    <td>{{ group[0] }}</td>
-                    <td>{{ group[1] }}</td>
-                    <td>{{ group[2] }}</td>
-                  </tr>
-                  {% endfor %}  
-                  
-                </table>
+                <div class="table_scroll">
+                  <table>
+                    <tr>
+                      <th>Check</th>
+                      <th>ID</th>
+                      <th>Group Name</th>
+                      <th>Group Description</th>
+                    </tr>
+                    {% for group in groups %}
+                    <tr>
+                      <td><input type="checkbox" value="{{ group[0] }}" name="checks"> </td>
+                      <td>{{ group[0] }}</td>
+                      <td>{{ group[1] }}</td>
+                      <td>{{ group[2] }}</td>
+                    </tr>
+                    {% endfor %}  
+                    
+                  </table>
+                </div>
+                <div class="button_rows">
+                  <button type="reset" class="submit_btn">Clear selection</button>
                 <button type="submit" class="submit_btn">Delete selected group(s)</button>
+                </div>
               </form>
             </div>          
         </div>

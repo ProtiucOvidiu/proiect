@@ -116,7 +116,8 @@ def delete_user_run():
     is_logged_in()
 
     users = []
-    query = ("SELECT * FROM users ORDER BY id;")
+    query = ("SELECT id, username, full_name, email, phone_number, is_admin " 
+        "FROM users ORDER BY id;")
 
     # database connection to get the groups
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
@@ -171,7 +172,7 @@ def execute_delete_user():
             conn.close()
             print('Connection to db was closed!')
 
-    return delete_user_run()
+    return redirect("/delete_user")
     
 
 #==============================================================================#
@@ -213,7 +214,7 @@ def execute_delete_group():
     delete = request.form.getlist('checks')
 
     ids_string = form_delete_id_string(delete)
-    query = "DELETE FROM groups WHERE id IN " + ids_string
+    query = "DELETE FROM groups WHERE id IN " + ids_string + ";"
     
     # database connection to get the groups
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
@@ -236,7 +237,7 @@ def execute_delete_group():
             conn.close()
             print('Connection to db was closed!')
     
-    return delete_group_run()
+    return redirect("/delete_group")
 
 #==============================================================================#
 
@@ -251,11 +252,10 @@ def delete_perm_run():
     # database connection to get the groups
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
         database=DB_DATABASE)
-
     try:
         cur = conn.cursor(buffered=True)
-        
-        # get all the groups
+
+        # get all the permissions
         cur.execute(query)
         perms = cur.fetchall()
 
@@ -434,7 +434,7 @@ def admin_settings_update():
             conn.close()
             print('Connection to db was closed!')
 
-    return admin_settings_run()
+    return redirect("/admin_settings")
 
 #==============================================================================#
 

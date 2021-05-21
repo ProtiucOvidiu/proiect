@@ -104,7 +104,8 @@ def user_groups_run():
 
    # return the page with all the data stored in the groups variable which is a
     # dictionary with {name, yes/no} pairs
-    return render_template('user_files/user_groups.html', groups = create_group_dict(group_names, user_groups))
+    return render_template('user_files/user_groups.html', 
+        groups = create_group_dict(group_names, user_groups))
 
 #==============================================================================#
 

@@ -132,7 +132,7 @@ def is_user_admin():
       cur.execute(queries[0])
       is_admin_in_db = cur.fetchall()
 
-      is_admin = is_admin_in_db[0]
+      is_admin = is_admin_in_db[0][0]
     
       if(is_admin_in_db[0] == 0):
         queries.append("SELECT g.id FROM groups g"

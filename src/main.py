@@ -7,26 +7,31 @@ import operator
 import re
 from sign_up import sign_up_pers
 from global_variables import *
-import user, admin
+import admin, user
 
 #==============================================================================#
 
 @app.route('/')
 def home():
   if not session.get('logged_in'):
-    return render_template('common_files/login.html')
+    return render_template("common_files/login.html")
   else:
     is_admin = is_user_admin()
     if is_admin:
-      return admin.admin_home_run()
+      return redirect('/admin_home')
     else:
-      return user.user_home_run()
+      return redirect('/user_home')
 
 #==============================================================================#
 
 @app.route('/login', methods=['POST','GET']) 
 def do_admin_login():
   login = request.form
+
+  # if the sign up button was pressed
+  if login.get('sign_up'):
+    return redirect("/sign_up")
+
   password = login['password']
   email = login['email-username']
   username = login['email-username']
@@ -54,16 +59,12 @@ def do_admin_login():
       conn.close()
       print('Connection to db was closed!')
 
-  # if the sign up button was pressed
-  if login.get('sign_up'):
-    return render_template('common_files/sign_up.html')
-
   # if there is no data from db aka there is no user stored in db with that
   # username or email  
   if not data:
     error = 'Invalid credentials'
     flash(error)
-    return render_template('common_files/login.html')
+    return redirect("/login")
 
   # check the username/email if it matches with the one stored
   for i in data[:][0]:
@@ -77,7 +78,7 @@ def do_admin_login():
   if check != 2:
     error = 'Wrong password or email'
     flash(error)
-    return render_template('common_files/login.html', error = error)
+    return redirect("login", error = error)
 
   # if it reaches this code than it means that all the login details are 
   # correct
@@ -91,18 +92,32 @@ def do_admin_login():
 
 #==============================================================================#
 
-@app.route('/sign_up', methods=['POST', 'GET']) 
+@app.route('/sign_up')
+def sign_up():
+  return render_template("common_files/sign_up.html")
+
+#==============================================================================#
+
+@app.route('/login_button')
+def login_button():
+  return redirect('/')
+
+#==============================================================================#
+
+@app.route('/sign_up_run', methods=['POST', 'GET']) 
 def do_admin_sign_up():
   request_sign = request.form
+
+  # if the sign up button was pressed
+  if request_sign.get('login'):
+    return redirect("/")
+
   full_name = request_sign['full_name'] 
   user_name = request_sign['user_name']
   email = request_sign['email']
   phone = request_sign['phone']
   password = request_sign['password']
   pass_conf = request_sign['confirm_password']
-
-  if request_sign.get('login'):
-    return render_template('common_files/login.html')
   
   sign_up_pers1 = sign_up_pers(full_name, user_name, email, phone, password, pass_conf)
   
@@ -115,11 +130,11 @@ def do_admin_sign_up():
     for row in users_rows:
         if user_name == row[0]:
           flash('Invalid User Name.')
-          return render_template('common_files/sign_up.html')
+          return redirect("/sign_up")
 
     if not (sign_up_pers1.check_pass(pass_conf) and sign_up_pers1.check_email()):
       flash('Please check your sign up details and try again.')
-      return render_template('common_files/sign_up.html')
+      return redirect("/sign_up")
 
     pass_hash = sha256_crypt.hash(password)
     
@@ -134,7 +149,7 @@ def do_admin_sign_up():
       conn.close()
       print('Connection to db was closed!')
 
-  return render_template('common_files/login.html')
+  return redirect("/login")
 
 #==============================================================================#
 
@@ -142,7 +157,7 @@ def do_admin_sign_up():
 def logout():
   session['logged_in'] = False
   unset_user()
-  return home()
+  return redirect("/")
 
 #==============================================================================#
 
@@ -168,7 +183,7 @@ def reset_password():
   # 
   conn.close()
   cur.close()
-  return reset()
+  return redirect("/reset")
 
 if __name__ == "__main__":
   app.secret_key = os.urandom(12)

@@ -4,8 +4,11 @@
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1" encoding="utf-8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" type= "text/css" href="../static/styles/index.css">
+    <!--
     <link rel="stylesheet" type= "text/css" href="../../static/styles/delete.css">
+    -->
     <script type="text/javascript" src="../../static/scripts/index.js"></script>
   
     
@@ -51,49 +54,72 @@
       <button class="open_btn" onclick="open_menu()">☰</button>
       <div style="padding: 30px;">
         <h2>Delete one or more users</h2>
+        <!--
         <div style="position: relative;" class="form_container">
+          
           <div id="user_form" class="">
             
-              <div class="form_row">
+              <div class="form_row"> -->
                 <form action="{{url_for('execute_delete_user')}}" method="POST">
-                  <table>
-                    <tr>
-                      <th>Check</th>
-                      <th>ID</th>
-                      <th>Username</th>
-                      <th>Fullname</th>
-                      <th>Email</th>
-                      <th>Phone Number</th>
-                      <th>Is Admin?</th>
-                    </tr>
-                    {% for user in users %}
-                    <tr>
-                      <td><input type="checkbox" value="{{ user[0] }}" name="checks"> </td>
-                      <td>{{ user[0] }}</td>
-                      <td>{{ user[1] }}</td>
-                      <td>{{ user[2] }}</td>
-                      <td>{{ user[3] }}</td>
-                      <td>{{ user[4] }}</td>
-                      <td>{{ user[5] }}</td>
-                    </tr>
-                    {% endfor %}
-                    
-                  </table>
-                  <button type="submit" class="submit_btn">Delete selected user(s)</button>
+                          <div class="table-responsive">
+                            <table class="table table-bordered table-hover">
+                              <thead class="thead-info">
+                                <tr>
+                                  <th scope="col">Check</th>
+                                  <th scope="col">ID</th>
+                                  <th scope="col">Username</th>
+                                  <th scope="col">Fullname</th>
+                                  <th scope="col">Email</th>
+                                  <th scope="col">Phone Number</th>
+                                  <th scope="col">Is Admin?</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {% if user|length %}
+                                <tr>
+                                  <td colspan="7">There are no users defined! Check the database</td>
+                                </tr>
+
+                                {% else %}
+                                  {% for user in users %}
+                                  <tr>
+                                    <td scope="row"><input type="checkbox" value="{{ user[0] }}" name="checks"> </td>
+                                    <td>{{ user[0] }}</td>
+                                    <td>{{ user[1] }}</td>
+                                    <td>{{ user[2] }}</td>
+                                    <td>{{ user[3] }}</td>
+                                    <td>{{ user[4] }}</td>
+                                    <td>{{ user[5] }}</td>
+                                  </tr>
+                                  {% endfor %}
+                               
+                                {% endif %}
+
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                        <div class="button_rows">
+                          <button type="reset" class="submit_btn">Clear selection</button>
+                        <button type="submit" class="submit_btn">Delete selected user(s)</button>
+                        </div>
+                        <!--
+                        </div>
+                      </div>
+                    </div>
+                    </div>
+                  -->
+                  
                 </form>
-  
+                <!--
               </div>
             
           </div>
-          <div id="group_form" class="form">
-            <p>Group form</p>
-          </div>
-          <div id="perm_form" class="form">
-            <p>Perm form</p>
-          </div>
         </div>
+        -->
       </div>
-      </div>
+      
+      
     </div>
 
 <script>
