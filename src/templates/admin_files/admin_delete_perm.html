@@ -53,6 +53,7 @@
           <a href="/delete_user" target="_self">Delete an user</a>
           <a href="/delete_group" target="_self">Delete a group</a>
           <a href="/delete_perm" target="_self">Delete a permission</a>
+          <a href="/delete_app" target="_self">Delete an app</a>
         </div>
   
         <a href="/admin_msg" target="_self">Messages</a>
@@ -62,7 +63,7 @@
     <div id="main">
       <button class="open_btn" onclick="open_menu()">☰</button>
       <div class="main-container">
-        <h2>Delete one or more apps</h2>
+        <h2>Delete one or more permissions</h2>
 
         <form action="{{ url_for('execute_delete_perm') }}" method="POST">
           <div class="table-responsive">
@@ -87,7 +88,7 @@
                   {% endfor %}  
                 {% else %}
                 <tr>
-                  <td colspan="4">There are no apps defined! Check the database</td>
+                  <td colspan="4">There are no permissions defined! Check the database</td>
                 </tr>
                 {% endif %}
               </tbody>   

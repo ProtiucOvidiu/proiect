@@ -397,6 +397,71 @@ def execute_delete_perm():
 
 #==============================================================================#
 
+@app.route('/delete_app')
+def delete_app_run():
+    # if the user is not logged in, redirect him/her to the login page
+    is_logged_in()
+
+    apps = []
+    query = "SELECT * FROM apps ORDER BY id;"
+
+    # database connection to get the apps
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+    try:
+        cur = conn.cursor(buffered=True)
+
+        # get all the permissions
+        cur.execute(query)
+        apps = cur.fetchall()
+
+        # close the connection
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if (conn):
+            conn.close()
+            print('Connection to db was closed!')
+
+    return render_template('admin_files/admin_delete_app.html', apps = apps)
+
+#==============================================================================#
+
+@app.route('/delete_app_exec', methods=['POST'])
+def execute_delete_app():
+     # get the list of ids that the admin wants to delete
+    delete = request.form.getlist('checks')
+
+    ids_string = form_delete_id_string(delete)
+    query = "DELETE FROM apps WHERE id IN " + ids_string
+    
+    # database connection to execute the query
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+
+    try:
+        cur = conn.cursor(buffered=True)
+
+        # execute the query and commit the change
+        cur.execute(query)
+        conn.commit()
+
+        # close the connection
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if (conn):
+            conn.close()
+            print('Connection to db was closed!')
+            
+    return redirect('/delete_app')
+
+#==============================================================================#
+
 @app.route('/admin_msg')
 def admin_msg_run():
     # if the user is not logged in, redirect him/her to the login page
