@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!--Link pentru sageata-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type= "text/css" href="../static/styles/index.css">
+    <link rel="stylesheet" type= "text/css" href="../../static/styles/delete.css">
+    <script type="text/javascript" src="../../static/scripts/index.js"></script>
+    <script>
+     
+    </script>
+    
+  </head>
+
+  <body>
+
+    <div class="topnav" id="myTopnav">
+
+      <div class="dropdown">
+        <button class="dropbtn">Profile  
+          <i class="fa fa-caret-down" style="text-align: right;"></i>  
+        </button>
+
+        <div class="dropdown-content">
+          <a href="/admin_settings" target="_self">Settings</a>
+          <a href="/admin_contact" target="_self">Contact</a>
+          <a href="/logout" target="_self">Log Out</a>
+
+        </div>
+      </div>
+      <a href="/admin_home" class="homebtn" target="_self">Home</a>
+    </div>
+    <div id="side_menu" class="sidebar">
+        <a href="javascript:void(0)" class="closebtn" onclick="close_menu()">×</a>
+        <a href="/admin_home" target="_self">Apps</a>
+        <a href="/admin_groups" target="_self">Groups</a>
+        <button class="dropdown-side-btn">Add user/group/perm
+          <i class="fa fa-caret-down"></i>
+        </button>
+            <div class="dropdown-side-menu">
+                <a href="/add_user">Add user</a>
+                <a href="#">Add group</a>
+                <a href="#">Add permissions</a>
+            </div>
+        <a href="/admin_modify" target="_self">Modify user/group/perm</a>
+  
+        <button class="dropdown-side-btn" id="drop-side-btn">Delete
+          <i class="fa fa-caret-down" style="text-align: right"></i>
+        </button>
+        <div class="dropdown-side-menu">
+          <a href="/delete_user" target="_self">Delete an user</a>
+          <a href="/delete_group" target="_self">Delete a group</a>
+          <a href="/delete_perm" target="_self">Delete a permission</a>
+          <a href="/delete_app" target="_self">Delete an app</a>
+        </div>
+  
+        <a href="/admin_msg" target="_self">Messages</a>
+        <a href="/admin_forum" target="_self">Q&A/Forum</a>
+      </div>
+
+    <div id="main">
+      <button class="open_btn" onclick="open_menu()">☰</button>
+      <div class="main-container">
+        <h2>Delete one or more apps</h2>  
+
+        <form action="{{ url_for('execute_delete_app') }}" method="POST">
+          <div class="table-responsive">
+            <table class="table table-bordered table-hover">
+              <thead class="thead-info">
+                <tr>
+                  <th scope="col">Check</th>
+                  <th scope="col">ID</th>
+                  <th scope="col">App Name</th>
+                  <th scope="col">App Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if apps|length %}
+                  {% for app in apps %}
+                  <tr>
+                    <td><input type="checkbox" value="{{ app[0] }}" name="checks"> </td>
+                    <td>{{ app[0] }}</td>
+                    <td>{{ app[1] }}</td>
+                    <td>{{ app[2] }}</td>
+                  </tr>
+                  {% endfor %}  
+                {% else %}
+                  <tr>
+                    <td colspan="4">There are no apps defined! Check the database</td>
+                  </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+          <div class="button_rows">
+            <button type="submit" class="btn btn-info">Delete selected app(s)</button>
+            <button type="reset" class="btn btn-info">Clear selection</button>
+          </div>
+        </form>
+      </div>  
+      
+    </div>
+    </div>
+    <script>
+        var dropdown = document.getElementsByClassName("dropdown-side-btn");
+        var i;
+      
+        for (i = 0; i < dropdown.length; i++) {
+        dropdown[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var dropdownContent = this.nextElementSibling;
+        if (dropdownContent.style.display === "block") {
+        dropdownContent.style.display = "none";
+        } else {
+        dropdownContent.style.display = "block";
+        }
+        });
+        }
+       </script>     
+    
+  </body>
+</html>

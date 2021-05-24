@@ -149,7 +149,7 @@ def do_admin_sign_up():
       conn.close()
       print('Connection to db was closed!')
 
-  return redirect("/login")
+  return redirect("/")
 
 #==============================================================================#
 

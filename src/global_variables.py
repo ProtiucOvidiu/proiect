@@ -13,15 +13,15 @@ user_id = []
 #==============================================================================#
 
 # database login details to freemysql_hosting
-DB_HOST = 'sql11.freemysqlhosting.net'
-DB_USER = 'sql11402476'
-DB_PASSWORD = 'kS7DsFkJep'
-DB_DATABASE = 'sql11402476'
+#DB_HOST = 'sql11.freemysqlhosting.net'
+#DB_USER = 'sql11402476'
+#DB_PASSWORD = 'kS7DsFkJep'
+#DB_DATABASE = 'sql11402476'
 
-#DB_HOST = '127.0.0.1'
-#DB_USER = 'root'
-#DB_PASSWORD = 'cvscvs'
-#DB_DATABASE = 'sky_security'
+DB_HOST = '127.0.0.1'
+DB_USER = 'root'
+DB_PASSWORD = 'cvscvs'
+DB_DATABASE = 'sky_security'
 
 #==============================================================================#
 
@@ -84,7 +84,6 @@ def is_logged_in():
 def is_group_in_list(admin_groups, group):
     # verify if a specific group name is in the list or not
     for group_row in admin_groups:
-        print(group + "----" + group_row[0])
         if group == group_row[0]:
             return True
     return False
@@ -97,7 +96,6 @@ def is_group_in_list(admin_groups, group):
 def create_group_dict(group_names, admin_groups):
     groups = {}
     for group_row in group_names:
-        print("group_row"+str(group_row))
         if is_group_in_list(admin_groups, group_row[0]):
             groups[ group_row[0] ] = "Yes"
         else:
