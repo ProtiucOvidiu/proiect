@@ -108,12 +108,12 @@ def login_user(app_id, user_login, password):
             # generate the list of group ids for the query
             for i in range(0, len(group_ids)):
                 if i != len(group_ids) - 1:
-                    tmp_query += str(group_ids[i][0]) + ", "
+                    perm_query += str(group_ids[i][0]) + ", "
                 else:
-                    tmp_query += str(group_ids[i][0]) + "); "
+                    perm_query += str(group_ids[i][0]) + "); "
 
             # execute the query and fetch the result
-            cur.execute(tmp_query)
+            cur.execute(perm_query)
             perm_ids = cur.fetchall()
 
             # if there are no permissions defined for any of the groups there
@@ -131,7 +131,7 @@ def login_user(app_id, user_login, password):
                 for p in perm_ids:
                     print(p)
             
-                perm_query = ("SELECT id, name FROM permissions WHERE "
+                perm_query = ("SELECT name FROM permissions WHERE "
                               "app_id = " + str(app_id) + " AND id IN (")
                 # generate the list of perm ids for the query
                 for i in range(0, len(perm_ids)):
@@ -161,8 +161,7 @@ def login_user(app_id, user_login, password):
                     for a in app_perms:
                         print(a)
                     for p in app_perms:
-                        response.append(str(p[0]))
-                        response.append(p[1])
+                        response.append(p[0])
 
         # close the connection
         cur.close()

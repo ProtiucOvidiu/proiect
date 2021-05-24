@@ -80,7 +80,7 @@ if __name__ == '__main__':
             # the number of permissions for the user
             limit = recv_msg(sock)
             # do a receive for all the permissions and print them            
-            for i in range(0, int(response)):
+            for i in range(0, int(limit)):
                 perm = recv_msg(sock)
                 print(perm)
         else:

@@ -61,6 +61,8 @@ def handle_client(client_sock, addr):
             # and the error message
             send_msg(client_sock, response[1])
         elif response[0] == "OK":
+            # send the OK string that lets the client know that everything is ok
+            send_msg(client_sock, response[0])
             # count how many permission does the user have and create the list 
             # that contains all of them
             no_of_perms = 0
@@ -79,21 +81,22 @@ def handle_client(client_sock, addr):
                 if response[i].startswith("DELETE"):
                     client_response.append(str(DELETE))
                     no_of_perms += 1
-
-
-            # send the OK string that lets the client know that everything is ok
-            send_msg(client_sock, response[0])
+            # do a sleep to avoid sending multime messages at the same time
+            time.sleep(1)
             # send the number of permissions that the client should expect
             send_msg(client_sock, str(no_of_perms))
+            # do a sleep to avoid sending multime messages at the same time
             time.sleep(1)
             # send the list of permissions one by one 
             for i in range(0, no_of_perms):
                 send_msg(client_sock, client_response[i])
+                # do a sleep to avoid sending multime messages at the same time
                 time.sleep(1)
         else:
             # something unexpected happened
             send_msg(client_sock, "ERROR")
-            time.sleep(3)
+            # do a sleep to avoid sending multime messages at the same time
+            time.sleep(1)
             send_msg(client_sock, ("There was an unknown error! Please try"
                                    " again later.\n"))
         
@@ -112,7 +115,6 @@ def handle_client(client_sock, addr):
 def recv_msg(sock):
     data = bytearray()
     msg = ''
-
     # while there is no message we do a receive
     while not msg:
         recvd = sock.recv(2000)
