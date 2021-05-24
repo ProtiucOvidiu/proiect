@@ -744,10 +744,195 @@ def check_username(username):
     return check
 #==============================================================================#
 
-@app.route('/add_group')
+@app.route('/add_group', methods=['POST','GET'])
 def admin_add_group():
-    return render_template('admin_files/admin_add_group.html')
 
-@app.route('/add_perms')
+    #print('\n\n\n\n'+str(user_id[0])+'\n\n\n\n')
+    query = ("SELECT * from groups;")
+    query2 = "SELECT id, username from users;"
+    query3 = "SELECT id, name from permissions;"
+    (groups, users, permissions)= query_for_user_groups_relation(query, query2, query3)
+    #insert_groups()
+    
+    # insert into groups_perm_relation group id nou creat + perm id selectat
+    return render_template('admin_files/admin_add_group.html', groups = groups, users = users, permissions = permissions)
+#==============================================================================#
+def query_for_user_groups_relation(query, query2, query3):
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+    try:
+        cur = conn.cursor(buffered = True)
+        cur.execute(query)
+        query = cur.fetchall()
+        cur.execute(query2)
+        query2 = cur.fetchall()
+        cur.execute(query3)
+        query3 = cur.fetchall()
+        print(query3)
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if conn:
+            conn.close()
+            print('Connection to db was closed!')
+    return (query, query2, query3)
+#==============================================================================#
+@app.route('/add_group_run', methods = ['POST'])
+def insert_groups():
+    add = request.form
+    name = add.get('name')
+    description = add.get('description')
+    users = request.form.getlist('users')
+    #print(users)
+    #print(name, description)
+    query = "INSERT INTO groups (name, description) VALUES ('" + str(name) + "', '" + str(description) + "');"
+    query2 = "SELECT id from groups WHERE name = '" + str(name) +"';"
+    #print(query)
+    #print(query2)
+    print("----------------")
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+    try:
+        cur = conn.cursor(buffered = True)
+        cur.execute(query)
+        conn.commit()
+        cur.execute(query2)
+        query2 = cur.fetchone()[0]
+        print(query2)
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if conn:
+            conn.close()
+            print('Connection to db was closed!')
+    insert_group_relation(query2, users)
+    return redirect('/add_group')
+#==============================================================================#
+def insert_group_relation(query, users):
+    query2 = "INSERT INTO user_groups_relation (group_id, user_id) VALUES (" + str(query) + ","
+    queries = []
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+    try:
+        cur = conn.cursor(buffered = True)
+        for i in range(0, len(users)):
+            queries.append(query2 + str(users[i])+ ");")
+
+        for i in range(0,len(queries)):
+            cur.execute(str(queries[i]))
+            conn.commit()
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if conn:
+            conn.close()
+            print('Connection to db was closed!')
+    return redirect('/add_group_run')
+
+#==============================================================================#
+
+@app.route('/add_perms', methods = ['POST','GET'])
 def admin_add_perms():
-    return render_template('admin_files/admin_add_perm.html')
+    query = "SELECT * from permissions;"
+    groups = "SELECT * from groups;"
+    apps = "SELECT id, name from apps"
+    (query, groups, apps) = exec_query(query, groups, apps)
+    return render_template('admin_files/admin_add_perm.html', perms = query, groups = groups, apps = apps)
+
+def exec_query(query1, query2, query3):
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+    try:
+        cur = conn.cursor(buffered = True)
+        cur.execute(query1)
+        query1 = cur.fetchall()
+        cur.execute(query2)
+        query2 = cur.fetchall()
+        cur.execute(query3)
+        query3 = cur.fetchall()
+        
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if conn:
+            conn.close()
+            print('Connection to db was closed!')
+    return (query1, query2, query3)
+
+@app.route('/add_perms_run', methods = ['POST'])
+def insert_perms():
+    add_perms = request.form
+    name = add_perms.get('name')
+    description = add_perms.get('description')
+    id_apps = add_perms.getlist('apps')
+    id_groups = add_perms.getlist('groups')
+    perm_id = "SELECT id from permissions"
+    print("{} {}".format(id_apps, id_groups))
+    insert = "INSERT INTO permissions (name, description, app_id) VALUES ('" + str(name) + "', '" + str(description) + "', " 
+    queries = []
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+    try:
+        cur = conn.cursor(buffered = True)
+        for i in range(0, len(id_apps)):
+            queries.append(insert + str(int(id_apps[i]))+ ");")
+        print(queries)
+        for i in range(0,len(queries)):
+            cur.execute(str(queries[i]))
+            conn.commit()
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if conn:
+            conn.close()
+            print('Connection to db was closed!')
+
+    #group_id = id_groups
+    # name = id
+    insert_groups_perm_relation(id_groups, name)
+    return redirect('/add_perms')
+
+def insert_groups_perm_relation(group_id, name):
+    print("-------------------")
+    query = "INSERT INTO groups_perm_relation (perm_id, group_id) VALUES (" 
+    query2 = "SELECT id from permissions WHERE name= '" + str(name) + "';"
+    queries = []
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+    
+    try:
+        cur = conn.cursor(buffered = True)
+        cur.execute(query2)
+        query2 = cur.fetchone()[0]
+        query += str(query2) + ", "
+        print(query2)
+        for i in range(0, len(group_id)):
+            queries.append(query + str(group_id[i])+ ");")
+        #print(queries)
+        for i in range(0,len(queries)):
+            cur.execute(str(queries[i]))
+            conn.commit()
+            print(queries[i])
+
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if conn:
+            conn.close()
+            print('Connection to db was closed!')
+
+    print("---------------")
+
+    return redirect('/add_perms_run')
