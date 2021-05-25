@@ -6,6 +6,7 @@ function open_menu() {
   function close_menu() {
     document.getElementById("side_menu").style.width = "0";
     document.getElementById("main").style.marginLeft= "0";
+    //document.getElementsByClassName("dropdown-side-btn").disabled = true;
   }
   
   function myFunction() {

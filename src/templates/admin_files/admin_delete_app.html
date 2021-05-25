@@ -3,7 +3,7 @@
 
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!--Link pentru sageata-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" type= "text/css" href="../static/styles/index.css">
     <link rel="stylesheet" type= "text/css" href="../../static/styles/delete.css">
@@ -63,9 +63,9 @@
     <div id="main">
       <button class="open_btn" onclick="open_menu()">☰</button>
       <div class="main-container">
-        <h2>Delete one or more permissions</h2>
+        <h2>Delete one or more apps</h2>  
 
-        <form action="{{ url_for('execute_delete_perm') }}" method="POST">
+        <form action="{{ url_for('execute_delete_app') }}" method="POST">
           <div class="table-responsive">
             <table class="table table-bordered table-hover">
               <thead class="thead-info">
@@ -77,30 +77,28 @@
                 </tr>
               </thead>
               <tbody>
-                {% if perms|length %}
-                  {% for perm in perms %}
+                {% if apps|length %}
+                  {% for app in apps %}
                   <tr>
-                    <td><input type="checkbox" value="{{ perm[0] }}" name="checks"> </td>
-                    <td>{{ perm[0] }}</td>
-                    <td>{{ perm[1] }}</td>
-                    <td>{{ perm[1] }}</td>
+                    <td><input type="checkbox" value="{{ app[0] }}" name="checks"> </td>
+                    <td>{{ app[0] }}</td>
+                    <td>{{ app[1] }}</td>
+                    <td>{{ app[2] }}</td>
                   </tr>
                   {% endfor %}  
                 {% else %}
-                <tr>
-                  <td colspan="4">There are no permissions defined! Check the database</td>
-                </tr>
+                  <tr>
+                    <td colspan="4">There are no apps defined! Check the database</td>
+                  </tr>
                 {% endif %}
-              </tbody>   
+              </tbody>
             </table>
-          </div>          
+          </div>
           <div class="button_rows">
-            <button type="submit" class="btn btn-info">Delete selected apps(s)</button>
-            <button type="reset"  class="btn btn-info">Clear selection</button>
+            <button type="submit" class="btn btn-info">Delete selected app(s)</button>
+            <button type="reset" class="btn btn-info">Clear selection</button>
           </div>
         </form>
-            </div>          
-        </div>
       </div>  
       
     </div>
