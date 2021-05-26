@@ -247,11 +247,12 @@ def update_group(modify):
 def update_permissions(modify):
     update_query = ""
     if (modify.get('id_perm') and modify.get('name_perm')) or \
-    (modify.get('id_perm') and modify.get('desc_perm')): 
+    (modify.get('id_perm') and modify.get('desc_perm')) or \
+    (modify.get('id_perm') and modify.get('app')): 
         update_query = "UPDATE permissions"
-        if modify.get('name_perm') != '' and modify.get('desc_perm') != '':
+        if modify.get('name_perm') != '' and modify.get('desc_perm') != '' and modify.get('app'):
             update_query += " SET name = \'" + modify['name_perm'] + '\', description = \''\
-            + modify['desc_perm'] + '\''
+            + modify['desc_perm'] + '\' , app_id = \''  + modify['app'] + '\''
         if modify.get('desc_perm') == '':
             update_query += " SET name = \'" + modify['name_perm'] + '\''
         if modify.get('name_perm') == '':
@@ -297,16 +298,6 @@ def update_user_perm(modify):
         "WHERE group_id = " + modify['id_group'] + " and perm_id = " + modify['remove_perm'] + ";")
     return (insert_query, remove_query)
 
-def update_user_app(modify):
-    insert_query = ''
-    remove_query = ''
-    if (modify.get('id_group') and modify.get('add_perm')):
-        insert_query +=("Insert into groups_perm_relation(group_id, perm_id) "
-        "values(" + modify['id_group'] + ", " + modify['add_perm'] + ");")
-    elif (modify.get('id_group') and modify.get('remove_perm')):
-        remove_query += ("DELETE FROM groups_perm_relation "
-        "WHERE group_id = " + modify['id_group'] + " and perm_id = " + modify['remove_perm'] + ";")
-    return (insert_query, remove_query)
 
 
 #==============================================================================#
