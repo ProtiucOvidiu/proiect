@@ -162,27 +162,34 @@ def admin_modify_run():
         "INNER JOIN user_groups_relation ug ON ug.group_id = g.id "
         "WHERE ug.user_id = " + str(user_id[0]) + ");")
     query3 = "Select id, username from users;"
+    query4 = "Select * from apps;"
     # if the user is not logged in, redirect him/her to the login page
     is_logged_in()
     try:
         conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
         database=DB_DATABASE)
         cur = conn.cursor(buffered = True)
-        (groups, perm, users) = temp(query, query2, query3)
+        (groups, perm, users, apps) = temp(query, query2, query3, query4)
         if request.method == 'POST':
                 if update_group(modify) != '':
                     cur.execute(update_group(modify))
                 if update_permissions(modify) != '':
                     cur.execute(update_permissions(modify))
+                if update_apps(modify) != '':
+                    cur.execute(update_apps(modify))
                 (insert_user_group, remove_user_group) = update_user_group(modify)
-                cur.execute(insert_user_group)
-                print(insert_user_group)
+                if insert_user_group != '':
+                    cur.execute(insert_user_group)
                 if remove_user_group != '':
                     cur.execute(remove_user_group)
-                print(remove_user_group)
+                (insert_user_perm, remove_user_perm) = update_user_perm(modify)
+                if insert_user_perm != '':
+                    cur.execute(insert_user_perm)
+                if remove_user_perm != '':
+                    cur.execute(remove_user_perm)
                 conn.commit()
         elif request.method == 'GET':
-            return render_template('admin_files/admin_modify.html', groups = groups, perm = perm, users = users)
+            return render_template('admin_files/admin_modify.html', groups = groups, perm = perm, users = users, apps = apps)
         cur.close()
         conn.close()
     except mariadb.Error as error:
@@ -190,14 +197,15 @@ def admin_modify_run():
     finally:
         if conn:
             conn.close()
-    (groups, perm, users) = temp(query, query2, query3)
-    return render_template('admin_files/admin_modify.html', groups = groups, perm = perm,  users = users)
+    (groups, perm, users, apps) = temp(query, query2, query3, query4)
+    return render_template('admin_files/admin_modify.html', groups = groups, perm = perm,  users = users, apps = apps)
 
 # use this function to get groups and permission, without reloading the page
-def temp(query, query2, query3):
+def temp(query, query2, query3, query4):
     groups = ''
     permissions = ''
     users = ''
+    apps = ''
     try: 
         conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
         database=DB_DATABASE)
@@ -208,6 +216,8 @@ def temp(query, query2, query3):
         permissions = cur.fetchall()
         cur.execute(query3)
         users = cur.fetchall()
+        cur.execute(query4)
+        apps = cur.fetchall()
         cur.close()
         conn.close()
     except mariadb.Error as error:
@@ -215,7 +225,7 @@ def temp(query, query2, query3):
     finally:
         if conn:
             conn.close()
-    return (groups, permissions, users)
+    return (groups, permissions, users, apps)
 
 # The actual function for update data in groups
 def update_group(modify):
@@ -249,6 +259,22 @@ def update_permissions(modify):
         update_query += " WHERE id = " + modify['id_perm'] + ';'
     return update_query
 
+# The actual function for update data in apps
+def update_apps(modify):
+    update_query = ""
+    if (modify.get('id_app') and modify.get('name_app')) or \
+    (modify.get('id_app') and modify.get('link')): 
+        update_query = "UPDATE apps"
+        if modify.get('name_app') != '' and modify.get('link') != '':
+            update_query += " SET name = \'" + modify['name_app'] + '\', link = \''\
+            + modify['link'] + '\''
+        if modify.get('link') == '':
+            update_query += " SET name = \'" + modify['name_app'] + '\''
+        if modify.get('name_app') == '':
+            update_query += " SET link = \'" + modify['link'] + '\''
+        update_query += " WHERE id = " + modify['id_app'] + ';'
+    return update_query
+
 def update_user_group(modify):
     insert_query = ''
     remove_query = ''
@@ -261,6 +287,17 @@ def update_user_group(modify):
     return (insert_query, remove_query)
 
 def update_user_perm(modify):
+    insert_query = ''
+    remove_query = ''
+    if (modify.get('id_group') and modify.get('add_perm')):
+        insert_query +=("Insert into groups_perm_relation(group_id, perm_id) "
+        "values(" + modify['id_group'] + ", " + modify['add_perm'] + ");")
+    elif (modify.get('id_group') and modify.get('remove_perm')):
+        remove_query += ("DELETE FROM groups_perm_relation "
+        "WHERE group_id = " + modify['id_group'] + " and perm_id = " + modify['remove_perm'] + ";")
+    return (insert_query, remove_query)
+
+def update_user_app(modify):
     insert_query = ''
     remove_query = ''
     if (modify.get('id_group') and modify.get('add_perm')):
