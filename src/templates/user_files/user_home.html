@@ -39,22 +39,30 @@
       <button class="open_btn" onclick="open_menu()">☰</button>
       <div class="main-container">
         <h2>Apps view</h2>
-        <p>List of permissions.</p>
+        <p>List of apps and the associated permissions.</p>
         
              <div class="table-responsive">
               <table class="table table-bordered table-hover">
                 <thead class="thead-info">
                   <tr>
                     <th scope="col">App Name</th>
-                    <th scope="col">Link</th>
+                    <th scope="col">Permission name</th>
+                    <th scope="col">Permission description</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {% if permissions|length %}
-                    {% for perm in permissions %}
+                  {% if app_perms_list|length %}
+                    {% for app, perms in app_perms_list.items() %}
                     <tr>
-                      <td scope="row" id="{{ perm[0] }}">{{ perm[0] }}</td>
-                      <td><a href="#" class="link-style">The app</a></td></tr>
+                      <td scope="row" rowspan="{{ perms|length + 1}}" style="text-align: center; vertical-align: middle;">{{ app }}</td>
+                     
+                      {% for p in perms %}
+                      <tr>
+                        <td scope="row">{{ p[1] }}</td>
+                        <td scope="row">{{ p[2] }}</td>
+                      </tr>
+                      {% endfor %}
+                    
                     </tr>
                     {% endfor %}
                   

@@ -13,9 +13,10 @@ def admin_home_run():
     # list of queries
     queries = []
 
-    # create query to get the pemissions of the user
+    # create query to get the pemissions of the user based on the groups that
+    # the user is a part of
     queries.append(
-        "SELECT p.name FROM permissions p "
+        "SELECT * FROM permissions p "
         "INNER JOIN groups_perm_relation gp ON gp.perm_id = p.id "
         "WHERE gp.group_id IN ( "
         "SELECT g.id FROM groups g "
@@ -28,9 +29,52 @@ def admin_home_run():
     try:
         cur = conn.cursor(buffered=True)       
 
-        # get all the permissions names for this user
+        # get all the permissions for this user based on the groups that 
+        # the user is a part of
         cur.execute(queries[0])
-        permissions = cur.fetchall()   
+        permissions = cur.fetchall()
+
+        # store the distinct app ids
+        app_ids = []
+
+        # create the list of unique apps that the user has access to
+        for p in permissions:
+            if p[3] not in app_ids:
+                app_ids.append(p[3])
+        
+        # select the app names and ids based on the list created
+        queries.append("SELECT * FROM apps WHERE id IN" 
+                       + form_delete_id_string(app_ids, True))
+        
+        # fetch the apps
+        cur.execute(queries[1])
+        apps = cur.fetchall()
+
+        # store the id and name in a {id : name} format
+        app_id_name = {}
+        for app in apps:
+            app_id_name[app[0]] = app[1]
+
+        app_perms_list = {}
+
+        # initialize the dictionary with the app name as a key and an empty list that 
+        # will be filled later with the permissions
+        for name in app_id_name.values():
+            app_perms_list[ name ] = []
+
+        # for each permission get the app_id and search it in the app_id_name
+        # to get the name of the app and append the permission to the list
+        # that has the name as a key
+        for p in permissions:
+            if p[3] in app_id_name.keys():
+                is_in_list = False
+                for perm in app_perms_list[ app_id_name[p[3]] ]:
+                    if p[1] == perm[1]:
+                        is_in_list = True
+                        break
+                if not is_in_list:
+                    app_perms_list[ app_id_name[p[3]] ].append(p)
+
 
         # close the connection
         cur.close()
@@ -42,8 +86,8 @@ def admin_home_run():
             conn.close()
             print('Connection to db was closed!')
 
-    # return the page with all the data stored in the permissions variable
-    return render_template('admin_files/admin_home.html', permissions = permissions)
+    # return the page with all the data stored in the app_perms_list variable
+    return render_template('admin_files/admin_home.html', app_perms_list = app_perms_list)
 
 #==============================================================================#
 
@@ -238,7 +282,7 @@ def execute_delete_user():
     # get the list of ids that the admin wants to delete
     delete = request.form.getlist('checks')
 
-    ids_string = form_delete_id_string(delete)    
+    ids_string = form_delete_id_string(delete, True)    
     queries = []
     queries.append("DELETE FROM users WHERE id IN " + ids_string)
 
@@ -304,7 +348,7 @@ def execute_delete_group():
     # get the list of ids that the admin wants to delete
     delete = request.form.getlist('checks')
 
-    ids_string = form_delete_id_string(delete)
+    ids_string = form_delete_id_string(delete, True)
     query = "DELETE FROM groups WHERE id IN " + ids_string + ";"
     
     # database connection to get the groups
@@ -369,7 +413,7 @@ def execute_delete_perm():
      # get the list of ids that the admin wants to delete
     delete = request.form.getlist('checks')
 
-    ids_string = form_delete_id_string(delete)
+    ids_string = form_delete_id_string(delete, True)
     query = "DELETE FROM permissions WHERE id IN " + ids_string
     
     # database connection to get the groups
@@ -434,7 +478,7 @@ def execute_delete_app():
      # get the list of ids that the admin wants to delete
     delete = request.form.getlist('checks')
 
-    ids_string = form_delete_id_string(delete)
+    ids_string = form_delete_id_string(delete, True)
     query = "DELETE FROM apps WHERE id IN " + ids_string
     
     # database connection to execute the query

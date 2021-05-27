@@ -110,6 +110,7 @@ body {
     z-index: 0;
     display: inline-block;
     float: right;
+    font-size: 16px;
   }
 
   .topnav .dropbtn {
@@ -143,7 +144,8 @@ body {
     display: none;
     position: relative;
     top: 25;
-    background-color: #E5F0E7;
+    font-size: 16px;
+    background-color: #2e8d8f;
     min-width: 100px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
@@ -152,7 +154,7 @@ body {
   .topnav .dropdown-content a {
     position: relative;
     top: 5;
-    color: black;
+    color: white;
     padding: 12px 16px;
     text-decoration: none!important;
     display: block;
@@ -163,8 +165,8 @@ body {
   }
   
   .topnav .dropdown-content a:hover {
-    background-color: #9CC5A1;
-    color: black;
+    /*background-color: #9CC5A1;*/
+    color: #9CC5A1;
   }
   
   .topnav .dropdown-content a.active {
