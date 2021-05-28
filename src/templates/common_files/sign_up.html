@@ -14,28 +14,31 @@
   <form action="{{ url_for('do_admin_sign_up') }}" method="POST">
     <div class="sign_up">
       <div class="sign_up-screen">
-        <div class="app-title"> 
+        <div class="login-form" style="padding: 3px">
+          <img src="../../static/img/logo_transparent.png" class="img-logo" >
+        </div>
+        <div class="app-title" style="padding-top: 15px; padding-bottom: 15px;"> 
           <h1>Sign up</h1>
         </div>
       <div class="sign_up-form">
         <div class="control-group">
           <input type="text" class="login-field" value="" placeholder="full name" name="full_name" required>
-      </div>
+         </div>
         <div class="control-group">
             <input type="text" class="login-field" value="" placeholder="user name" name="user_name" required>
         </div>
         <div class="control-group">
           <input type="email" class="login-field" value="" autocomplete="email" placeholder="email" name="email" required>
-      </div>
-      <div class="control-group">
-        <input type="phone" class="login-field" value="" placeholder="phone" name="phone" required>
-    </div>
+        </div>
+        <div class="control-group">
+          <input type="phone" class="login-field" value="" placeholder="phone" name="phone" required>
+        </div>
         <div class="control-group">
             <input type="password" class="login-field" value="" placeholder="password" name="password" required>
         </div>
         <div class="control-group">
           <input type="password" class="login-field" value="" placeholder="confirm password" name="confirm_password" required>
-      </div>
+        </div>
           <div class="button" style="padding: 10px 10px 10px;" >
             <button type="submit" value="Sign up" class="btn"> Sign Up </button>
           </div>
@@ -55,7 +58,7 @@
               {% block page_content %}{% endblock %}
           </div>
           {% endblock %}
-       </div>
+        
       </div>
      </div>
     </form>
