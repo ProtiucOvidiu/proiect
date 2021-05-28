@@ -67,41 +67,63 @@
       -->
       <a href="/admin_forum" target="_self">Frequent Questions</a>
     </div>
-
-    <!-- <style>
-      #permission, #group {
-        width: 100%;
-        padding: 50px 0;
-        text-align: center;
-        background-color: lightblue;
-        margin-top: 20px;
-      }
-      </style> -->
     <div id="main">
      
       <button class="open_btn" onclick="open_menu()">☰</button>
       <div class="main-container">
-        <h2>Modify users, groups permissions or apps</h2>
-        <p>Modify the values stored in the database for each type.</p>
-
+        <h2>Modify</h2>
+        <p>List of options.</p>
         <script>
           $(document).ready(function() {
             $('#group').click(function() {
-              $('.menu').toggle();
+              $('.group').toggle();
+              $('.permission').toggle(false);
+              $('.user_group').toggle(false);
+              $('.user_perm').toggle(false);
             });
+          });
+          $(document).ready(function() {
             $('#permission').click(function() {
-              $('.menu1').toggle();
+              $('.permission').toggle();
+              $('.group').toggle(false);
+              $('.user_group').toggle(false);
+              $('.user_perm').toggle(false);
             });
-            $('#user').click(function() {
-              $('.menu2').toggle();
+          });
+          $(document).ready(function() {
+            $('#app').click(function() {
+              $('.app').toggle();
+              $('.permission').toggle(false);
+              $('.group').toggle(false);
+              $('.user_group').toggle(false);
+              $('.user_perm').toggle(false);
             });
-        });
+          });
+          $(document).ready(function() {
+            $('#user_group').click(function() {
+              $('.group').toggle();
+              $('.user_group').toggle();
+              $('.permission').toggle(false);
+              $('.user_perm').toggle(false);
+              $('.app').toggle(false);
+            });
+          });
+          $(document).ready(function() {
+            $('#user_perm').click(function() {
+              $('.group').toggle();
+              $('.user_perm').toggle();
+              $('.permission').toggle(false);
+              $('.user_group').toggle(false);
+            });
+          });
         </script>
         <button class="btn btn-outline-primary"  id="group" >Group</button>
         <button  class="btn btn-outline-primary" id="permission" >Permission</button>
-        <button  class="btn btn-outline-primary" id="user" >User</button>
+        <button  class="btn btn-outline-primary" id="app" >App</button>
+        <button  class="btn btn-outline-primary" id="user_group" >User-Group</button>
+        <button  class="btn btn-outline-primary" id="user_perm" >Group-Permissions</button>
         <form action="{{url_for('admin_modify_run')}}" method="POST">
-          <div class="menu" style="display: none;"> 
+          <div class="group" style="display: none;"> 
             <table class="table">
               <thead class="thead">
                 <tr>
@@ -115,8 +137,8 @@
                 {% for i in groups %}
                 <tr>
                   <th scope="row">{{i.0}}</th>
-                  <td contenteditable='true'>{{i.1}}</td>
-                  <td contenteditable='true'>{{i.2}}</td>
+                  <td>{{i.1}}</td>
+                  <td>{{i.2}}</td>
                 </tr>
                 {% endfor %}
                 <tr>
@@ -127,15 +149,15 @@
                 </tr>
               </tbody>
             </table>
-              
           </div>
-          <div class="menu1" style="display: none;"> 
+          <div class="permission" style="display: none;"> 
             <table class="table">
               <thead class="thead">
                 <tr>
-                  <th scope="col" style=" border-bottom: 2px solid black !important;">#</th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;">Permission</th>
                   <th scope="col" style=" border-bottom: 2px solid black !important;">Name</th>
                   <th scope="col" style=" border-bottom: 2px solid black !important;">Description</th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;">App</th>
                   <th scope="col" style=" border-bottom: 2px solid black !important;"></th>
                 </tr>
               </thead>
@@ -143,20 +165,50 @@
                 {% for i in perm %}
                 <tr>
                   <th scope="row">{{i.0}}</th>
-                  <td contenteditable='true'>{{i.1}}</td>
-                  <td contenteditable='true'>{{i.2}}</td>
+                  <td>{{i.1}}</td>
+                  <td>{{i.2}}</td>
+                  <td>{{i.3}}</td>
                 </tr>
                 {% endfor %}
                 <tr>
                   <td><input type="number" class="form-control" name="id_perm" placeholder="Id"></td>
                   <td ><input type="text" class="form-control" name="name_perm" placeholder="New Name"></td>
                   <td ><input type="text" class="form-control" name="desc_perm" placeholder="New Description"></td>
+                  <td ><input type="text" class="form-control" name="app" placeholder="New App"></td>
                   <td><button class="btn btn-secondary btn_submit" type="submit"> Run </button></td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <div class="menu2" style="display: none;"> 
+          <div class="app" style="display: none;"> 
+            <table class="table">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">App</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Link</th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for i in apps %}
+                <tr>
+                  <th scope="row">{{i.0}}</th>
+                  <td>{{i.1}}</td>
+                  <td>{{i.2}}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                  <td><input type="number" class="form-control" name="id_app" placeholder="Id"></td>
+                  <td ><input type="text" class="form-control" name="name_app" placeholder="New Name"></td>
+                  <td ><input type="text" class="form-control" name="link" placeholder="New Link"></td>
+                  <td><button class="btn btn-secondary" type="submit"> Run </button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          </div>
+          <div class="user_group" style="display: none;"> 
             <table class="table">
               <thead class="thead">
                 <tr>
@@ -170,15 +222,40 @@
                 {% for i in users %}
                 <tr>
                   <th scope="row">{{i.0}}</th>
-                  <td contenteditable='true'>{{i.0}}</td>
-                  <td contenteditable='true'>{{i.0}}</td>
+                  <td>{{i.1}}</td>
                 </tr>
                 {% endfor %}
                 <tr>
-                  <td><input type="number" class="form-control" name="id_perm" placeholder="Id"></td>
-                  <td ><input type="text" class="form-control" name="name_perm" placeholder="New Name"></td>
-                  <td ><input type="text" class="form-control" name="desc_perm" placeholder="New Description"></td>
-                  <td><button class="btn btn-secondary btn_submit" type="submit"> Run </button></td>
+                  <td><input type="number" class="form-control" name="id_user" placeholder="Id"></td>
+                  <td ><input type="text" class="form-control" name="add_group" placeholder="Add Group Id"></td>
+                  <td ><input type="text" class="form-control" name="remove_group" placeholder="Remove Group Id"></td>
+                  <td><button class="btn btn-danger" type="submit"> Run </button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="user_perm" style="display: none;"> 
+            <table class="table">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">Permission</th>
+                  <th scope="col">Name</th>
+                  <th scope="col"></th>
+                  <th scope="col"></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for i in perm %}
+                <tr>
+                  <th scope="row">{{i.0}}</th>
+                  <td>{{i.1}}</td>
+                </tr>
+                {% endfor %}
+                <tr>
+                  <td><input type="number" class="form-control" name="id_group" placeholder="Id Group"></td>
+                  <td ><input type="text" class="form-control" name="add_perm" placeholder="Add Permission Id"></td>
+                  <td ><input type="text" class="form-control" name="remove_perm" placeholder="Remove Permission Id"></td>
+                  <td><button class="btn btn-danger" type="submit"> Run </button></td>
                 </tr>
               </tbody>
             </table>
