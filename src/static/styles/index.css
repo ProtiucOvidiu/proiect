@@ -11,7 +11,8 @@ body {
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #36A9AB;
+    /*background-color: #36A9AB;*/
+    background-color: #2596be;
     overflow-x: hidden;
     transition: 0.5s;
     padding-top: 60px;
@@ -26,12 +27,12 @@ body {
   }
   
   .sidebar a:hover, .dropdown-side-btn:hover {
-    color: #9CC5A1;
+    color: #1a6985;
   }
   
   .sidebar a:active {
     color: white;
-    background-color: #9CC5A1;
+    background-color: #92cbdf;
   }
   
   .sidebar .closebtn {
@@ -45,14 +46,14 @@ body {
   .open_btn {
     font-size: 20px;
     cursor: pointer;
-    background-color: #36A9AB;
+    background-color: #2596be;
     color: white;
     padding: 10px 15px;
     border: none;
   }
   
   .open_btn:hover {
-    background-color: #3BB8BA
+    background-color: #1a6985
       /*#216869;*/
     ;
   }
@@ -67,7 +68,7 @@ body {
   .dropdown-side-btn {
     border: none!important;
     text-align: left;
-    background-color: #36A9AB;
+    background-color: #2596be;
     width: 100%;
   }
 
@@ -79,10 +80,13 @@ body {
   /* Div where all the elements are stored */
   .dropdown-side-menu {
     display: none;
-    background-color: #2e8d8f;
+    background-color: #1e7898;
     transition: 13s;
   }
   
+  .dropdown-side-menu a:hover {
+    color: #7cc0d8;
+  }
  
   #main {
     transition: margin-left 0.5s;
@@ -110,10 +114,11 @@ body {
     z-index: 0;
     display: inline-block;
     float: right;
+    font-size: 16px;
   }
 
   .topnav .dropbtn {
-    background-color: #36A9AB;
+    background-color: #2596be;
     color: white;
     padding-top: 16px;
     padding-bottom: 16px;
@@ -124,7 +129,7 @@ body {
   
   .topnav .homebtn {
     text-decoration: none!important;
-    background-color: #36A9AB;
+    background-color: #2596be;
     color: white;
     padding: 16px;
     font-size: 16px;
@@ -143,7 +148,8 @@ body {
     display: none;
     position: relative;
     top: 25;
-    background-color: #E5F0E7;
+    font-size: 16px;
+    background-color: #1e7898;
     min-width: 100px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
@@ -152,7 +158,7 @@ body {
   .topnav .dropdown-content a {
     position: relative;
     top: 5;
-    color: black;
+    color: white;
     padding: 12px 16px;
     text-decoration: none!important;
     display: block;
@@ -163,8 +169,7 @@ body {
   }
   
   .topnav .dropdown-content a:hover {
-    background-color: #9CC5A1;
-    color: black;
+    color: #7cc0d8;
   }
   
   .topnav .dropdown-content a.active {
@@ -209,4 +214,9 @@ body {
   padding: 50px 30px 50px 30px;
 }
 
+.img-logo{
+  width: 250px;
+  height: 80px;
+  padding-bottom: 15px;
+}
 

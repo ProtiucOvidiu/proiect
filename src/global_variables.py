@@ -106,15 +106,23 @@ def create_group_dict(group_names, admin_groups):
 ###
 # Creates a string with the specified ids in the form of (1, 2, 3);
 ###
-def form_delete_id_string(delete):
+def form_delete_id_string(delete, is_form):
     # form the string 
     ids_string = "("
-    for i in range(0, len(delete)):
-        if i != len(delete) - 1:
-            ids_string += delete[i] + ","
-        else:
-            ids_string += delete[i] + ");"
+    if is_form:
+        for i in range(0, len(delete)):
+            if i != len(delete) - 1:
+                ids_string += str(delete[i]) + ","
+            else:
+                ids_string += str(delete[i]) + ");"
+    else:
+        for i in range(0, len(delete)):
+            if i != len(delete) - 1:
+                ids_string += str(delete[i][0]) + ","
+            else:
+                ids_string += str(delete[i][0]) + ");"
     return ids_string
+
 #==============================================================================#
 ###
 # Check if a user is an admin and update it in the db 
