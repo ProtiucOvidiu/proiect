@@ -32,9 +32,9 @@ def do_admin_login():
   if login.get('sign_up'):
     return redirect("/sign_up")
 
-  password = login['password']
-  email = login['email-username']
-  username = login['email-username']
+  password = str(login.get("password", False))
+  email = str(login.get("email-username", False))
+  username = str(login.get("email-username", False))
 
   check = 0
   conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
@@ -62,9 +62,9 @@ def do_admin_login():
   # if there is no data from db aka there is no user stored in db with that
   # username or email  
   if not data:
-    error = 'Invalid credentials'
+    error = 'Invalid credentials!'
     flash(error)
-    return redirect("/login")
+    return redirect("/")
 
   # check the username/email if it matches with the one stored
   for i in data[:][0]:
@@ -76,9 +76,9 @@ def do_admin_login():
     check += 1
 
   if check != 2:
-    error = 'Wrong password or email'
+    error = 'Wrong password or email!'
     flash(error)
-    return redirect("login", error = error)
+    return redirect("/")
 
   # if it reaches this code than it means that all the login details are 
   # correct
@@ -112,12 +112,12 @@ def do_admin_sign_up():
   if request_sign.get('login'):
     return redirect("/")
 
-  full_name = request_sign['full_name'] 
-  user_name = request_sign['user_name']
-  email = request_sign['email']
-  phone = request_sign['phone']
-  password = request_sign['password']
-  pass_conf = request_sign['confirm_password']
+  full_name = str(request_sign.get('full_name', False))
+  user_name = str(request_sign.get('user_name', False))
+  email = str(request_sign.get('email', False))
+  phone = str(request_sign.get('phone', False))
+  password = str(request_sign.get('password', False))
+  pass_conf = str(request_sign.get('confirm_password', False))
   
   sign_up_pers1 = sign_up_pers(full_name, user_name, email, phone, password, pass_conf)
   

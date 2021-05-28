@@ -5,6 +5,9 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../../static/styles/style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
   <title>Sign up</title>
 </head>
 <body>
@@ -16,34 +19,36 @@
         </div>
       <div class="sign_up-form">
         <div class="control-group">
-          <input type="text" class="login-field" value="" placeholder="full name" name="full_name" >
+          <input type="text" class="login-field" value="" placeholder="full name" name="full_name" required>
       </div>
         <div class="control-group">
-            <input type="text" class="login-field" value="" placeholder="user name" name="user_name" >
+            <input type="text" class="login-field" value="" placeholder="user name" name="user_name" required>
         </div>
         <div class="control-group">
-          <input type="email" class="login-field" value="" autocomplete="email" placeholder="email" name="email" >
+          <input type="email" class="login-field" value="" autocomplete="email" placeholder="email" name="email" required>
       </div>
       <div class="control-group">
-        <input type="phone" class="login-field" value="" placeholder="phone" name="phone" >
+        <input type="phone" class="login-field" value="" placeholder="phone" name="phone" required>
     </div>
         <div class="control-group">
-            <input type="password" class="login-field" value="" placeholder="password" name="password" >
+            <input type="password" class="login-field" value="" placeholder="password" name="password" required>
         </div>
         <div class="control-group">
-          <input type="password" class="login-field" value="" placeholder="confirm password" name="confirm_password"  >
+          <input type="password" class="login-field" value="" placeholder="confirm password" name="confirm_password" required>
       </div>
           <div class="button" style="padding: 10px 10px 10px;" >
             <button type="submit" value="Sign up" class="btn"> Sign Up </button>
           </div>
           <div class="button" style="padding: 10px 10px 20px;" >
-            <button name="login" value="login" class="btn"> Login </button>
+            <a href="/" style="padding: 0px !important;">
+              <button type="button" name="login" value="login" class="btn"> Log In </button>
+            </a>
           </div>
           {% block content %}
           <div class="container">
               {% for message in get_flashed_messages() %}
-              <div class="alert alert-warning">
-                  <button type="button" class="close" data-dismiss="alert">&times;</button>
+              <div class="alert alert-info alert-dismissible fade show" role="alert">
+                  <span><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></span>
                   {{ message }}
               </div>
               {% endfor %}
@@ -54,6 +59,12 @@
       </div>
      </div>
     </form>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        $('.alert').alert()
+      })
+    </script>
 </body>
 </html>
 

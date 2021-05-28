@@ -77,3 +77,14 @@ h2 {
     padding-top: 20px;
     padding-bottom: 20px;;
 }
+.btn_submit {
+    background-color: #1e7898 !important;
+    border: 0px solid transparent;
+    color: white !important;
+  }
+.btn_submit:hover {
+    background-color: #7cc0d8 !important;
+  }
+thead {
+    background-color: #2596be !important; color: white;
+  }

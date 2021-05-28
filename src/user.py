@@ -13,6 +13,8 @@ def user_home_run():
     # list of queries
     queries = []
 
+    app_perms_list = {}
+
     # create query to get the pemissions of the user based on the groups that
     # the user is a part of
     queries.append(
@@ -54,8 +56,6 @@ def user_home_run():
         app_id_name = {}
         for app in apps:
             app_id_name[app[0]] = app[1]
-
-        app_perms_list = {}
 
         # initialize the dictionary with the app name as a key and an empty list that 
         # will be filled later with the permissions

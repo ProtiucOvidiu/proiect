@@ -10,6 +10,18 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <style>
+      .btn_submit {
+        background-color: #1e7898;
+        border: 0px solid transparent;
+      }
+      .btn_submit:hover {
+        background-color: #7cc0d8;
+      }
+      thead {
+        background-color: #2596be !important; color: white;
+      }
+    </style>
   </head>
   <body>
     <div class="topnav" id="myTopnav">
@@ -28,32 +40,34 @@
     </div>
     <div id="side_menu" class="sidebar">
       <a href="javascript:void(0)" class="closebtn" onclick="close_menu()">×</a>
+      <img src="../../static/img/logo_transparent.png" class="img-logo">
       <a href="/admin_home" target="_self">Apps</a>
       <a href="/admin_groups" target="_self">Groups</a>
-      <button class="dropdown-side-btn">Add 
+      <button class="dropdown-side-btn">Add
         <i class="fa fa-caret-down"></i>
       </button>
           <div class="dropdown-side-menu">
-              <a href="/add_user">Add user</a>
-              <a href="/add_group">Add group</a>
+              <a href="/add_user">Add users</a>
+              <a href="/add_group">Add groups</a>
               <a href="/add_perms">Add permissions</a>
-              <a href="/add_apps">Add application</a>
+              <a href="/add_apps">Add applications</a>
           </div>
-      <a href="/admin_modify" target="_self">Modify user/group/perm</a>
-
+      <a href="/admin_modify" target="_self">Modify</a>
       <button class="dropdown-side-btn" id="drop-side-btn">Delete
         <i class="fa fa-caret-down" style="text-align: right"></i>
       </button>
       <div class="dropdown-side-menu">
-        <a href="/delete_user" target="_self">Delete an user</a>
-        <a href="/delete_group" target="_self">Delete a group</a>
-        <a href="/delete_perm" target="_self">Delete a permission</a>
-        <a href="/delete_app" target="_self">Delete an app</a>
+        <a href="/delete_user" target="_self">Delete users</a>
+        <a href="/delete_group" target="_self">Delete groups</a>
+        <a href="/delete_perm" target="_self">Delete permissions</a>
+        <a href="/delete_app" target="_self">Delete applications</a>
       </div>
-
+      <!--
       <a href="/admin_msg" target="_self">Messages</a>
-      <a href="/admin_forum" target="_self">Q&A/Forum</a>
+      -->
+      <a href="/admin_forum" target="_self">Frequent Questions</a>
     </div>
+
     <!-- <style>
       #permission, #group {
         width: 100%;
@@ -67,8 +81,8 @@
      
       <button class="open_btn" onclick="open_menu()">☰</button>
       <div class="main-container">
-        <h2>Modify users/groups/permissions view</h2>
-        <p>List of options.</p>
+        <h2>Modify users, groups permissions or apps</h2>
+        <p>Modify the values stored in the database for each type.</p>
 
         <script>
           $(document).ready(function() {
@@ -89,12 +103,12 @@
         <form action="{{url_for('admin_modify_run')}}" method="POST">
           <div class="menu" style="display: none;"> 
             <table class="table">
-              <thead class="thead-dark">
+              <thead class="thead">
                 <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Description</th>
-                  <th scope="col"></th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;">#</th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;">Name</th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;">Description</th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;"></th>
                 </tr>
               </thead>
               <tbody>
@@ -109,7 +123,7 @@
                   <td><input type="number" class="form-control" name="id" placeholder="Id"></td>
                   <td ><input type="text" class="form-control" name="name" placeholder="New Name"></td>
                   <td ><input type="text" class="form-control" name="description" placeholder="New Description"></td>
-                  <td><button class="btn btn-secondary" type="submit"> Run </button></td>
+                  <td><button class="btn btn-secondary btn_submit" type="submit"> Run </button></td>
                 </tr>
               </tbody>
             </table>
@@ -117,12 +131,12 @@
           </div>
           <div class="menu1" style="display: none;"> 
             <table class="table">
-              <thead class="thead-dark">
+              <thead class="thead">
                 <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Description</th>
-                  <th scope="col"></th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;">#</th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;">Name</th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;">Description</th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;"></th>
                 </tr>
               </thead>
               <tbody>
@@ -137,19 +151,19 @@
                   <td><input type="number" class="form-control" name="id_perm" placeholder="Id"></td>
                   <td ><input type="text" class="form-control" name="name_perm" placeholder="New Name"></td>
                   <td ><input type="text" class="form-control" name="desc_perm" placeholder="New Description"></td>
-                  <td><button class="btn btn-secondary" type="submit"> Run </button></td>
+                  <td><button class="btn btn-secondary btn_submit" type="submit"> Run </button></td>
                 </tr>
               </tbody>
             </table>
           </div>
           <div class="menu2" style="display: none;"> 
             <table class="table">
-              <thead class="thead-dark">
+              <thead class="thead">
                 <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Description</th>
-                  <th scope="col"></th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;">#</th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;">Name</th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;">Description</th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;"></th>
                 </tr>
               </thead>
               <tbody>
@@ -164,7 +178,7 @@
                   <td><input type="number" class="form-control" name="id_perm" placeholder="Id"></td>
                   <td ><input type="text" class="form-control" name="name_perm" placeholder="New Name"></td>
                   <td ><input type="text" class="form-control" name="desc_perm" placeholder="New Description"></td>
-                  <td><button class="btn btn-secondary" type="submit"> Run </button></td>
+                  <td><button class="btn btn-secondary btn_submit" type="submit"> Run </button></td>
                 </tr>
               </tbody>
             </table>

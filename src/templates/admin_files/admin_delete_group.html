@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" type= "text/css" href="../static/styles/index.css">
     <link rel="stylesheet" type= "text/css" href="../../static/styles/delete.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
     <script type="text/javascript" src="../../static/scripts/index.js"></script>
     <script>
      
@@ -34,54 +35,55 @@
     </div>
     <div id="side_menu" class="sidebar">
         <a href="javascript:void(0)" class="closebtn" onclick="close_menu()">×</a>
+        <img src="../../static/img/logo_transparent.png" class="img-logo">
         <a href="/admin_home" target="_self">Apps</a>
         <a href="/admin_groups" target="_self">Groups</a>
-        <button class="dropdown-side-btn">Add 
+        <button class="dropdown-side-btn">Add
           <i class="fa fa-caret-down"></i>
         </button>
             <div class="dropdown-side-menu">
-                <a href="/add_user">Add user</a>
-                <a href="/add_group">Add group</a>
+                <a href="/add_user">Add users</a>
+                <a href="/add_group">Add groups</a>
                 <a href="/add_perms">Add permissions</a>
-                <a href="/add_apps">Add application</a>
+                <a href="/add_apps">Add applications</a>
             </div>
-        <a href="/admin_modify" target="_self">Modify user/group/perm</a>
-  
+        <a href="/admin_modify" target="_self">Modify</a>
         <button class="dropdown-side-btn" id="drop-side-btn">Delete
           <i class="fa fa-caret-down" style="text-align: right"></i>
         </button>
         <div class="dropdown-side-menu">
-          <a href="/delete_user" target="_self">Delete an user</a>
-          <a href="/delete_group" target="_self">Delete a group</a>
-          <a href="/delete_perm" target="_self">Delete a permission</a>
-          <a href="/delete_app" target="_self">Delete an app</a>
+          <a href="/delete_user" target="_self">Delete users</a>
+          <a href="/delete_group" target="_self">Delete groups</a>
+          <a href="/delete_perm" target="_self">Delete permissions</a>
+          <a href="/delete_app" target="_self">Delete applications</a>
         </div>
-  
+        <!--
         <a href="/admin_msg" target="_self">Messages</a>
-        <a href="/admin_forum" target="_self">Q&A/Forum</a>
+        -->
+        <a href="/admin_forum" target="_self">Frequent Questions</a>
       </div>
 
     <div id="main">
       <button class="open_btn" onclick="open_menu()">☰</button>
       <div class="main-container">
         <h2>Delete one or more groups</h2>  
-
+        <p>Delete one or more groups from the database.</p>
         <form action="{{ url_for('execute_delete_group') }}" method="POST">
           <div class="table-responsive">
-            <table class="table table-bordered table-hover">
+            <table class="table table-bordered table-hover" style="border:1px solid #dee2e6 !important;">
               <thead class="thead-info">
                 <tr>
-                  <th scope="col">Check</th>
-                  <th scope="col">ID</th>
-                  <th scope="col">Group Name</th>
-                  <th scope="col">Group Description</th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;">Check</th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;">ID</th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;">Group Name</th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;">Group Description</th>
                 </tr>
               </thead>
               <tbody>
                 {% if groups|length %}
                   {% for group in groups %}
                   <tr>
-                    <td><input type="checkbox" value="{{ group[0] }}" name="checks"> </td>
+                    <td><input type="checkbox" value="{{ group[0] }}" name="checks"></td>
                     <td>{{ group[0] }}</td>
                     <td>{{ group[1] }}</td>
                     <td>{{ group[2] }}</td>
@@ -96,8 +98,8 @@
             </table>
           </div>
           <div class="button_rows">
-            <button type="submit" class="btn btn-info">Delete selected group(s)</button>
-            <button type="reset" class="btn btn-info">Clear selection</button>
+            <button type="submit" class="btn btn_submit">Delete selected group(s)</button>
+            <button type="reset" class="btn btn-secondary">Clear selection</button>
           </div>
         </form>
       </div>  
