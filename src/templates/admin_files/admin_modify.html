@@ -80,6 +80,7 @@
               $('.permission').toggle(false);
               $('.user_group').toggle(false);
               $('.user_perm').toggle(false);
+              $('.app').toggle(false);
             });
           });
           $(document).ready(function() {
@@ -88,6 +89,7 @@
               $('.group').toggle(false);
               $('.user_group').toggle(false);
               $('.user_perm').toggle(false);
+              $('.app').toggle(false);
             });
           });
           $(document).ready(function() {
@@ -114,6 +116,7 @@
               $('.user_perm').toggle();
               $('.permission').toggle(false);
               $('.user_group').toggle(false);
+              $('.app').toggle(false);
             });
           });
         </script>
@@ -182,7 +185,7 @@
           </div>
           <div class="app" style="display: none;"> 
             <table class="table">
-              <thead class="thead-dark">
+              <thead class="thead">
                 <tr>
                   <th scope="col">App</th>
                   <th scope="col">Name</th>
@@ -236,12 +239,12 @@
           </div>
           <div class="user_perm" style="display: none;"> 
             <table class="table">
-              <thead class="thead-dark">
+              <thead class="thead">
                 <tr>
-                  <th scope="col">Permission</th>
-                  <th scope="col">Name</th>
-                  <th scope="col"></th>
-                  <th scope="col"></th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;">#</th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;">Name</th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;"></th>
+                  <th scope="col" style=" border-bottom: 2px solid black !important;"></th>
                 </tr>
               </thead>
               <tbody>
