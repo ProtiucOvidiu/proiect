@@ -92,6 +92,7 @@ body {
     transition: margin-left 0.5s;
     padding: 16px;
     z-index: 0;
+    height: 100%;
   }
   
   /* On smaller screens, where height is less than 450px, change the style of the sidenav (less padding and a smaller font size) */
