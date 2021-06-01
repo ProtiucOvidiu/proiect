@@ -107,20 +107,22 @@
           });
           $(document).ready(function() {
             $('#user_group').click(function() {
-              $('.group').toggle();
-              $('.user_group').toggle();
               $('.permission').toggle(false);
               $('.user_perm').toggle(false);
               $('.app').toggle(false);
+              $('.group').toggle(false);
+              $('.group').toggle();
+              $('.user_group').toggle();
             });
           });
           $(document).ready(function() {
             $('#user_perm').click(function() {
-              $('.group').toggle();
-              $('.user_perm').toggle();
               $('.permission').toggle(false);
               $('.user_group').toggle(false);
               $('.app').toggle(false);
+              $('.group').toggle(false);
+              $('.group').toggle();
+              $('.user_perm').toggle();
             });
           });
         </script>
