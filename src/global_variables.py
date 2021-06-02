@@ -13,15 +13,15 @@ user_id = []
 #==============================================================================#
 
 # database login details to freemysql_hosting
-DB_HOST = 'sql11.freemysqlhosting.net'
-DB_USER = 'sql11402476'
-DB_PASSWORD = 'kS7DsFkJep'
-DB_DATABASE = 'sql11402476'
+# DB_HOST = 'sql11.freemysqlhosting.net'
+# DB_USER = 'sql11402476'
+# DB_PASSWORD = 'kS7DsFkJep'
+# DB_DATABASE = 'sql11402476'
 
-#DB_HOST = '127.0.0.1'
-#DB_USER = 'root'
-#DB_PASSWORD = 'cvscvs'
-#DB_DATABASE = 'test'
+DB_HOST = '127.0.0.1'
+DB_USER = 'root'
+DB_PASSWORD = 'cvscvs'
+DB_DATABASE = 'sky_security'
 
 #==============================================================================#
 
