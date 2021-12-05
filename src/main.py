@@ -8,6 +8,11 @@ import re
 from sign_up import sign_up_pers
 from global_variables import *
 import admin, user
+import numpy as np
+import plotly
+import plotly.graph_objects as go
+import plotly.offline as pyo
+from plotly.offline import init_notebook_mode
 
 #==============================================================================#
 
@@ -31,6 +36,23 @@ def do_admin_login():
   # if the sign up button was pressed
   if login.get('sign_up'):
     return redirect("/sign_up")
+
+  query = "SELECT a.name, p.name, g.name, gpr.perm_id FROM groups_perm_relation AS gpr INNER JOIN groups AS g ON g.id = gpr.group_id INNER JOIN permissions AS p ON gpr.perm_id = p.id INNER JOIN apps AS a ON p.app_id = a.id WHERE perm_id IN (  SELECT id FROM permissions WHERE app_id = 3) ORDER BY p.name;"
+  conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, database=DB_DATABASE)
+  try:
+    cur = conn.cursor(buffered = True)
+    cur.execute(query)
+    query = cur.fetchall()
+    print(query)
+    cur.close()
+    conn.close()
+  except mariadb.Error as error:
+    print("Failed to read data from table", error)
+  finally:
+    if conn:
+      conn.close()
+      print('Connection to db was closed!')
+
 
   password = str(login.get("password", False))
   email = str(login.get("email-username", False))

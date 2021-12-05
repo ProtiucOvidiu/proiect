@@ -38,7 +38,7 @@ def check_if_data_is_good(user_login, password):
         else:
             # else check if the password provided matches the hash stored in the 
             # database and generate a response
-            print("DB pass_hash: " + user_data[0][2])# + "\n plaintext: " + password)
+            print("DB pass_hash: " + user_data[0][2] + "\n plaintext: " + password)
             if sha256_crypt.verify(password, user_data[0][2]):
                 # passwords match
                 response.append('OK')

@@ -2,6 +2,14 @@ from flask import Flask, flash, redirect, render_template, request, session, abo
 import mysql.connector as mariadb
 from passlib.hash import sha256_crypt
 from global_variables import *
+import numpy as np
+import plotly
+import plotly.graph_objects as go
+import plotly.offline as pyo
+from plotly.offline import init_notebook_mode
+import pandas as pd
+import json
+import plotly.express as px
 
 #==============================================================================#
 
@@ -1090,3 +1098,106 @@ def insert_apps():
             conn.close()
             print('Connection to db was closed!')
     return redirect ('/add_apps')
+
+@app.route("/admin_dashboard", methods = ['POST', 'GET'])
+def do_dashboard():
+
+    groups = "SELECT name from groups;"
+    group_1 = "SELECT count(user_id) FROM user_groups_relation WHERE group_id = 1;"
+    group_2 = "SELECT count(user_id) FROM user_groups_relation WHERE group_id = 2;"
+    group_3 = "SELECT count(user_id) FROM user_groups_relation WHERE group_id = 3;"
+    group_4 = "SELECT count(user_id) FROM user_groups_relation WHERE group_id = 4;"
+    group_5 = "SELECT count(user_id) FROM user_groups_relation WHERE group_id = 5;"
+    group_6 = "SELECT count(user_id) FROM user_groups_relation WHERE group_id = 6;"
+    group_7 = "SELECT count(user_id) FROM user_groups_relation WHERE group_id = 7;"
+    apps = "SELECT name FROM apps;"
+    query = "SELECT gpr.perm_id, p.name, g.name, a.name FROM groups_perm_relation AS gpr INNER JOIN groups AS g ON g.id = gpr.group_id INNER JOIN permissions AS p ON gpr.perm_id = p.id INNER JOIN apps AS a ON p.app_id = a.id WHERE perm_id IN (  SELECT id FROM permissions WHERE app_id = 3) ORDER BY p.name;"
+
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+        database=DB_DATABASE)
+    try:
+        cur = conn.cursor(buffered = True)
+        cur.execute(groups)
+        group_names = cur.fetchall()
+        cur.execute(group_1)
+        gr1 = cur.fetchone()[0]
+        cur.execute(group_2)
+        gr2 = cur.fetchone()[0]
+        cur.execute(group_3)
+        gr3 = cur.fetchone()[0]
+        cur.execute(group_4)
+        gr4 = cur.fetchone()[0]
+        cur.execute(group_5)
+        gr5 = cur.fetchone()[0]
+        cur.execute(group_6)
+        gr6 = cur.fetchone()[0]
+        cur.execute(group_7)
+        gr7 = cur.fetchone()[0]
+        cur.execute(apps)
+        apps = cur.fetchall()
+        cur.execute(query)
+        print(query)
+        cur.close()
+        conn.close()
+    except mariadb.Error as error:
+            print("Failed to read data from table", error)
+    finally:
+        if conn:
+            conn.close()
+            print('Connection to db was closed!')
+
+
+    fig3 = go.Figure()
+
+    fig3.add_trace(go.Bar(
+    x = [['Pesti', 'Pesti', 'Second', 'Second'],
+        ["A", "B", "A", "B"]],
+    y = [2, 3, 1, 5],
+    name = "Adults",
+    ))
+
+    fig3.add_trace(go.Bar(
+    x = [['First', 'First', 'Second', 'Second'],
+        ["A", "B", "A", "B"]],
+    y = [8, 3, 6, 5],
+    name = "Children",
+    ))
+
+    fig3.update_layout(title_text="Multi-category axis")
+
+    fig3 = px.bar(fig3, x="Fruit", y="Amount", color="City", barmode="group")
+
+    graphJSON = json.dumps(fig3, cls=plotly.utils.PlotlyJSONEncoder)
+   
+    # different individual parts in
+    # total chart
+    countries=[group_names[0],group_names[1],
+            group_names[2],group_names[3],
+            group_names[4],group_names[5],
+            group_names[6]]
+    
+    # values corresponding to each
+    # individual country present in
+    # countries
+    values = [gr1, gr2, gr3, gr4,
+            gr5, gr6, gr7]
+    
+    # plotting pie chart
+    fig = go.Figure(data=[go.Pie(labels=countries,
+                        values=values)])
+    
+
+    #CONVERTING A GRAPH TO A JSON GRAPH
+    graphJSON2 = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+
+   
+    applications = [apps[0], apps[1]]
+
+    valuesApps = [1, 1]
+
+    fig2 = go.Figure(data=[go.Pie(labels=applications, values = valuesApps)])
+
+    graphJSON3 = json.dumps(fig2, cls=plotly.utils.PlotlyJSONEncoder)
+
+
+    return render_template('admin_files/admin_dashboard.html', graphJSON = graphJSON, graphJSON2=graphJSON2, graphJSON3 = graphJSON3)
