@@ -27,7 +27,7 @@ def user_home_run():
 
     # database connection 
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered=True)       
 
@@ -107,7 +107,7 @@ def user_groups_run():
 
     # database connection to get the groups
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered=True)
 
@@ -166,7 +166,7 @@ def user_settings_run():
 
     # database connection
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered = True)
 
@@ -247,7 +247,7 @@ def user_settings_update():
     sql += " WHERE id = " + id + ";" 
     # database connection 
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered = True)
 

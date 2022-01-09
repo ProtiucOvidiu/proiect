@@ -18,10 +18,18 @@ DB_USER = 'sql11463302'
 DB_PASSWORD = 'Me7E1aUPIW'
 DB_DATABASE = 'sql11463302'
 
+<<<<<<< HEAD
 #DB_HOST = '127.0.0.1'
 #DB_USER = 'root'
 #DB_PASSWORD = 'cvscvs'
 #DB_DATABASE = 'test'
+=======
+DB_HOST = 'mysql-65574-0.cloudclusters.net'
+DB_USER = 'admin'
+DB_PASSWORD = 'UDqCxg1v'
+DB_DATABASE = 'sky_security'
+DB_PORT = 19400
+>>>>>>> Import/Export pages
 
 #==============================================================================#
 
@@ -134,7 +142,7 @@ def is_user_admin():
 
     # connection to the db
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
       cur = conn.cursor(buffered = True)
       cur.execute(queries[0])

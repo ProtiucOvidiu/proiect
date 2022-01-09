@@ -1,6 +1,9 @@
-from flask import Flask, flash, redirect, render_template, request, session, abort, url_for
+from flask import Flask, flash, redirect, render_template, request, session, abort, url_for, Response
 import mysql.connector as mariadb
 from passlib.hash import sha256_crypt
+import csv, io, time, zipfile, os
+from os.path import basename
+from zipfile import ZipFile
 from global_variables import *
 import numpy as np
 import plotly
@@ -33,7 +36,7 @@ def admin_home_run():
 
     # database connection 
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered=True)       
 
@@ -116,7 +119,7 @@ def admin_groups_run():
 
     # database connection to get the groups
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered=True)
         # get all the group names
@@ -175,7 +178,7 @@ def admin_modify_run():
     is_logged_in()
     try:
         conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+            database=DB_DATABASE, port=DB_PORT)
         cur = conn.cursor(buffered = True)
         (groups, perm, users, apps) = temp(query, query2, query3, query4)
         if request.method == 'POST':
@@ -216,7 +219,7 @@ def temp(query, query2, query3, query4):
     apps = ''
     try: 
         conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
         cur = conn.cursor(buffered = True)
         cur.execute(query)
         groups = cur.fetchall()
@@ -321,7 +324,7 @@ def delete_user_run():
 
     # database connection to get the groups
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
 
     try:
         cur = conn.cursor(buffered=True)
@@ -353,7 +356,7 @@ def execute_delete_user():
 
     # database connection to get the groups
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
 
     try:
         cur = conn.cursor(buffered=True)
@@ -387,7 +390,7 @@ def delete_group_run():
 
     # database connection to get the groups
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
 
     try:
         cur = conn.cursor(buffered=True)
@@ -418,7 +421,7 @@ def execute_delete_group():
     
     # database connection to get the groups
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
 
     try:
         cur = conn.cursor(buffered=True)
@@ -451,7 +454,7 @@ def delete_perm_run():
 
     # database connection to get the groups
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered=True)
 
@@ -483,7 +486,7 @@ def execute_delete_perm():
     
     # database connection to get the groups
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
 
     try:
         cur = conn.cursor(buffered=True)
@@ -516,7 +519,7 @@ def delete_app_run():
 
     # database connection to get the apps
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered=True)
 
@@ -548,7 +551,7 @@ def execute_delete_app():
     
     # database connection to execute the query
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
 
     try:
         cur = conn.cursor(buffered=True)
@@ -603,7 +606,7 @@ def admin_settings_run():
 
     # database connection 
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered = True)
         cur.execute(query)
@@ -681,7 +684,7 @@ def admin_settings_update():
 
     # database connection 
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered = True)
 
@@ -719,7 +722,7 @@ def admin_add_user():
 
     # database connection 
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered = True)
         cur.execute(query1)
@@ -783,7 +786,7 @@ def create_query(groups, lista):
     "phone_number, is_admin) VALUES ( '" + user_name + "' , '" + str(lista[3])
     + "', '" + str(lista[0]) + "', '" + str(lista[1]) + "', '" + str(lista[2]) + "', ")
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         user_id = "SELECT id FROM users WHERE username = '" + user_name + "' ;"
         cur = conn.cursor(buffered = True)
@@ -827,7 +830,7 @@ def check_username(username):
     check = True
     user_query = "SELECT username FROM users;"
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered = True)
         cur.execute(user_query)
@@ -863,7 +866,7 @@ def admin_add_group():
 #==============================================================================#
 def query_for_user_groups_relation(query, query2, query3):
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered = True)
         cur.execute(query)
@@ -895,7 +898,7 @@ def insert_groups():
     
     
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered = True)
         cur.execute(query)
@@ -918,7 +921,7 @@ def insert_group_relation(query, users):
     query2 = "INSERT INTO user_groups_relation (group_id, user_id) VALUES (" + str(query) + ","
     queries = []
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered = True)
         for i in range(0, len(users)):
@@ -939,11 +942,12 @@ def insert_group_relation(query, users):
 
 #==============================================================================#
 def group_perm_relation(perms, group_id):
-    query = "INSERT INTO groups_perm_relation (group_id, perm_id) VALUES (" + str(group_id) + ", "
+    query = ("INSERT INTO groups_perm_relation (group_id, perm_id) VALUES (" 
+            + str(group_id) + ", ")
     
     queries = []
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     
     try:
         cur = conn.cursor(buffered = True)
@@ -963,19 +967,19 @@ def group_perm_relation(perms, group_id):
             print('Connection to db was closed!')
 
     return True
-
-
+#==============================================================================#
 @app.route('/add_perms', methods = ['POST','GET'])
 def admin_add_perms():
     query = "SELECT * from permissions;"
     groups = "SELECT * from groups;"
     apps = "SELECT id, name from apps"
     (query, groups, apps) = exec_query(query, groups, apps)
-    return render_template('admin_files/admin_add_perm.html', perms = query, groups = groups, apps = apps)
-
+    return render_template('admin_files/admin_add_perm.html', perms = query, 
+                            groups = groups, apps = apps)
+#==============================================================================#
 def exec_query(query1, query2, query3):
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered = True)
         cur.execute(query1)
@@ -994,7 +998,7 @@ def exec_query(query1, query2, query3):
             conn.close()
             print('Connection to db was closed!')
     return (query1, query2, query3)
-
+#==============================================================================#
 @app.route('/add_perms_run', methods = ['POST'])
 def insert_perms():
     add_perms = request.form
@@ -1003,10 +1007,11 @@ def insert_perms():
     id_apps = add_perms.getlist('apps')
     id_groups = add_perms.getlist('groups')
     perm_id = "SELECT id from permissions"
-    insert = "INSERT INTO permissions (name, description, app_id) VALUES ('" + str(name) + "', '" + str(description) + "', " 
+    insert = ("INSERT INTO permissions (name, description, app_id) VALUES ('" 
+                + str(name) + "', '" + str(description) + "', " )
     queries = []
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered = True)
         for i in range(0, len(id_apps)):
@@ -1027,14 +1032,14 @@ def insert_perms():
     # name = id
     insert_groups_perm_relation(id_groups, name)
     return redirect('/add_perms')
-
+#==============================================================================#
 def insert_groups_perm_relation(group_id, name):
 
     query = "INSERT INTO groups_perm_relation (perm_id, group_id) VALUES (" 
     query2 = "SELECT id from permissions WHERE name= '" + str(name) + "';"
     queries = []
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     
     try:
         cur = conn.cursor(buffered = True)
@@ -1058,12 +1063,12 @@ def insert_groups_perm_relation(group_id, name):
             print('Connection to db was closed!')
 
     return True
-
+#==============================================================================#
 @app.route('/add_apps')
 def add_apps_load():
     apps = "SELECT * from apps"
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered = True)
         cur.execute(apps)
@@ -1077,14 +1082,16 @@ def add_apps_load():
             conn.close()
             print('Connection to db was closed!')
     return render_template('admin_files/admin_add_app.html', apps = apps)
+#==============================================================================#
 @app.route('/add_apps_run', methods = ['POST'])
 def insert_apps():
     apps = request.form
     name = apps.get('name')
     link = apps.get('link')
-    insert = "INSERT INTO apps (name, link) VALUES ('" + str(name) + "', '" + str(link) + "');"
+    insert = ("INSERT INTO apps (name, link) VALUES ('" + str(name) + "', '" 
+                + str(link) + "');")
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered = True)
         cur.execute(insert)
@@ -1168,3 +1175,120 @@ def do_dashboard():
 
 
     return render_template('admin_files/admin_dashboard.html', graphJSON = graphJSON, graphJSON2=graphJSON2, graphJSON3 = graphJSON3)
+#==============================================================================#
+@app.route('/import_export')
+def imp_exp_load():
+    return render_template('admin_files/admin_imp_exp.html', button = '')
+#------------------------------------------------------------------------------#
+def zipFilesInDir(dirName, zipFileName, filter):
+   # create a ZipFile object
+   with ZipFile(zipFileName, 'w') as zipObj:
+       # Iterate over all the files in directory
+       for folderName, subfolders, filenames in os.walk(dirName):
+           for filename in filenames:
+               if filter(filename):
+                   # create complete filepath of file in directory
+                   filePath = os.path.join(folderName, filename)
+                   # Add file to zip
+                   zipObj.write(filePath, basename(filePath))
+#------------------------------------------------------------------------------#
+@app.route('/export_data_run', methods=['POST'])
+def export_data():
+    # Table headers
+    USERS_HEADER = ['id', 'username', 'password', 'full_name', 'email', 
+                    'phone_number', 'is_admin']
+    GROUPS_HEADER = ['id', 'name', 'description']
+    PERMS_HEADER = ['id', 'name', 'description', 'app_id']
+    APPS_HEADER = ['id', 'name', 'link']
+    USERS_GROUPS_HEADER = ['id', 'user_id', 'group_id']
+    APPS_PERMS_HEADER = ['id', 'group_id', 'perm_id']
+
+    # download button
+    button = ''
+
+    # get the list of objects that the admin wants to export
+    export = request.form.getlist('checks_exp')
+
+    if export:
+        # if it's not empty, then run the queries
+        conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+            database=DB_DATABASE, port=DB_PORT)
+        query = 'SELECT * FROM '
+        try:
+            cur = conn.cursor(buffered = True)
+            for table in export:
+                tmp_query = query + table + ';'
+                cur.execute(tmp_query)
+                table_data = cur.fetchall()
+                print(table_data)
+                if table == 'users':
+                    with open('./static/export/users.csv', 'w+') as file:
+                        writer = csv.writer(file)
+                        writer.writerow(USERS_HEADER)
+                        writer.writerows(table_data)
+                elif table == 'groups':
+                    with open('./static/export/groups.csv', 'w+') as file:
+                        writer = csv.writer(file)
+                        writer.writerow(GROUPS_HEADER)
+                        writer.writerows(table_data)
+                elif table == 'permissions':
+                    with open('./static/export/permissions.csv', 'w+') as file:
+                        writer = csv.writer(file)
+                        writer.writerow(PERMS_HEADER)
+                        writer.writerows(table_data)
+                elif table == 'apps':
+                    with open('./static/export/apps.csv', 'w+') as file:
+                        writer = csv.writer(file)
+                        writer.writerow(APPS_HEADER)
+                        writer.writerows(table_data)
+                elif table == 'user_groups_relation':
+                    with open('./static/export/user_groups_relation.csv', 'w+') as file:
+                        writer = csv.writer(file)
+                        writer.writerow(USERS_GROUPS_HEADER)
+                        writer.writerows(table_data)
+                elif table == 'group_perm_relation':
+                    with open('./static/export/group_perm_relation.csv', 'w+') as file:
+                        writer = csv.writer(file)
+                        writer.writerow(APPS_PERMS_HEADER)
+                        writer.writerows(table_data)     
+            cur.close()
+            conn.close()
+        except mariadb.Error as error:
+                print("Failed to read data from table", error)
+        finally:
+            if conn:
+                conn.close()
+                print('Connection to db was closed!')
+        # create a zip archive of all the csv files
+        zipFilesInDir('./static/export', 'export_data.zip', 
+                lambda name : 'csv' in name)
+        # create download button to be inserted into page
+        button = '<button class="btn btn_submit">Download data</button>'
+    return redirect('/import_export') 
+#------------------------------------------------------------------------------#
+@app.route('/export_data_download')
+def export_data_download():
+    FILEPATH = r"./export_data.zip"
+    fileobj = io.BytesIO()
+    with zipfile.ZipFile(fileobj, 'w') as zip_file:
+        zip_info = zipfile.ZipInfo(FILEPATH)
+        zip_info.date_time = time.localtime(time.time())[:6]
+        zip_info.compress_type = zipfile.ZIP_DEFLATED
+        with open(FILEPATH, 'rb') as fd:
+            zip_file.writestr(zip_info, fd.read())
+    fileobj.seek(0)
+
+    # Changed line below
+    return Response(fileobj.getvalue(),
+                    mimetype='application/zip',
+                    headers={'Content-Disposition': 'attachment;filename=export_data.zip'})
+
+#    return send_file('./static/export/export_data.zip',
+#                     mimetype='application/zip',
+#                     attachment_filename='export_data.zip',
+#                     as_attachment=True)
+#------------------------------------------------------------------------------#
+@app.route('/import_data_run', methods=['POST'])
+def import_data():
+    pass
+#==============================================================================#
