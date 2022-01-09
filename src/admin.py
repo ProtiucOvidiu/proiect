@@ -1,3 +1,4 @@
+from contextlib import nullcontext
 from flask import Flask, flash, redirect, render_template, request, session, abort, url_for, Response
 import mysql.connector as mariadb
 from passlib.hash import sha256_crypt
@@ -1290,5 +1291,40 @@ def export_data_download():
 #------------------------------------------------------------------------------#
 @app.route('/import_data_run', methods=['POST'])
 def import_data():
-    pass
+    uploaded_file = str(request.form.get('import'))
+
+    if uploaded_file.lower().endswith(('csv')):
+        if uploaded_file.filename != '':
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], uploaded_file.filename)
+            # set the file path
+            uploaded_file.save(file_path)
+            # save the file
+    return redirect('import_export')
 #==============================================================================#
+
+def parseCSV(filePath):
+    USERS_HEADER = ['id', 'username', 'password', 'full_name', 'email', 
+                    'phone_number', 'is_admin']
+    GROUPS_HEADER = ['id', 'name', 'description']
+    PERMS_HEADER = ['id', 'name', 'description', 'app_id']
+    APPS_HEADER = ['id', 'name', 'link']
+    USERS_GROUPS_HEADER = ['id', 'user_id', 'group_id']
+    APPS_PERMS_HEADER = ['id', 'group_id', 'perm_id']
+
+    imported = request.form.getlist('checks_imp')
+    
+    csvData = pd.read_csv(filePath, names=USERS_HEADER, header=None)
+
+    if csvData == 'users':
+        pass
+    elif csvData == 'groups':
+        pass   
+    elif csvData == 'permissions':
+        pass
+    elif csvData == 'apps':
+        pass       
+    elif csvData == 'user_groups_relation':
+        pass         
+    elif csvData == 'group_perm_relation':
+        pass
+        return nullcontext

@@ -102,7 +102,7 @@
             <h4 class="card-subtitle mb-2 text-muted"> Choose which data to import:</h4>
             <br>
             <div class="table-responsive">
-              <form action="{{ url_for('import_data') }}" method="post">
+              <form name='import' id='import' action="{{ url_for('import_data') }}" method="post">
                 <table class="table table-bordered" style="border:1px solid #dee2e6 !important;">
                   <tbody>
                     <tr>

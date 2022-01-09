@@ -9,6 +9,14 @@ import mysql.connector as mariadb
 app = Flask(__name__, static_url_path="/static", template_folder="templates")
 user_name = [] # access it with user_name[0]
 user_id = []
+UPLOAD_FOLDER = 'static/files'
+app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
+USERS_HEADER = ['id', 'username', 'password', 'full_name', 'email', 'phone_number', 'is_admin']
+GROUPS_HEADER = ['id', 'name', 'description']
+PERMS_HEADER = ['id', 'name', 'description', 'app_id']
+APPS_HEADER = ['id', 'name', 'link']
+USERS_GROUPS_HEADER = ['id', 'user_id', 'group_id']
+APPS_PERMS_HEADER = ['id', 'group_id', 'perm_id']
 
 #==============================================================================#
 
@@ -18,18 +26,11 @@ DB_USER = 'sql11463302'
 DB_PASSWORD = 'Me7E1aUPIW'
 DB_DATABASE = 'sql11463302'
 
-<<<<<<< HEAD
-#DB_HOST = '127.0.0.1'
-#DB_USER = 'root'
-#DB_PASSWORD = 'cvscvs'
-#DB_DATABASE = 'test'
-=======
 DB_HOST = 'mysql-65574-0.cloudclusters.net'
 DB_USER = 'admin'
 DB_PASSWORD = 'UDqCxg1v'
 DB_DATABASE = 'sky_security'
 DB_PORT = 19400
->>>>>>> Import/Export pages
 
 #==============================================================================#
 
