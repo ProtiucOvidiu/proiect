@@ -14,9 +14,9 @@ user_id = []
 
 # database login details to freemysql_hosting
 DB_HOST = 'sql11.freemysqlhosting.net'
-DB_USER = 'sql11455863'
-DB_PASSWORD = 'njcUYg3GIA'
-DB_DATABASE = 'sql11455863'
+DB_USER = 'sql11463302'
+DB_PASSWORD = 'Me7E1aUPIW'
+DB_DATABASE = 'sql11463302'
 
 #DB_HOST = '127.0.0.1'
 #DB_USER = 'root'
