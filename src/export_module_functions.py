@@ -22,7 +22,7 @@ def check_if_data_is_good(user_login, password):
     
     # connection to db
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         # position the cursor
         cur = conn.cursor(buffered = True)
@@ -81,7 +81,7 @@ def login_user(app_id, user_login, password):
 
     # connection to db
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         # position the cursor
         cur = conn.cursor(buffered = True)

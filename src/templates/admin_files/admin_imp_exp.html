@@ -78,8 +78,8 @@
                       <td><input type="checkbox" value="groups" name="checks_exp">       Groups</td>
                       <td><input type="checkbox" value="permissions" name="checks_exp">       Permissions</td>
                       <td><input type="checkbox" value="apps" name="checks_exp">       Apps</td>
-                      <td><input type="checkbox" value="user-groups" name="checks_exp">       Users-Groups Table</td>
-                      <td><input type="checkbox" value="apps-perm" name="checks_exp">       Apps-Permissions Table</td>
+                      <td><input type="checkbox" value="user_groups_relation-groups" name="checks_exp">       Users-Groups Table</td>
+                      <td><input type="checkbox" value="group_perm_relation-perm" name="checks_exp">       Groups-Permissions Table</td>
                     </tr>
                   </tbody>
                 </table>
@@ -87,10 +87,10 @@
                   <button type="submit" class="btn btn_submit">Export selected data</button>
                   <button type="reset" class="btn btn-secondary">Clear selection</button>
                 </div>
-                <div class="button_rows" >
-                  <button class="btn btn_submit" onclick="url_for('export_data_download')">Download data</button>
-                </div>
               </form>
+              <div class="button_rows" >
+                <button class="btn btn_submit"><a href="{{ url_for('export_data_download') }}" class='btn_submit' style="text-decoration: none;">Download data</a></button>
+              </div>
             </div>
           </div>
         </div>

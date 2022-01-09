@@ -1,5 +1,4 @@
-from contextlib import nullcontext
-from flask import Flask, flash, redirect, render_template, request, session, abort, url_for, Response
+from flask import Flask, flash, redirect, render_template, request, session, abort, url_for, Response, send_file
 import mysql.connector as mariadb
 from passlib.hash import sha256_crypt
 import csv, io, time, zipfile, os
@@ -1116,7 +1115,7 @@ def do_dashboard():
     users_perms = "select perm.name, count(*) from permissions as perm inner join groups_perm_relation gpr on gpr.perm_id = perm.id inner join user_groups_relation as ugr on ugr.group_id = gpr.group_id group by perm.name;"
     
     conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+        database=DB_DATABASE, port=DB_PORT)
     try:
         cur = conn.cursor(buffered = True)
         cur.execute(group_names)
@@ -1213,7 +1212,7 @@ def export_data():
     if export:
         # if it's not empty, then run the queries
         conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-            database=DB_DATABASE, port=DB_PORT)
+            database=DB_DATABASE, port=19400)
         query = 'SELECT * FROM '
         try:
             cur = conn.cursor(buffered = True)
@@ -1269,6 +1268,7 @@ def export_data():
 #------------------------------------------------------------------------------#
 @app.route('/export_data_download')
 def export_data_download():
+    '''
     FILEPATH = r"./export_data.zip"
     fileobj = io.BytesIO()
     with zipfile.ZipFile(fileobj, 'w') as zip_file:
@@ -1278,11 +1278,13 @@ def export_data_download():
         with open(FILEPATH, 'rb') as fd:
             zip_file.writestr(zip_info, fd.read())
     fileobj.seek(0)
-
+'''
     # Changed line below
-    return Response(fileobj.getvalue(),
-                    mimetype='application/zip',
-                    headers={'Content-Disposition': 'attachment;filename=export_data.zip'})
+    return send_file('./export_data.zip', as_attachment=True)
+
+#    return Response(fileobj.getvalue(),
+#                    mimetype='application/zip',
+#                    headers={'Content-Disposition': 'attachment;filename=export_data.zip'})
 
 #    return send_file('./static/export/export_data.zip',
 #                     mimetype='application/zip',
