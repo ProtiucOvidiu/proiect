@@ -43,7 +43,12 @@ def do_admin_login():
   if login.get('sign_up'):
     return redirect("/sign_up")
 
-  query = "SELECT a.name, p.name, g.name, gpr.perm_id FROM groups_perm_relation AS gpr INNER JOIN groups AS g ON g.id = gpr.group_id INNER JOIN permissions AS p ON gpr.perm_id = p.id INNER JOIN apps AS a ON p.app_id = a.id WHERE perm_id IN (  SELECT id FROM permissions WHERE app_id = 3) ORDER BY p.name;"
+  query = ("SELECT a.name, p.name, g.name, gpr.perm_id FROM "
+           "groups_perm_relation AS gpr INNER JOIN groups AS g "
+           "ON g.id = gpr.group_id INNER JOIN permissions AS p "
+           "ON gpr.perm_id = p.id INNER JOIN apps AS a ON p.app_id = a.id "
+           "WHERE perm_id IN (  SELECT id FROM permissions WHERE app_id = 3) "
+           "ORDER BY p.name;")
   conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
         password=DB_PASSWORD, database=DB_DATABASE)
   try:
@@ -114,7 +119,7 @@ def do_admin_login():
   session['logged_in'] = True
     
   # save the username in a global variable so that you can access it from other scripts
-  set_user(data[0][0], data[0][1])
+  set_user(data[0][0])
 
   # return the appropriate page
   return home()

@@ -1,6 +1,5 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort, flash, url_for
 import mysql.connector as mariadb
-
 from global_variables import *
 
 #==============================================================================#
@@ -162,7 +161,7 @@ def user_settings_run():
     #id from global_varibles gotten from login
     id = str(user_id[0])
     #username from global_varibles gotten from login
-    username= str(user_name[0]) 
+#    username= str(user_name[0]) 
 
     # database connection
     conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
@@ -196,7 +195,7 @@ def user_settings_update():
 
     #empty dictonary to store information about the user
     date_user = {}
-    username = str(user_name[0])
+#    username = str(user_name[0])
     id = str(user_id[0])
     counter = 0
     # site method for update form is POST

@@ -597,7 +597,7 @@ def admin_settings_run():
     #id from global_varibles gotten from login
     id = str(user_id[0])
     #username from global_varibles gotten from login
-    username= str(user_name[0]) 
+#    username= str(user_name[0]) 
     #select all data from user where id matches
     query = "SELECT * from users WHERE id ='" + id + "';"
 
@@ -629,7 +629,7 @@ def admin_settings_update():
 
     #empty dictonary to store information about the user
     date_user = {}
-    username = str(user_name[0])
+#    username = str(user_name[0])
     id = str(user_id[0])
     counter = 0
     # site method for update form is POST
@@ -1296,6 +1296,8 @@ def export_data():
 #------------------------------------------------------------------------------#
 @app.route('/export_data_download')
 def export_data_download():
+    output = os.system("rm -rf ./static/export/*")
+    print("command output" + output)
     # Changed line below
     return send_file('./export_data.zip', as_attachment=True)
 #------------------------------------------------------------------------------#
