@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import Flask, flash, redirect, render_template, request, session, abort, flash, url_for
+from flask import Flask, flash, redirect, render_template, request, session, abort, flash, url_for, make_response
 import re
 import mysql.connector as mariadb
 
@@ -7,21 +7,24 @@ import mysql.connector as mariadb
 
 # the app variable used for app routing
 app = Flask(__name__, static_url_path="/static", template_folder="templates")
-user_name = [] # access it with user_name[0]
 user_id = []
+UPLOAD_FOLDER = 'static/files'
+app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
+USERS_HEADER = ['id', 'username', 'password', 'full_name', 'email', 'phone_number', 'is_admin']
+GROUPS_HEADER = ['id', 'name', 'description']
+PERMS_HEADER = ['id', 'name', 'description', 'app_id']
+APPS_HEADER = ['id', 'name', 'link']
+USERS_GROUPS_HEADER = ['id', 'user_id', 'group_id']
+APPS_PERMS_HEADER = ['id', 'group_id', 'perm_id']
 
 #==============================================================================#
 
 # database login details to freemysql_hosting
-DB_HOST = 'sql11.freemysqlhosting.net'
-DB_USER = 'sql11463302'
-DB_PASSWORD = 'Me7E1aUPIW'
-DB_DATABASE = 'sql11463302'
-
-#DB_HOST = '127.0.0.1'
-#DB_USER = 'root'
-#DB_PASSWORD = 'cvscvs'
-#DB_DATABASE = 'test'
+DB_HOST = 'website-hosting'
+DB_USER = 'sky_admin'
+DB_PASSWORD = 'h^g8p{66TgW'
+DB_DATABASE = 'sky_security'
+DB_PORT = 3306
 
 #==============================================================================#
 
@@ -33,19 +36,23 @@ def init():
 ###
 # set the user_name & user_id variable to a specific value
 ###
-def set_user(id, username):
-    global user_name, user_id
+def set_user(id):
+    global  user_id
     user_id.insert(0, id)
-    user_name.insert(0, username)
+#    resp = make_response()
+#    resp.set_cookie('user_id', str(id))
+#    return resp
 
 #==============================================================================#
 ###
 # unset the user_name & user_id
 ###
 def unset_user():
-    global user_name, user_id
+    global user_id
     user_id.pop(0)
-    user_name.pop(0)
+#    resp = make_response()
+#    resp.set_cookie('user_id', '', expires = 0)
+#    return resp
 
 #==============================================================================#
 ###
@@ -132,9 +139,11 @@ def is_user_admin():
     queries = []
     queries.append("SELECT is_admin FROM users WHERE id = " + str(user_id[0]))
 
+    print(queries[0] + "------------------------")
+
     # connection to the db
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
       cur = conn.cursor(buffered = True)
       cur.execute(queries[0])

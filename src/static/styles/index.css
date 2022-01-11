@@ -1,5 +1,6 @@
 body {
-    font-family: "Lato", sans-serif;
+    font-family: "Raleway" !important;
+    font-weight: 500 !important;
   }
   
   /* top menu */
@@ -22,6 +23,7 @@ body {
     padding: 8px 8px 8px 32px;
     text-decoration: none!important;
     font-size: 25px;
+    font-weight: 500 !important;
     color: white;
     display: block;
   }
@@ -116,6 +118,7 @@ body {
     display: inline-block;
     float: right;
     font-size: 16px;
+    font-weight: 500 !important;
   }
 
   .topnav .dropbtn {
@@ -142,7 +145,7 @@ body {
     position: relative;
     float: right;
     z-index: 0;
-  
+    font-weight: 500 !important;
   }
   
   .topnav .dropdown-content {
@@ -153,6 +156,7 @@ body {
     background-color: #1e7898;
     min-width: 100px;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    font-weight: 500 !important;
     z-index: 1;
   }
   
@@ -162,6 +166,7 @@ body {
     color: white;
     padding: 12px 16px;
     text-decoration: none!important;
+    font-weight: 500 !important;
     display: block;
   }
   
@@ -221,3 +226,7 @@ body {
   padding-bottom: 15px;
 }
 
+/* background */
+table {
+  background-color: white;
+}

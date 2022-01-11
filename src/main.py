@@ -1,5 +1,6 @@
-from flask import Flask
-from flask import Flask, flash, redirect, render_template, request, session, abort, flash, url_for
+from flask import Flask, jsonify
+import requests
+from flask import Flask, flash, redirect, render_template, request, session, abort, flash, url_for, request
 from passlib.hash import sha256_crypt
 import mysql.connector as mariadb
 import os
@@ -13,7 +14,12 @@ import plotly
 import plotly.graph_objects as go
 import plotly.offline as pyo
 from plotly.offline import init_notebook_mode
-
+from OpenSSL import SSL
+import ssl
+#ssl.PROTOCOL_TLSv1_2
+#context = SSL.Context(ssl.PROTOCOL_TLSv1_2)
+#context.use_privatekey_file('server.key')
+#context.use_certificate_file('server.crt')   
 #==============================================================================#
 
 @app.route('/')
@@ -37,8 +43,14 @@ def do_admin_login():
   if login.get('sign_up'):
     return redirect("/sign_up")
 
-  query = "SELECT a.name, p.name, g.name, gpr.perm_id FROM groups_perm_relation AS gpr INNER JOIN groups AS g ON g.id = gpr.group_id INNER JOIN permissions AS p ON gpr.perm_id = p.id INNER JOIN apps AS a ON p.app_id = a.id WHERE perm_id IN (  SELECT id FROM permissions WHERE app_id = 3) ORDER BY p.name;"
-  conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, database=DB_DATABASE)
+  query = ("SELECT a.name, p.name, g.name, gpr.perm_id FROM "
+           "groups_perm_relation AS gpr INNER JOIN groups AS g "
+           "ON g.id = gpr.group_id INNER JOIN permissions AS p "
+           "ON gpr.perm_id = p.id INNER JOIN apps AS a ON p.app_id = a.id "
+           "WHERE perm_id IN (  SELECT id FROM permissions WHERE app_id = 3) "
+           "ORDER BY p.name;")
+  conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
   try:
     cur = conn.cursor(buffered = True)
     cur.execute(query)
@@ -59,8 +71,8 @@ def do_admin_login():
   username = str(login.get("email-username", False))
 
   check = 0
-  conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+  conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
   try:
     
     cur = conn.cursor(buffered = True)
@@ -107,7 +119,7 @@ def do_admin_login():
   session['logged_in'] = True
     
   # save the username in a global variable so that you can access it from other scripts
-  set_user(data[0][0], data[0][1])
+  set_user(data[0][0])
 
   # return the appropriate page
   return home()
@@ -191,7 +203,8 @@ def reset():
 
 @app.route('/reset_password', methods = ['POST','GET'])
 def reset_password():
-  conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, database=DB_DATABASE)
+  conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
   cur = conn.cursor(buffered=True)
   if request.method == 'POST':
     if request.form.get('email'):
@@ -207,8 +220,13 @@ def reset_password():
   cur.close()
   return redirect("/reset")
 
+@app.route('/', methods=['GET'])
+def serve():
+    return "Hello world", 200
+
 if __name__ == "__main__":
   app.secret_key = os.urandom(12)
+  #context = ('cert.perm', 'key.perm')
   app.run(debug=True, host='0.0.0.0', port=5000)
 
 

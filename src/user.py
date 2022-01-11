@@ -1,6 +1,5 @@
 from flask import Flask, flash, redirect, render_template, request, session, abort, flash, url_for
 import mysql.connector as mariadb
-
 from global_variables import *
 
 #==============================================================================#
@@ -26,8 +25,8 @@ def user_home_run():
         "WHERE ug.user_id = " + str(user_id[0]) + ");")
 
     # database connection 
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered=True)       
 
@@ -106,8 +105,8 @@ def user_groups_run():
         "WHERE ug.user_id = " + str(user_id[0]) + ";")
 
     # database connection to get the groups
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered=True)
 
@@ -162,11 +161,11 @@ def user_settings_run():
     #id from global_varibles gotten from login
     id = str(user_id[0])
     #username from global_varibles gotten from login
-    username= str(user_name[0]) 
+#    username= str(user_name[0]) 
 
     # database connection
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered = True)
 
@@ -196,7 +195,7 @@ def user_settings_update():
 
     #empty dictonary to store information about the user
     date_user = {}
-    username = str(user_name[0])
+#    username = str(user_name[0])
     id = str(user_id[0])
     counter = 0
     # site method for update form is POST
@@ -246,8 +245,8 @@ def user_settings_update():
     #update from id user
     sql += " WHERE id = " + id + ";" 
     # database connection 
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered = True)
 
