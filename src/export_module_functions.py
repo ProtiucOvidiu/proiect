@@ -21,8 +21,8 @@ def check_if_data_is_good(user_login, password):
         query = "SELECT id, username, password FROM users WHERE username = '" + user_login + "';"
     
     # connection to db
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         # position the cursor
         cur = conn.cursor(buffered = True)
@@ -80,8 +80,8 @@ def login_user(app_id, user_login, password):
                     + str(login_response[1]) + ";")
 
     # connection to db
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         # position the cursor
         cur = conn.cursor(buffered = True)

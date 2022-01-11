@@ -38,7 +38,8 @@ def do_admin_login():
     return redirect("/sign_up")
 
   query = "SELECT a.name, p.name, g.name, gpr.perm_id FROM groups_perm_relation AS gpr INNER JOIN groups AS g ON g.id = gpr.group_id INNER JOIN permissions AS p ON gpr.perm_id = p.id INNER JOIN apps AS a ON p.app_id = a.id WHERE perm_id IN (  SELECT id FROM permissions WHERE app_id = 3) ORDER BY p.name;"
-  conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, database=DB_DATABASE)
+  conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
   try:
     cur = conn.cursor(buffered = True)
     cur.execute(query)
@@ -59,8 +60,8 @@ def do_admin_login():
   username = str(login.get("email-username", False))
 
   check = 0
-  conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+  conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
   try:
     
     cur = conn.cursor(buffered = True)
@@ -191,7 +192,8 @@ def reset():
 
 @app.route('/reset_password', methods = ['POST','GET'])
 def reset_password():
-  conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD, database=DB_DATABASE)
+  conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
   cur = conn.cursor(buffered=True)
   if request.method == 'POST':
     if request.form.get('email'):

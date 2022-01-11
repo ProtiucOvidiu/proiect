@@ -21,16 +21,16 @@ APPS_PERMS_HEADER = ['id', 'group_id', 'perm_id']
 #==============================================================================#
 
 # database login details to freemysql_hosting
-DB_HOST = 'sql11.freemysqlhosting.net'
-DB_USER = 'sql11463302'
-DB_PASSWORD = 'Me7E1aUPIW'
-DB_DATABASE = 'sql11463302'
+DB_HOST = ''
+DB_USER = ''
+DB_PASSWORD = ''
+DB_DATABASE = ''
+DB_PORT = 3306
 
-DB_HOST = 'mysql-65574-0.cloudclusters.net'
-DB_USER = 'admin'
-DB_PASSWORD = 'UDqCxg1v'
-DB_DATABASE = 'sky_security'
-DB_PORT = 19400
+#DB_HOST = 'mysql-65574-0.cloudclusters.net'
+#DB_USER = 'admin'
+#DB_PASSWORD = 'UDqCxg1v'
+#DB_DATABASE = 'sky_security'
 
 #==============================================================================#
 
@@ -142,8 +142,8 @@ def is_user_admin():
     queries.append("SELECT is_admin FROM users WHERE id = " + str(user_id[0]))
 
     # connection to the db
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
       cur = conn.cursor(buffered = True)
       cur.execute(queries[0])

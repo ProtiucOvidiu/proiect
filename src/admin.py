@@ -1,4 +1,4 @@
-from flask import Flask, flash, redirect, render_template, request, session, abort, url_for, Response, send_file
+from flask import Flask, flash, redirect, render_template, request, session, abort, url_for, Response, send_file, make_response
 import mysql.connector as mariadb
 from passlib.hash import sha256_crypt
 import csv, io, time, zipfile, os
@@ -15,7 +15,6 @@ import json
 import plotly.express as px
 
 #==============================================================================#
-
 @app.route('/admin_home')
 def admin_home_run():
    # if the user is not logged in, redirect him/her to the login page
@@ -35,8 +34,8 @@ def admin_home_run():
         "WHERE ug.user_id = " + str(user_id[0]) + ");")
 
     # database connection 
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered=True)       
 
@@ -99,9 +98,7 @@ def admin_home_run():
 
     # return the page with all the data stored in the app_perms_list variable
     return render_template('admin_files/admin_home.html', app_perms_list = app_perms_list)
-
 #==============================================================================#
-
 @app.route('/admin_groups')
 def admin_groups_run():
     # if the user is not logged in, redirect him/her to the login page
@@ -118,8 +115,8 @@ def admin_groups_run():
         "WHERE ug.user_id = " + str(user_id[0]) + ";")
 
     # database connection to get the groups
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered=True)
         # get all the group names
@@ -147,18 +144,14 @@ def admin_groups_run():
     #    print(key + "-------" + value)
     return render_template('admin_files/admin_groups.html', groups = groups
         )
-
 #==============================================================================#
-
 @app.route('/admin_add')
 def admin_add_run():
     # if the user is not logged in, redirect him/her to the login page
     is_logged_in()
 
-    return render_template('admin_files/admin_add_user.html')
-    
+    return render_template('admin_files/admin_add_user.html')    
 #==============================================================================#
-
 @app.route('/admin_modify', methods = ['POST', 'GET'])
 def admin_modify_run():
     modify = request.form
@@ -210,7 +203,7 @@ def admin_modify_run():
             conn.close()
     (groups, perm, users, apps) = temp(query, query2, query3, query4)
     return render_template('admin_files/admin_modify.html', groups = groups, perm = perm,  users = users, apps = apps)
-
+#==============================================================================#
 # use this function to get groups and permission, without reloading the page
 def temp(query, query2, query3, query4):
     groups = ''
@@ -218,8 +211,8 @@ def temp(query, query2, query3, query4):
     users = ''
     apps = ''
     try: 
-        conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+        conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
         cur = conn.cursor(buffered = True)
         cur.execute(query)
         groups = cur.fetchall()
@@ -237,7 +230,7 @@ def temp(query, query2, query3, query4):
         if conn:
             conn.close()
     return (groups, permissions, users, apps)
-
+#==============================================================================#
 # The actual function for update data in groups
 def update_group(modify):
     update_query = ""
@@ -253,7 +246,7 @@ def update_group(modify):
             update_query += " SET description = \'" + modify['description'] + '\''
         update_query += " WHERE id = " + modify['id'] + ';'
     return update_query
-
+#==============================================================================#
 # The actual function for update data in permissions
 def update_permissions(modify):
     update_query = ""
@@ -270,7 +263,7 @@ def update_permissions(modify):
             update_query += " SET description = \'" + modify['desc_perm'] + '\''
         update_query += " WHERE id = " + modify['id_perm'] + ';'
     return update_query
-
+#==============================================================================#
 # The actual function for update data in apps
 def update_apps(modify):
     update_query = ""
@@ -286,7 +279,7 @@ def update_apps(modify):
             update_query += " SET link = \'" + modify['link'] + '\''
         update_query += " WHERE id = " + modify['id_app'] + ';'
     return update_query
-
+#==============================================================================#
 def update_user_group(modify):
     insert_query = ''
     remove_query = ''
@@ -297,7 +290,7 @@ def update_user_group(modify):
         remove_query += ("DELETE FROM user_groups_relation "
         "WHERE user_id = " + modify['id_user'] + " and group_id = " + modify['remove_group'] + ";")
     return (insert_query, remove_query)
-
+#==============================================================================#
 def update_user_perm(modify):
     insert_query = ''
     remove_query = ''
@@ -308,11 +301,7 @@ def update_user_perm(modify):
         remove_query += ("DELETE FROM groups_perm_relation "
         "WHERE group_id = " + modify['id_group'] + " and perm_id = " + modify['remove_perm'] + ";")
     return (insert_query, remove_query)
-
-
-
 #==============================================================================#
-
 @app.route('/delete_user')
 def delete_user_run():
     # if the user is not logged in, redirect him/her to the login page
@@ -323,8 +312,8 @@ def delete_user_run():
         "FROM users ORDER BY id;")
 
     # database connection to get the groups
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
 
     try:
         cur = conn.cursor(buffered=True)
@@ -355,8 +344,8 @@ def execute_delete_user():
     queries.append("DELETE FROM users WHERE id IN " + ids_string)
 
     # database connection to get the groups
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
 
     try:
         cur = conn.cursor(buffered=True)
@@ -389,8 +378,8 @@ def delete_group_run():
     query = "SELECT * FROM groups ORDER BY id;"
 
     # database connection to get the groups
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
 
     try:
         cur = conn.cursor(buffered=True)
@@ -420,8 +409,8 @@ def execute_delete_group():
     query = "DELETE FROM groups WHERE id IN " + ids_string + ";"
     
     # database connection to get the groups
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
 
     try:
         cur = conn.cursor(buffered=True)
@@ -453,8 +442,8 @@ def delete_perm_run():
     query = "SELECT * FROM permissions ORDER BY id;"
 
     # database connection to get the groups
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered=True)
 
@@ -485,8 +474,8 @@ def execute_delete_perm():
     query = "DELETE FROM permissions WHERE id IN " + ids_string
     
     # database connection to get the groups
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
 
     try:
         cur = conn.cursor(buffered=True)
@@ -518,8 +507,8 @@ def delete_app_run():
     query = "SELECT * FROM apps ORDER BY id;"
 
     # database connection to get the apps
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered=True)
 
@@ -550,8 +539,8 @@ def execute_delete_app():
     query = "DELETE FROM apps WHERE id IN " + ids_string
     
     # database connection to execute the query
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
 
     try:
         cur = conn.cursor(buffered=True)
@@ -605,8 +594,8 @@ def admin_settings_run():
     query = "SELECT * from users WHERE id ='" + id + "';"
 
     # database connection 
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered = True)
         cur.execute(query)
@@ -683,8 +672,8 @@ def admin_settings_update():
     sql += " WHERE id = " + id + ";" 
 
     # database connection 
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered = True)
 
@@ -721,8 +710,8 @@ def admin_add_user():
     query2 = "SELECT id, name FROM permissions;"
 
     # database connection 
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered = True)
         cur.execute(query1)
@@ -738,7 +727,8 @@ def admin_add_user():
             conn.close()
             print('Connection to db was closed!')
 
-    return render_template('admin_files/admin_add_user.html', groups = groups, perms = perms)
+    return render_template('admin_files/admin_add_user.html', groups = groups, 
+                            perms = perms)
 
 #==============================================================================#
 
@@ -751,7 +741,8 @@ def submit_user_form():
     l = []
 
     if request.method == 'POST':
-        full_name = str(request.form.get('first_name')) + " " + str(request.form.get('last_name'))
+        full_name = (str(request.form.get('first_name')) + " "
+                     + str(request.form.get('last_name')))
         l.append(full_name)
         if check_email(request.form.get('email')):
             l.append(request.form.get('email'))
@@ -785,8 +776,8 @@ def create_query(groups, lista):
     user_query = ( "INSERT INTO users (username, password, full_name, email, " 
     "phone_number, is_admin) VALUES ( '" + user_name + "' , '" + str(lista[3])
     + "', '" + str(lista[0]) + "', '" + str(lista[1]) + "', '" + str(lista[2]) + "', ")
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         user_id = "SELECT id FROM users WHERE username = '" + user_name + "' ;"
         cur = conn.cursor(buffered = True)
@@ -802,7 +793,8 @@ def create_query(groups, lista):
         cur.execute(user_id)
         user_id = str(cur.fetchone()[0])
         
-        query = "INSERT INTO user_groups_relation (user_id, group_id) VALUES (" + str(user_id) + ", "
+        query = ("INSERT INTO user_groups_relation (user_id, group_id) VALUES ("
+                 + str(user_id) + ", ")
         queries = []
         
         for i in range(0, len(groups)):
@@ -829,8 +821,8 @@ def create_query(groups, lista):
 def check_username(username):
     check = True
     user_query = "SELECT username FROM users;"
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered = True)
         cur.execute(user_query)
@@ -862,11 +854,12 @@ def admin_add_group():
     #insert_groups()
     
     # insert into groups_perm_relation group id nou creat + perm id selectat
-    return render_template('admin_files/admin_add_group.html', groups = groups, users = users, permissions = permissions)
+    return render_template('admin_files/admin_add_group.html', groups = groups, 
+                            users = users, permissions = permissions)
 #==============================================================================#
 def query_for_user_groups_relation(query, query2, query3):
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered = True)
         cur.execute(query)
@@ -893,12 +886,13 @@ def insert_groups():
     description = add.get('description')
     users = request.form.getlist('users')
     perms = request.form.getlist('permissions')
-    query = "INSERT INTO groups (name, description) VALUES ('" + str(name) + "', '" + str(description) + "');"
+    query = ("INSERT INTO groups (name, description) VALUES ('" + str(name) 
+            + "', '" + str(description) + "');")
     query2 = "SELECT id from groups WHERE name = '" + str(name) +"';"
     
     
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered = True)
         cur.execute(query)
@@ -918,10 +912,11 @@ def insert_groups():
     return redirect('/add_group')
 #==============================================================================#
 def insert_group_relation(query, users):
-    query2 = "INSERT INTO user_groups_relation (group_id, user_id) VALUES (" + str(query) + ","
+    query2 = ("INSERT INTO user_groups_relation (group_id, user_id) VALUES (" 
+                + str(query) + ",")
     queries = []
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered = True)
         for i in range(0, len(users)):
@@ -946,8 +941,8 @@ def group_perm_relation(perms, group_id):
             + str(group_id) + ", ")
     
     queries = []
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     
     try:
         cur = conn.cursor(buffered = True)
@@ -978,8 +973,8 @@ def admin_add_perms():
                             groups = groups, apps = apps)
 #==============================================================================#
 def exec_query(query1, query2, query3):
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered = True)
         cur.execute(query1)
@@ -1010,8 +1005,8 @@ def insert_perms():
     insert = ("INSERT INTO permissions (name, description, app_id) VALUES ('" 
                 + str(name) + "', '" + str(description) + "', " )
     queries = []
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered = True)
         for i in range(0, len(id_apps)):
@@ -1038,8 +1033,8 @@ def insert_groups_perm_relation(group_id, name):
     query = "INSERT INTO groups_perm_relation (perm_id, group_id) VALUES (" 
     query2 = "SELECT id from permissions WHERE name= '" + str(name) + "';"
     queries = []
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     
     try:
         cur = conn.cursor(buffered = True)
@@ -1067,8 +1062,8 @@ def insert_groups_perm_relation(group_id, name):
 @app.route('/add_apps')
 def add_apps_load():
     apps = "SELECT * from apps"
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered = True)
         cur.execute(apps)
@@ -1090,8 +1085,8 @@ def insert_apps():
     link = apps.get('link')
     insert = ("INSERT INTO apps (name, link) VALUES ('" + str(name) + "', '" 
                 + str(link) + "');")
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered = True)
         cur.execute(insert)
@@ -1105,17 +1100,27 @@ def insert_apps():
             conn.close()
             print('Connection to db was closed!')
     return redirect ('/add_apps')
-
+#==============================================================================#
 @app.route("/admin_dashboard", methods = ['POST', 'GET'])
 def do_dashboard():
 
-    group_names = "select g.name, count(*) from groups as g inner join user_groups_relation as ugr on ugr.group_id = g.id inner join users as u on u.id = ugr.user_id group by g.name;"
+    group_names = ("select g.name, count(*) from groups as g inner join "
+                    "user_groups_relation as ugr on ugr.group_id = g.id inner "
+                    "join users as u on u.id = ugr.user_id group by g.name;")
     apps = "select count(*), name from apps group by name;"
-    query = "SELECT gpr.perm_id, p.name, g.name, a.name FROM groups_perm_relation AS gpr INNER JOIN groups AS g ON g.id = gpr.group_id INNER JOIN permissions AS p ON gpr.perm_id = p.id INNER JOIN apps AS a ON p.app_id = a.id WHERE perm_id IN (  SELECT id FROM permissions WHERE app_id = 3) ORDER BY p.name;"
-    users_perms = "select perm.name, count(*) from permissions as perm inner join groups_perm_relation gpr on gpr.perm_id = perm.id inner join user_groups_relation as ugr on ugr.group_id = gpr.group_id group by perm.name;"
+    query = ("SELECT gpr.perm_id, p.name, g.name, a.name FROM "
+             "groups_perm_relation AS gpr INNER JOIN groups AS g "
+             "ON g.id = gpr.group_id INNER JOIN permissions AS p "
+             "ON gpr.perm_id = p.id INNER JOIN apps AS a ON p.app_id = a.id "
+             "WHERE perm_id IN (  SELECT id FROM permissions WHERE app_id = 3)"
+             " ORDER BY p.name;")
+    users_perms = ("select perm.name, count(*) from permissions as perm "
+                "inner join groups_perm_relation gpr on gpr.perm_id = perm.id "
+                "inner join user_groups_relation as ugr "
+                "on ugr.group_id = gpr.group_id group by perm.name;")
     
-    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-        database=DB_DATABASE, port=DB_PORT)
+    conn = mariadb.connect(host=DB_HOST, port=int(DB_PORT), user=DB_USER, 
+        password=DB_PASSWORD, database=DB_DATABASE)
     try:
         cur = conn.cursor(buffered = True)
         cur.execute(group_names)
@@ -1138,9 +1143,14 @@ def do_dashboard():
             print('Connection to db was closed!')
 
 
-    permission = [users_perms[0][0], users_perms[1][0], users_perms[2][0], users_perms[3][0], users_perms[4][0], users_perms[5][0], users_perms[6][0]]
-    count_perms = [users_perms[0][1], users_perms[1][1], users_perms[2][1], users_perms[3][1], users_perms[4][1], users_perms[5][1], users_perms[6][1]]
-    fig3 = px.line(x=permission, y=count_perms, labels=dict(x="Permission", y="Amount", color="Time Period"))
+    permission = [users_perms[0][0], users_perms[1][0], users_perms[2][0], 
+                  users_perms[3][0], users_perms[4][0], users_perms[5][0], 
+                  users_perms[6][0]]
+    count_perms = [users_perms[0][1], users_perms[1][1], users_perms[2][1], 
+                   users_perms[3][1], users_perms[4][1], users_perms[5][1], 
+                   users_perms[6][1]]
+    fig3 = px.line(x=permission, y=count_perms, 
+            labels=dict(x="Permission", y="Amount", color="Time Period"))
     fig3.add_bar(x=permission, y=count_perms, name="Counter")
     fig3.update_layout(title_text="Multi-category axis")
 
@@ -1174,11 +1184,13 @@ def do_dashboard():
     graphJSON3 = json.dumps(fig2, cls=plotly.utils.PlotlyJSONEncoder)
 
 
-    return render_template('admin_files/admin_dashboard.html', graphJSON = graphJSON, graphJSON2=graphJSON2, graphJSON3 = graphJSON3)
+    return render_template('admin_files/admin_dashboard.html', 
+        graphJSON = graphJSON, graphJSON2=graphJSON2, graphJSON3 = graphJSON3)
 #==============================================================================#
 @app.route('/import_export')
-def imp_exp_load():
-    return render_template('admin_files/admin_imp_exp.html', button = '')
+@app.route('/import_export/<b>')
+def imp_exp_load(b = ''):
+    return render_template('admin_files/admin_imp_exp.html', button = b)
 #------------------------------------------------------------------------------#
 def zipFilesInDir(dirName, zipFileName, filter):
    # create a ZipFile object
@@ -1204,7 +1216,7 @@ def export_data():
     APPS_PERMS_HEADER = ['id', 'group_id', 'perm_id']
 
     # download button
-    button = ''
+    b = ''
 
     # get the list of objects that the admin wants to export
     export = request.form.getlist('checks_exp')
@@ -1212,45 +1224,53 @@ def export_data():
     if export:
         # if it's not empty, then run the queries
         conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
-            database=DB_DATABASE, port=19400)
+            database=DB_DATABASE, port=DB_PORT)
         query = 'SELECT * FROM '
         try:
             cur = conn.cursor(buffered = True)
             for table in export:
+                print("table name: " + table)
                 tmp_query = query + table + ';'
+                print("Query: " + tmp_query)
                 cur.execute(tmp_query)
-                table_data = cur.fetchall()
+                table_data = cur.fetchall()                
                 print(table_data)
                 if table == 'users':
                     with open('./static/export/users.csv', 'w+') as file:
                         writer = csv.writer(file)
                         writer.writerow(USERS_HEADER)
                         writer.writerows(table_data)
+                        print('-----users')
                 elif table == 'groups':
                     with open('./static/export/groups.csv', 'w+') as file:
                         writer = csv.writer(file)
                         writer.writerow(GROUPS_HEADER)
                         writer.writerows(table_data)
+                        print('-----groups')
                 elif table == 'permissions':
                     with open('./static/export/permissions.csv', 'w+') as file:
                         writer = csv.writer(file)
                         writer.writerow(PERMS_HEADER)
                         writer.writerows(table_data)
+                        print('-----perms')
                 elif table == 'apps':
                     with open('./static/export/apps.csv', 'w+') as file:
                         writer = csv.writer(file)
                         writer.writerow(APPS_HEADER)
                         writer.writerows(table_data)
+                        print('-----apps')
                 elif table == 'user_groups_relation':
                     with open('./static/export/user_groups_relation.csv', 'w+') as file:
                         writer = csv.writer(file)
                         writer.writerow(USERS_GROUPS_HEADER)
                         writer.writerows(table_data)
+                        print('-----u_g_rel')
                 elif table == 'group_perm_relation':
                     with open('./static/export/group_perm_relation.csv', 'w+') as file:
                         writer = csv.writer(file)
                         writer.writerow(APPS_PERMS_HEADER)
                         writer.writerows(table_data)     
+                        print('-----g_p_rel')
             cur.close()
             conn.close()
         except mariadb.Error as error:
@@ -1263,33 +1283,13 @@ def export_data():
         zipFilesInDir('./static/export', 'export_data.zip', 
                 lambda name : 'csv' in name)
         # create download button to be inserted into page
-        button = '<button class="btn btn_submit">Download data</button>'
-    return redirect('/import_export') 
+        b = 'show button'
+    return redirect('/import_export/{b}')
 #------------------------------------------------------------------------------#
 @app.route('/export_data_download')
 def export_data_download():
-    '''
-    FILEPATH = r"./export_data.zip"
-    fileobj = io.BytesIO()
-    with zipfile.ZipFile(fileobj, 'w') as zip_file:
-        zip_info = zipfile.ZipInfo(FILEPATH)
-        zip_info.date_time = time.localtime(time.time())[:6]
-        zip_info.compress_type = zipfile.ZIP_DEFLATED
-        with open(FILEPATH, 'rb') as fd:
-            zip_file.writestr(zip_info, fd.read())
-    fileobj.seek(0)
-'''
     # Changed line below
     return send_file('./export_data.zip', as_attachment=True)
-
-#    return Response(fileobj.getvalue(),
-#                    mimetype='application/zip',
-#                    headers={'Content-Disposition': 'attachment;filename=export_data.zip'})
-
-#    return send_file('./static/export/export_data.zip',
-#                     mimetype='application/zip',
-#                     attachment_filename='export_data.zip',
-#                     as_attachment=True)
 #------------------------------------------------------------------------------#
 @app.route('/import_data_run', methods=['POST'])
 def import_data():
@@ -1303,7 +1303,6 @@ def import_data():
             # save the file
     return redirect('import_export')
 #==============================================================================#
-
 def parseCSV(filePath):
     USERS_HEADER = ['id', 'username', 'password', 'full_name', 'email', 
                     'phone_number', 'is_admin']
@@ -1330,3 +1329,4 @@ def parseCSV(filePath):
     elif csvData == 'group_perm_relation':
         pass
         return nullcontext
+#==============================================================================#

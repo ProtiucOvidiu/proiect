@@ -78,8 +78,8 @@
                       <td><input type="checkbox" value="groups" name="checks_exp">       Groups</td>
                       <td><input type="checkbox" value="permissions" name="checks_exp">       Permissions</td>
                       <td><input type="checkbox" value="apps" name="checks_exp">       Apps</td>
-                      <td><input type="checkbox" value="user_groups_relation-groups" name="checks_exp">       Users-Groups Table</td>
-                      <td><input type="checkbox" value="group_perm_relation-perm" name="checks_exp">       Groups-Permissions Table</td>
+                      <td><input type="checkbox" value="user_groups_relation" name="checks_exp">       Users-Groups Table</td>
+                      <td><input type="checkbox" value="groups_perm_relation" name="checks_exp">       Groups-Permissions Table</td>
                     </tr>
                   </tbody>
                 </table>
@@ -88,9 +88,15 @@
                   <button type="reset" class="btn btn-secondary">Clear selection</button>
                 </div>
               </form>
-              <div class="button_rows" >
-                <button class="btn btn_submit"><a href="{{ url_for('export_data_download') }}" class='btn_submit' style="text-decoration: none;">Download data</a></button>
-              </div>
+
+              {% block content %}
+                {% if button|length %}
+                  <div class="button_rows" >
+                    <button class="btn btn_submit"><a href="{{ url_for('export_data_download') }}" class='btn_submit' style="text-decoration: none;">Download data</a></button>
+                  </div>
+                {% endif %}
+              {% endblock %}
+            
             </div>
           </div>
         </div>
