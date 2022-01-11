@@ -21,16 +21,11 @@ APPS_PERMS_HEADER = ['id', 'group_id', 'perm_id']
 #==============================================================================#
 
 # database login details to freemysql_hosting
-DB_HOST = ''
-DB_USER = ''
-DB_PASSWORD = ''
-DB_DATABASE = ''
+DB_HOST = '199.247.4.112'
+DB_USER = 'sky_admin'
+DB_PASSWORD = 'h^g8p{66TgW'
+DB_DATABASE = 'sky_security'
 DB_PORT = 3306
-
-#DB_HOST = 'mysql-65574-0.cloudclusters.net'
-#DB_USER = 'admin'
-#DB_PASSWORD = 'UDqCxg1v'
-#DB_DATABASE = 'sky_security'
 
 #==============================================================================#
 

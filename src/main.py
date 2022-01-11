@@ -1,5 +1,6 @@
-from flask import Flask
-from flask import Flask, flash, redirect, render_template, request, session, abort, flash, url_for
+from flask import Flask, jsonify
+import requests
+from flask import Flask, flash, redirect, render_template, request, session, abort, flash, url_for, request
 from passlib.hash import sha256_crypt
 import mysql.connector as mariadb
 import os
@@ -13,7 +14,12 @@ import plotly
 import plotly.graph_objects as go
 import plotly.offline as pyo
 from plotly.offline import init_notebook_mode
-
+from OpenSSL import SSL
+import ssl
+#ssl.PROTOCOL_TLSv1_2
+#context = SSL.Context(ssl.PROTOCOL_TLSv1_2)
+#context.use_privatekey_file('server.key')
+#context.use_certificate_file('server.crt')   
 #==============================================================================#
 
 @app.route('/')
@@ -209,8 +215,13 @@ def reset_password():
   cur.close()
   return redirect("/reset")
 
+@app.route('/', methods=['GET'])
+def serve():
+    return "Hello world", 200
+
 if __name__ == "__main__":
   app.secret_key = os.urandom(12)
+  #context = ('cert.perm', 'key.perm')
   app.run(debug=True, host='0.0.0.0', port=5000)
 
 

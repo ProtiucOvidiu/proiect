@@ -1,3 +1,6 @@
+from contextlib import nullcontext
+import os
+from os.path import join, dirname, realpath
 from flask import Flask, flash, redirect, render_template, request, session, abort, url_for, Response, send_file, make_response
 import mysql.connector as mariadb
 from passlib.hash import sha256_crypt
@@ -13,6 +16,11 @@ from plotly.offline import init_notebook_mode
 import pandas as pd
 import json
 import plotly.express as px
+import pandas as pd
+
+UPLOAD_FOLDER = 'static/files/'
+app.config['UPLOAD_FOLDER'] =  UPLOAD_FOLDER
+
 
 #==============================================================================#
 @app.route('/admin_home')
@@ -1293,14 +1301,14 @@ def export_data_download():
 #------------------------------------------------------------------------------#
 @app.route('/import_data_run', methods=['POST'])
 def import_data():
-    uploaded_file = str(request.form.get('import'))
-
-    if uploaded_file.lower().endswith(('csv')):
-        if uploaded_file.filename != '':
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], uploaded_file.filename)
-            # set the file path
-            uploaded_file.save(file_path)
-            # save the file
+    uploaded_file = request.files['import_csv']
+    
+    if uploaded_file.filename != '':
+        file_path = UPLOAD_FOLDER + uploaded_file.filename
+        # set the file path
+        uploaded_file.save(file_path)
+        parseCSV(file_path)
+        # save the file
     return redirect('import_export')
 #==============================================================================#
 def parseCSV(filePath):
@@ -1311,22 +1319,132 @@ def parseCSV(filePath):
     APPS_HEADER = ['id', 'name', 'link']
     USERS_GROUPS_HEADER = ['id', 'user_id', 'group_id']
     APPS_PERMS_HEADER = ['id', 'group_id', 'perm_id']
-
     imported = request.form.getlist('checks_imp')
+    print(str(imported))
     
-    csvData = pd.read_csv(filePath, names=USERS_HEADER, header=None)
+    conn = mariadb.connect(host=DB_HOST, user=DB_USER, password=DB_PASSWORD,
+            database=DB_DATABASE, port=DB_PORT)
+   
+    
+    if str(imported[0]) == 'users':
+        csvData = pd.read_csv(filePath, names=USERS_HEADER, header=None)
+        for i, row in csvData.iterrows():
+            if row[0] == 'id':
+                continue
+            sql = "INSERT INTO users (id, username, password, full_name, email, phone_number, id_admin) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            values = (row['id'], row['username'], row['password'], row['full_name'], row['email'], row['phone_number'], row['id_admin'])
+            try:
+                cur = conn.cursor(buffered = True)
+                cur.execute(sql, values)
+                conn.commit()
+                print(i, row['id'], row['username'], row['password'], row['full_name'], row['email'], row['phone_number'], row['id_admin'])
+                cur.close()
+                conn.close()
+            except mariadb.Error as error:
+                print("Failed to read data from table", error)
+            finally:
+                if conn:
+                    conn.close()
+                    print('Connection to db was closed!')
+    
+    elif str(imported[0]) == 'groups':
+        csvData = pd.read_csv(filePath, names=GROUPS_HEADER, header=None)
+        for i, row in csvData.iterrows():
+            if row[0] == 'id':
+                continue
+            sql = "INSERT INTO groups (id, name, description) VALUES (%s, %s, %s)"
+            values = [row['id'], row['name'], row['description']]
+            try:
+                cur = conn.cursor(buffered = True)
+                cur.execute(sql, (values))
+                conn.commit()
+                print(i, row['id'], row['name'], row['description'])
+                cur.close()
+                conn.close()
+            except mariadb.Error as error:
+                print("Failed to read data from table", error)
+            finally:
+                if conn:
+                    conn.close()
+                    print('Connection to db was closed!')
+      
+    elif str(imported[0]) == 'permissions':
+        csvData = pd.read_csv(filePath, names=PERMS_HEADER, header=None)
+        for i, row in csvData.iterrows():
+            sql = "INSERT INTO permissions (id, name, description, app_id) VALUES (%s, %s, %s, %s)"
+            values = [row['id'], row['name'], row['description'], row['app_id']]
+            try:
+                cur = conn.cursor(buffered = True)
+                cur.execute(sql, (values))
+                conn.commit()
+                print(i, row['id'], row['name'], row['description'], row['app_id'])
+                cur.close()
+                conn.close()
+            except mariadb.Error as error:
+                print("Failed to read data from table", error)
+            finally:
+                if conn:
+                    conn.close()
+                    print('Connection to db was closed!')
+    elif str(imported[0]) == 'apps':
+        csvData = pd.read_csv(filePath, names=APPS_HEADER, header=None)
+        for i, row in csvData.iterrows():
+            if row[0] == 'id':
+                continue
+            sql = "INSERT INTO apps (id, name, link) VALUES (%s, %s, %s)"
+            values = [row['id'], row['name'], row['link']]
+            try:
+                cur = conn.cursor(buffered = True)
+                cur.execute(sql, (values))
+                conn.commit()
+                print(i, row['id'], row['name'], row['link'])
+                cur.close()
+                conn.close()
+            except mariadb.Error as error:
+                print("Failed to read data from table", error)
+            finally:
+                if conn:
+                    conn.close()
+                    print('Connection to db was closed!')
+    elif str(imported[0]) == 'user_groups_relation':
+        csvData = pd.read_csv(filePath, names=USERS_GROUPS_HEADER, header=None)
+        for i, row in csvData.iterrows():
+            if row[0] == 'id':
+                continue
+            sql = "INSERT INTO user_groups_relation (id, user_id, group_id) VALUES (%s, %s, %s)"
+            values = [row['id'], row['user_id'], row['group_id']]
+            try:
+                cur = conn.cursor(buffered = True)
+                cur.execute(sql, (values))
+                conn.commit()
+                print(i, row['id'], row['user_id'], row['group_id'])
+                cur.close()
+                conn.close()
+            except mariadb.Error as error:
+                print("Failed to read data from table", error)
+            finally:
+                if conn:
+                    conn.close()
+                    print('Connection to db was closed!')
+    elif str(imported[0]) == 'group_perm_relation':
+        csvData = pd.read_csv(filePath, names=APPS_PERMS_HEADER, header=None)
+        for i, row in csvData.iterrows():
+            if row[0] == 'id':
+                continue
+            sql = "INSERT INTO group_perm_relation (id, group_id, perm_id) VALUES (%s, %s, %s)"
+            values = [row['id'], row['group_id'], row['perm_id']]
+            try:
+                cur = conn.cursor(buffered = True)
+                cur.execute(sql, (values))
+                conn.commit()
+                print(i, row['id'], row['group_id'], row['perm_id'])
+                cur.close()
+                conn.close()
+            except mariadb.Error as error:
+                print("Failed to read data from table", error)
+            finally:
+                if conn:
+                    conn.close()
+                    print('Connection to db was closed!')
 
-    if csvData == 'users':
-        pass
-    elif csvData == 'groups':
-        pass   
-    elif csvData == 'permissions':
-        pass
-    elif csvData == 'apps':
-        pass       
-    elif csvData == 'user_groups_relation':
-        pass         
-    elif csvData == 'group_perm_relation':
-        pass
-        return nullcontext
 #==============================================================================#

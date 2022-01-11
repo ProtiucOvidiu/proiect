@@ -108,7 +108,7 @@
             <h4 class="card-subtitle mb-2 text-muted"> Choose which data to import:</h4>
             <br>
             <div class="table-responsive">
-              <form name='import' id='import' action="{{ url_for('import_data') }}" method="post">
+              <form name='import' id='import' action="{{ url_for('import_data') }}" method="POST" enctype="multipart/form-data">
                 <table class="table table-bordered" style="border:1px solid #dee2e6 !important;">
                   <tbody>
                     <tr>
@@ -122,8 +122,11 @@
                   </tbody>
                 </table>
                 <div class="button_rows" style="float: right;">
-                  <button type="submit" class="btn btn_submit">Delete selected app(s)</button>
+                  <input type="submit" class="btn btn_submit"></button>
                   <button type="reset" class="btn btn-secondary">Clear selection</button>
+                </div>
+                <div class="button_rows">
+                  <input type="file" id="import_csv" name="import_csv">
                 </div>
               </form>
             </div>    
